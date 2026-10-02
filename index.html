@@ -387,6 +387,7 @@ function card(f,i){
     ${f.popis?`<p class="desc">${esc(f.popis)}</p>`:""}
     <dl class="facts">${facts.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
     ${f.web?`<a class="link" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(f.web.replace(/^https?:\/\//,""))} ↗</a>`:""}
+    ${f.adresa?`<a class="link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([f.nazev,f.adresa,f.mesto&&!String(f.adresa).includes(f.mesto)?f.mesto:""].filter(Boolean).join(", "))}" target="_blank" rel="noopener">Ukázat na mapě ↗</a>`:""}
     <div class="actions">
       <a class="btn primary" ${ph?`href="tel:${ph}"`:'aria-disabled="true"'} data-call="${i}">${ICON.tel} Zavolat</a>
       <button class="btn" data-mail="${i}">${ICON.mail} Napsat</button>
