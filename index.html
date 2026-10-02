@@ -59,7 +59,6 @@ details.more .inner{display:grid;gap:8px;margin-top:8px}
 .state{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
 .state.open{background:var(--accent-soft);color:var(--accent)}
 .state.closed{background:var(--line);color:var(--muted)}
-nav.tabs.two{grid-template-columns:repeat(2,1fr)}
 @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}70%{box-shadow:0 0 0 9px color-mix(in srgb,var(--accent) 0%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
 .nudge{border-color:var(--accent)!important;animation:pulse 1.8s ease-out infinite}
 @media (prefers-reduced-motion:reduce){.nudge{animation:none;box-shadow:0 0 0 3px var(--accent-soft)}}
@@ -134,12 +133,13 @@ main{padding:12px 16px calc(96px + env(safe-area-inset-bottom,0px));display:grid
 .empty strong{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
 .status{font-size:12.5px;color:var(--muted);text-align:center;margin:0}
 
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:6px 16px calc(6px + env(safe-area-inset-bottom,0px))}
-.tab{background:none;border:0;padding:8px;display:grid;justify-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:flex;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.tab{flex:1;position:relative;background:none;border:0;padding:8px;display:grid;justify-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
 .tab svg{width:22px;height:22px}
 .tab[aria-selected="true"]{color:var(--accent)}
 
 /* Návody */
+.ghead .brand{display:flex;justify-content:space-between;align-items:center}
 .ghead{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:var(--bg);padding:14px 16px 10px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;border-bottom:1px solid var(--line)}
 .page-h{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02em;margin:0}
 .lead{margin:0;color:var(--muted)}
@@ -172,15 +172,51 @@ details.qa p{margin:8px 0 0}
 .field textarea{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;min-height:200px;resize:vertical}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:999px;font-size:13.5px;z-index:10;max-width:calc(100% - 32px);text-align:center}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
+/* nové: jazyk, Moje, štítky, vzdálenost, mapa */
+.bright{display:flex;flex-direction:column-reverse;align-items:flex-end;gap:5px;min-width:0;text-align:right}
+.brand h1{white-space:nowrap}
+.langbtn{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 9px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+.star{border:0;background:none;font-size:23px;line-height:1;padding:0 2px;cursor:pointer;color:var(--muted)}
+.star[aria-pressed="true"]{color:#D49A00}
+.tags{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.tag.hire{background:var(--accent-soft);color:var(--accent)}
+.tag.new{background:#ECE5FB;color:#5B3DB5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag.new{background:#2C2346;color:#C9B8F5}}
+.hire-line{font-size:13.5px;font-weight:600;color:var(--accent)}
+.hire-line span{font-weight:400;color:var(--muted)}
+.mstate{font-size:12.5px;color:var(--accent);font-weight:600;margin-top:3px}
+.dist{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.linkbtn{background:none;border:0;padding:0;text-align:left;cursor:pointer;font:inherit;font-size:13.5px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.tool{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font-size:13.5px;font-weight:600;cursor:pointer}
+.tool[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#map{height:62vh;min-height:320px;border-radius:16px;border:1px solid var(--line);position:relative;z-index:0;isolation:isolate;overflow:hidden;background:var(--surface)}
+.pop{display:grid;gap:3px;font-family:var(--body);font-size:13.5px}
+.pop b{font-size:14.5px}.pop span{color:#5E6B68}
+.pop-a{display:flex;gap:12px;margin-top:4px}.pop-a a{font-weight:700}
+.mpanel{display:grid;gap:8px;border-top:1px dashed var(--line);padding-top:10px}
+.mst{display:flex;flex-wrap:wrap;gap:6px}
+.mst button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer}
+.mst button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.mpanel textarea{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-height:58px;resize:vertical;font-size:14px}
+.mmeta{font-size:12.5px;color:var(--muted)}
+.remind{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:600}
+.remind button{border:0;background:none;color:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
+.tab .badge{position:absolute;top:3px;left:calc(50% + 6px);background:var(--accent);color:var(--accent-ink);font-size:10.5px;font-weight:700;border-radius:999px;padding:0 5px;min-width:17px;line-height:16px}
+.langs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 0}
+.langs button{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font-weight:600;font-size:14px;cursor:pointer}
+.langs button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+#moje .lead{margin:0 2px}
 </style></head><body>
 
 <div id="view-firmy">
 <header>
   <div class="hcollapse">
-  <div class="brand"><h1>Práce napřímo</h1><span class="count" id="count"></span></div>
-  <div class="mode" role="group" aria-label="Co hledáte">
-    <button type="button" data-mode="prace" aria-pressed="true">Hledám práci</button>
-    <button type="button" data-mode="sluzba" aria-pressed="false">Hledám službu / info</button>
+  <div class="brand"><h1>Práce napřímo</h1><span class="bright"><span class="count" id="count"></span><button class="langbtn" id="langbtn" data-langbtn type="button"></button></span></div>
+  <div class="mode" role="group">
+    <button type="button" data-mode="prace" aria-pressed="true" data-i18n="modePrace">Hledám práci</button>
+    <button type="button" data-mode="sluzba" aria-pressed="false" data-i18n="modeSluzba">Hledám službu / info</button>
   </div>
   <div class="search">
     <input id="q" type="search" placeholder="Hledat…" aria-label="Hledat">
@@ -189,69 +225,41 @@ details.qa p{margin:8px 0 0}
   </div>
   <div class="sugg" id="sugg" hidden></div>
   <div class="hint" id="hint" hidden></div>
-  <div class="chips" id="chips" role="toolbar" aria-label="Obory"></div>
+  <div class="chips" id="chips" role="toolbar"></div>
 </header>
 <main id="firmy"></main>
 </div>
 
+<div id="view-moje" hidden>
+<div class="ghead">
+  <div class="brand"><h2 class="page-h" data-i18n="mojeH">Moje</h2><button class="langbtn" data-langbtn type="button"></button></div>
+  <div class="chips" id="mchips" role="toolbar"></div>
+</div>
+<main id="moje"></main>
+</div>
+
 <div id="view-navody" hidden>
 <div class="ghead">
-  <div class="brand"><h2 class="page-h">Návody</h2></div>
-  <div class="chips" id="gchips" role="toolbar" aria-label="Témata návodů"></div>
+  <div class="brand"><h2 class="page-h" data-i18n="navH">Návody</h2><button class="langbtn" data-langbtn type="button"></button></div>
+  <div class="chips" id="gchips" role="toolbar"></div>
 </div>
 <main id="guide"></main>
 </div>
 
 <div id="view-onas" hidden>
-<div class="ghead"><div class="brand"><h2 class="page-h">O aplikaci</h2></div></div>
-<main class="about">
-  <button class="btn soft" id="rerun">Spustit průvodce znovu</button>
-  <section class="item">
-    <h3>Práce napřímo</h3>
-    <p>Firmy ve vašem okolí s přímým kontaktem. Hledáte práci? Zavolejte nebo napište firmě rovnou, bez inzerátů a agentur. Hledáte službu? Najdete tu obchody, autoservisy, kadeřnictví, dopravu a další služby kolem sebe.</p>
-  </section>
-  <section class="item">
-    <h3>Proč vznikla</h3>
-    <p>Aplikace vznikla, protože jsem sám hledal práci a chtěl jsem firmy oslovovat napřímo.</p>
-    <p class="sign">Michal Mamula, zakladatel projektu Práce napřímo</p>
-  </section>
-  <section class="item">
-    <h3>Kontakt</h3>
-    <p>Dotazy, nápady i chyby pište na <a class="link" href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a>.</p>
-    <div class="row">
-      <a class="btn primary" href="mailto:domecekcafe@gmail.com?subject=Chyb%C3%AD%20firma%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo&body=Dobr%C3%BD%20den%2C%0A%0Apros%C3%ADm%20o%20dopln%C4%9Bn%C3%AD%20firmy%20do%20aplikace%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo%3A%0A%0AN%C3%A1zev%3A%0AObor%20%28gastronomie%2C%20obchod%2C%20slu%C5%BEby%2C%20doprava%2C%20pr%C5%AFmysl%2C%20zdravotnictv%C3%AD%29%3A%0AAdresa%3A%0ATelefon%3A%0AFiremn%C3%AD%20e-mail%3A%0AWeb%3A%0AOtev%C3%ADrac%C3%AD%20doba%3A%0AKr%C3%A1tk%C3%BD%20popis%3A%0A">Chybí tu vaše firma?</a>
-      <a class="btn" href="mailto:domecekcafe@gmail.com?subject=Oprava%20%C3%BAdaj%C5%AF%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo&body=Dobr%C3%BD%20den%2C%0A%0Au%20firmy%20%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%20v%20aplikaci%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo%20pros%C3%ADm%20o%20opravu%20/%20odstran%C4%9Bn%C3%AD%20t%C4%9Bchto%20%C3%BAdaj%C5%AF%3A%0A%0A">Oprava údajů</a>
-    </div>
-  </section>
-  <section class="item">
-    <h3>Pro firmy</h3>
-    <ul>
-      <li><strong>Základní zápis</strong> – zdarma. Stačí napsat přes tlačítko „Chybí tu vaše firma?“.</li>
-      <li><strong>Zvýraznění</strong><span class="soon">připravujeme</span> – firma se ukáže nahoře ve svém oboru a lokalitě, viditelně označená jako „Doporučeno“.</li>
-      <li><strong>Banner</strong><span class="soon">připravujeme</span> – reklamní pruh v aplikaci.</li>
-    </ul>
-    <div class="row"><a class="btn" href="mailto:domecekcafe@gmail.com?subject=Zv%C3%BDrazn%C4%9Bn%C3%AD%20firmy%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo">Mám zájem o zvýraznění</a></div>
-  </section>
-  <section class="item">
-    <h3>Ochrana údajů</h3>
-    <ul>
-      <li>Údaje o firmách pochází z veřejných zdrojů: webů firem, obchodního a živnostenského rejstříku a veřejných katalogů. Zobrazujeme jen firemní kontakty.</li>
-      <li>Chcete své údaje opravit nebo odstranit? Napište nám přes „Oprava údajů“, vyřídíme to.</li>
-      <li>U živnostníků, lékařů a dalších podnikajících osob jména nezobrazujeme. Uvádíme jen druh služby, adresu provozovny a pracovní kontakt.</li>
-      <li>Aplikace nic neukládá ani neodesílá o vás. Texty z Návodů si jen kopírujete do svého e-mailu nebo telefonu.</li>
-      <li>Návštěvnost měříme anonymně přes GoatCounter, bez cookies.</li>
-    </ul>
-  </section>
-</main>
+<div class="ghead"><div class="brand"><h2 class="page-h" data-i18n="tabOnas">O aplikaci</h2><button class="langbtn" data-langbtn type="button"></button></div></div>
+<main class="about" id="about"></main>
 </div>
 
 <nav class="tabs" role="tablist">
   <button class="tab" role="tab" id="tab-firmy" aria-selected="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>Firmy</button>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg><span data-i18n="tabFirmy">Firmy</span></button>
+  <button class="tab" role="tab" id="tab-moje" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg><span data-i18n="tabMoje">Moje</span><span class="badge" hidden></span></button>
   <button class="tab" role="tab" id="tab-navody" aria-selected="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 7h6M9 11h6"/></svg>Návody</button>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 7h6M9 11h6"/></svg><span data-i18n="tabNavody">Návody</span></button>
   <button class="tab" role="tab" id="tab-onas" aria-selected="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>O aplikaci</button>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span data-i18n="tabOnas">O aplikaci</span></button>
 </nav>
 
 <script>
@@ -266,15 +274,217 @@ const DATA_DATE = "2. 10. 2026";
 /* ========================================== */
 
 const EMBEDDED = [{"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Barabizna Restaurant – Café", "adresa": "Pod Špitálem 363, Praha-Zbraslav", "telefon": "608 548 333 / 773 735 765", "email": "barabizna@seznam.cz", "web": "barabizna.cz", "hodiny": "denně 11:00–23:00", "styl": "Mexická, Tex-Mex", "popis": "Velká restaurace se zahradou, svatby a firemní akce", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Zbraslavský Hostinec", "adresa": "U Národní galerie 471, Praha-Zbraslav", "telefon": "608 183 454", "email": "info@zbraslavskyhostinec.cz", "web": "zbraslavskyhostinec.cz", "hodiny": "denně 11:00–23:00", "styl": "Česká kuchyně", "popis": "Tradiční česká kuchyně, tankový Pilsner", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Restaurace U Přístavu", "adresa": "U Malé řeky 623, Praha-Zbraslav", "telefon": "257 923 708", "email": "info@restauraceupristavu.cz", "web": "restauraceupristavu.cz", "hodiny": "Po–Čt 11–23, Pá–So 11–24, Ne 11–21", "styl": "Česká kuchyně", "popis": "Výletní restaurace u řeky, sál na svatby a akce", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Rang De Basanti", "adresa": "Žitavského 496, Praha-Zbraslav", "telefon": "775 999 991", "email": "info@rangdebasanti.cz", "web": "rangdebasanti.cz", "hodiny": "denně 11:00–22:00", "styl": "Indická kuchyně", "popis": "Indická restaurace, rozvoz, catering", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Restaurace Stella", "adresa": "Pod Třešňovkou 234, Praha-Zbraslav", "telefon": "725 327 646", "email": "info@stellazbraslav.cz", "web": "stellazbraslav.cz", "hodiny": "Po–So 11–22, Ne 11–21", "styl": "Burgery, steaky, pasta, pizza", "popis": "Restaurace a pub, rozvoz, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Restaurant Škoda lásky", "adresa": "Zbraslavské náměstí 453, Praha-Zbraslav", "telefon": "257 923 316", "email": "info@skodalasky.cz", "web": "skodalasky.cz", "hodiny": "Út–St 11–22, Čt–So 11–23, Ne 11–21", "styl": "Česká a mezinárodní", "popis": "Salonek, zimní zahrada, zahrádka pro 100 lidí", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Darwin Hotel Restaurant", "adresa": "U Národní galerie 471, Praha-Zbraslav", "telefon": "776 639 196", "email": "info@darwinhotel.cz", "web": "darwinhotel.cz", "hodiny": "Po–Pá 7–23, So–Ne 11–23", "styl": "Hotelová restaurace", "popis": "4* hotel se dvěma restauracemi", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Babá cucina", "adresa": "U Národní galerie 482, Praha-Zbraslav", "telefon": "771 148 480", "email": "info@babacucina.cz", "web": "babacucina.cz", "hodiny": "denně 11:00–23:00", "styl": "Italská / mezinárodní", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Hostinec U Bláhů", "adresa": "Lipenecká 6, Praha-Zbraslav", "telefon": "608 122 794", "email": "", "web": "hostinecublahu.cz", "hodiny": "denně 11:00–22:00", "styl": "Česká hospoda", "popis": "Tankový Staropramen, hotovky, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Restaurace U Žemličků", "adresa": "Vilímkova 225, Praha-Zbraslav", "telefon": "602 274 571", "email": "restaurace@uzemlicku.cz", "web": "uzemlicku.cz", "hodiny": "Po–Pá 11:00–15:00", "styl": "Česká, polední menu", "popis": "Polední menu a minutky", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Pho Family Zbraslav", "adresa": "Elišky Přemyslovny 424, Praha-Zbraslav", "telefon": "775 951 868", "email": "", "web": "phofamilyzbraslav.eatbu.com", "hodiny": "Po–Pá 10:30–20, So 11–17", "styl": "Vietnamská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Stromeček", "adresa": "Elišky Přemyslovny 433, Praha-Zbraslav", "telefon": "792 534 374", "email": "ahoj@stromecek.fun", "web": "stromecek.fun", "hodiny": "denně 9:00–21:00", "styl": "Bistro / kavárna / pivo", "popis": "Rodinné bistro s hernou pro děti", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Bifé Prádelna (Kavárna Prádelna)", "adresa": "U Prádelny 668, Praha-Zbraslav", "telefon": "776 798 563", "email": "", "web": "", "hodiny": "Út–Pá 9–18, So–Ne 10–18", "styl": "Kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Hospůdka na Slavoji", "adresa": "Pod Havlínem 1302, Praha-Zbraslav", "telefon": "604 623 801", "email": "foodtriptruck@email.cz", "web": "skzbraslav.cz/restaurace", "hodiny": "Po–Čt, Ne 16–23, Pá–So 16–24", "styl": "Hospoda, studená kuchyně", "popis": "Hospoda u hřiště SK Zbraslav, letní terasa", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Auzzie", "adresa": "Elišky Přemyslovny 451, Praha-Zbraslav", "telefon": "737 875 297", "email": "", "web": "instagram.com/auzzie_zbraslav", "hodiny": "Po–Pá 10–20, So zavřeno, Ne 10–20", "styl": "Asijské bistro, bubble tea", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "UJP – kantýna Zbraslav", "adresa": "Nad Kamínkou 1345, Praha-Zbraslav (areál UJP PRAHA a.s.)", "telefon": "", "email": "", "web": "", "hodiny": "", "styl": "Závodní jídelna", "popis": "", "overeno": "částečně"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Istanbul kebab", "adresa": "Elišky Přemyslovny 443, Praha-Zbraslav", "telefon": "777 199 778", "email": "", "web": "", "hodiny": "Po–Čt, Ne 10–22, Pá–So 10–23", "styl": "Kebab / turecká", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Pizza Padronissimo", "adresa": "Paškova 1511, Praha-Zbraslav", "telefon": "724 292 818", "email": "", "web": "", "hodiny": "Po–Pá 10–22, So–Ne 11–22", "styl": "Pizza, rozvoz", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Pivovar Horymír", "adresa": "Horymírovo nám. 1416/9, Praha-Radotín", "telefon": "702 182 199", "email": "info@pivovarhorymir.cz", "web": "pivovarhorymir.cz", "hodiny": "", "styl": "Minipivovar s restaurací", "popis": "Vlastní piva, bowling, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace Sokolovna Radotín", "adresa": "Vykoukových 622/2, Praha-Radotín", "telefon": "774 660 101", "email": "sokolovna.radotin@gmail.com", "web": "sokolovnaradotin.cz", "hodiny": "Po–Ne 11–22/23", "styl": "Česká a balkánská", "popis": "Restaurace s tradicí od roku 1931", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace Rozmarýn", "adresa": "nám. Osvoboditelů 26/1a, Praha-Radotín", "telefon": "257 811 694", "email": "info@restaurace-rozmaryn.cz", "web": "restaurace-rozmaryn.cz", "hodiny": "Po–Čt 11–22, Pá–So 11–23, Ne 11–21", "styl": "Česká kuchyně", "popis": "Zahrádka", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace Na Viničkách", "adresa": "Na Viničkách 551/1, Praha-Radotín", "telefon": "733 307 772", "email": "", "web": "restauracenavinickach.cz", "hodiny": "Po–Čt, Ne 11–23, Pá–So 11–24", "styl": "Česká kuchyně", "popis": "Zahrada, hotovky, polední menu", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace pivní Sanatorium", "adresa": "Štěrková 549/15, Praha-Radotín", "telefon": "606 360 305", "email": "", "web": "", "hodiny": "Út–Pá 16–23, So 11:30–23, Ne 11:30–22", "styl": "Pivnice", "popis": "Salonek, terasa", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Čínská restaurace Jia Le Yuan", "adresa": "Karlická 33/1, Praha-Radotín", "telefon": "608 207 107", "email": "", "web": "", "hodiny": "Po–So 10:30–22:30", "styl": "Čínská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Šárovo Bistro", "adresa": "Šárovo kolo 932/1, Praha-Radotín", "telefon": "728 067 724", "email": "info@sarovobistro.cz", "web": "sarovobistro.cz", "hodiny": "sezóna 1. 4.–15. 10.; Po–Pá 15–22, So 9–23, Ne 9–22", "styl": "Gril, česká kuchyně", "popis": "Bistro u Berounky na cyklostezce", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Motorest U Vodáka", "adresa": "Výpadová 1037/26, Praha-Radotín", "telefon": "257 811 519", "email": "", "web": "", "hodiny": "", "styl": "Motorest", "popis": "Kapacita 90 míst, zahrada", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Drak v Exilu (billiard klub)", "adresa": "nám. Osvoboditelů 1372, Praha-Radotín", "telefon": "731 314 428", "email": "", "web": "", "hodiny": "denně 11–22", "styl": "Hospoda", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Pizza na zavolanou", "adresa": "Horymírovo nám. 1416/9, Praha-Radotín", "telefon": "777 045 045", "email": "", "web": "", "hodiny": "Po–Pá 10–22, So–Ne 11–22", "styl": "Pizza, rozvoz", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Pizza na Rohu", "adresa": "Zderazská 46/2, Praha-Radotín", "telefon": "777 121 755", "email": "", "web": "", "hodiny": "Po–Pá 10–22, So–Ne 11–22", "styl": "Pizza, bistro, rozvoz", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "LUNA EXPRES", "adresa": "Vrážská 1513, Praha-Radotín", "telefon": "733 189 330", "email": "", "web": "", "hodiny": "Po–Pá 10–20", "styl": "Pizzerie", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Café U nás", "adresa": "Věštínská 1569, Praha-Radotín", "telefon": "733 684 743", "email": "", "web": "", "hodiny": "Po–Pá 8–19, So 9–19, Ne 13–19", "styl": "Kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Bistro U Ondřeje", "adresa": "Výpadová, Praha-Radotín", "telefon": "", "email": "", "web": "", "hodiny": "St–Pá 15:30–22, So 10–22, Ne 12–20", "styl": "Hospoda / bistro u cyklostezky", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace Soul.ad Lipence", "adresa": "Oddechová 886, Praha 5-Lipence", "telefon": "778 718 400", "email": "", "web": "", "hodiny": "Po–St, Ne 8–21, Čt–So 8–22", "styl": "Restaurace", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Restaurace Bolleta", "adresa": "Karlštejnská 255, Černošice", "telefon": "251 641 009", "email": "info@bolleta.cz", "web": "bolleta.cz", "hodiny": "Po–Čt 11–23, Pá 11–01, So 12–01, Ne 12–22", "styl": "Moderní / ryby, maso, burgery", "popis": "Letní terasa s grilem, catering", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Bistro Pláž Mokropsy", "adresa": "Na Drahách, Černošice-Mokropsy", "telefon": "731 118 472", "email": "info@bolleta.cz", "web": "plazmokropsy.cz", "hodiny": "sezónně, za příznivého počasí", "styl": "Street food, bar", "popis": "Kontejnerové bistro u řeky (patří k Bolletě)", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Restaurace Pod lípou", "adresa": "Dobřichovická 754, Černošice", "telefon": "775 711 131", "email": "restaurace-pod-lipou@seznam.cz", "web": "restaurace-pod-lipou.cz", "hodiny": "denně 11–22 (Pá–So do 23)", "styl": "Česká kuchyně", "popis": "Polední menu, točené pivo", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Restaurace Stadion", "adresa": "Fügnerova 1244, Černošice", "telefon": "606 575 226", "email": "", "web": "stadion-restaurace.cz", "hodiny": "Po–Čt, Ne 11–22, Pá–So 11–23", "styl": "Česká kuchyně", "popis": "Dětské hřiště", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Club Kino", "adresa": "Fügnerova 263, Černošice", "telefon": "604 204 588", "email": "", "web": "clubkino.cz", "hodiny": "St–Čt 16–23, Pá–So 11:30–02, Ne 11:30–22", "styl": "Minutková kuchyně, klub", "popis": "Restaurace a hudební klub, 92 míst", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Výletní hospůdka Křižárna", "adresa": "Křížovy Lázně 1068, Černošice", "telefon": "795 423 548", "email": "hospudkakrizarna@gmail.com", "web": "hospudkakrizarna.cz", "hodiny": "St–Čt 16:30–22, Pá 16–23, So 11–23, Ne 11–22", "styl": "Výletní hospoda", "popis": "U Berounky, hotovky a minutky", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Restaurace Jedličkovy Lázně", "adresa": "Ukrajinská 513, Černošice", "telefon": "604 958 716", "email": "", "web": "", "hodiny": "Po–Pá 16–22, So 11–22, Ne 11–21", "styl": "Česká kuchyně", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Steakhouse U Berana Mokropsy", "adresa": "Dr. Janského 606, Černošice", "telefon": "778 018 870", "email": "", "web": "", "hodiny": "So–Ne 12–22", "styl": "Steakhouse", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Kavárna Bárka", "adresa": "Vrážská 326, Černošice", "telefon": "723 729 445", "email": "", "web": "", "hodiny": "Pá 14–18, So–Ne 9–18", "styl": "Veganská kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Oliva Café & Bistro", "adresa": "Mokropeská 2027, Černošice", "telefon": "733 394 323", "email": "", "web": "", "hodiny": "Po–Pá 8–19, So 8:30–18:30, Ne 8:30–17:30", "styl": "Kavárna / bistro", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Zrnko a drobek", "adresa": "Masopustní náměstí, Černošice", "telefon": "702 050 291", "email": "", "web": "", "hodiny": "Po–Čt, Ne 9–20, Pá–So 9–21", "styl": "Kavárna, gril", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Kolkovna Stodůlky", "adresa": "Siemensova 2717/4, Praha 13-Stodůlky", "telefon": "277 271 505", "email": "stodulky@kolkovna.cz", "web": "kolkovna.cz", "hodiny": "Po–Čt, Ne 11–23, Pá–So 11–24", "styl": "Česká a mezinárodní", "popis": "Velká restaurace řetězce Kolkovna", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Srdcovka U Drsnejch", "adresa": "Mukařovského 1985/5, Praha 13-Stodůlky", "telefon": "607 022 222", "email": "udrsnejch@gmail.com", "web": "srdcovka-u-drsnejch.eatbu.com", "hodiny": "denně 10:30–24:00", "styl": "Pivnice / česká kuchyně", "popis": "Tankový Gambrinus", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "The PUB Praha 13", "adresa": "Bucharova 2817/9, Praha 13-Stodůlky", "telefon": "235 313 792", "email": "praha13@thepub.cz", "web": "thepub.cz/praha-13", "hodiny": "Po–Čt 11–24, Pá–So 11–01, Ne 12–23", "styl": "Česká hospoda", "popis": "Samoobslužné pípy", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Pivnice Stodůlky", "adresa": "Hábova 2345/7, Praha 13-Stodůlky", "telefon": "725 952 659", "email": "info@pivnicestodulky.cz", "web": "pivnicestodulky.cz", "hodiny": "Po–Čt 15–24, Pá–So 15–01, Ne 15–23", "styl": "Pivnice", "popis": "Tankové pivo, šipky", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Šenkýrna Lužiny (dříve Sladovna Lužiny)", "adresa": "Archeologická 2256/1, Praha 13-Stodůlky", "telefon": "770 320 076", "email": "", "web": "pivovar-luziny.cz", "hodiny": "denně 10:30–22:30", "styl": "Minipivovar / česká kuchyně", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Restaurace Globus Zličín", "adresa": "Sárská 133/5, Praha-Zličín (Třebonice)", "telefon": "251 037 325", "email": "", "web": "globus.cz", "hodiny": "denně 7:30–20:00", "styl": "Česká kuchyně / Hotovky", "popis": "Oblíbená samoobslužná restaurace s poctivou domácí kuchyní a snídaněmi.", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Bernard Pub U jezera", "adresa": "U Jezera 2037, Praha 13-Stodůlky", "telefon": "772 002 000", "email": "", "web": "", "hodiny": "Po–Čt, Ne 11–22, Pá–So 11–23", "styl": "Pivnice / restaurace", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "CAPPUVINO", "adresa": "Seydlerova 2835/4, Praha 13", "telefon": "607 007 616", "email": "", "web": "", "hodiny": "denně 11–23", "styl": "Italská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Tian Tian Asian Cuisine", "adresa": "Seydlerova 2148/9, Praha 13-Stodůlky", "telefon": "777 307 868", "email": "", "web": "", "hodiny": "denně 10–22", "styl": "Asijská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Bowlers Nové Butovice", "adresa": "Na Zlatě, Praha 13", "telefon": "606 905 372", "email": "", "web": "", "hodiny": "denně 9–20:30", "styl": "Poke / kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Plzeňský restaurant Kamera", "adresa": "Tilleho náměstí 792/2, Praha 5-Barrandov", "telefon": "777 850 202", "email": "info@restauracekamera.cz", "web": "restauracekamera.cz", "hodiny": "Po–So 11–23, Ne 11–22", "styl": "Česká kuchyně, gril", "popis": "250 míst, bowling, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Restaurace Semmering", "adresa": "Slivenecká 77/1, Praha 5-Hlubočepy", "telefon": "602 350 333", "email": "restaurace@semm.cz", "web": "semm.cz", "hodiny": "Út–So 12–23, Ne 12–21", "styl": "Moderní evropská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Čínská restaurace Třešeň", "adresa": "V Remízku 1030/19, Praha 5-Barrandov", "telefon": "251 556 559", "email": "", "web": "", "hodiny": "", "styl": "Čínská, sushi", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Bistro Barrandov", "adresa": "Krškova 807/21, Praha 5-Barrandov", "telefon": "", "email": "", "web": "bistrobarrandov.cz", "hodiny": "Po–Čt 8:30–14, Pá 8:30–13:30", "styl": "Bistro", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Jídelna Barrandov Studio", "adresa": "Kříženeckého nám. 322/5, Praha 5-Barrandov", "telefon": "775 018 751", "email": "barrandov@zatisigroup.cz", "web": "freshandtasty.cz/barrandovjidelna", "hodiny": "Po–Pá 8–15", "styl": "Jídelna", "popis": "Denní menu v areálu filmových ateliérů", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Park Café 67", "adresa": "Tilleho náměstí 792/2, Praha 5-Barrandov", "telefon": "777 747 400", "email": "barrandov@mlsame.cz", "web": "facebook.com/ParkCafe67", "hodiny": "Po–Pá 8–19, So 9–19, Ne 10–19", "styl": "Cukrárna / kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Besední restaurace U Ritschelů", "adresa": "Slivenecká 92, Praha 5-Hlubočepy", "telefon": "251 810 946", "email": "", "web": "besednirestaurace.cz", "hodiny": "Po–Čt, Ne 10–22, Pá–So 10–23", "styl": "Česká kuchyně", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Pizzeria Kaskada", "adresa": "Voskovcova 1075, Praha 5-Barrandov", "telefon": "251 813 511", "email": "", "web": "", "hodiny": "denně 11–22", "styl": "Pizzerie", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Pizza Merlo", "adresa": "Tilleho nám., Praha 5-Barrandov", "telefon": "777 525 501", "email": "", "web": "", "hodiny": "Po–Pá 9–21, So–Ne 10–21", "styl": "Pizza s sebou", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace U Radnice", "adresa": "Generála Šišky 2375/6, Praha 12-Modřany", "telefon": "603 200 180", "email": "info@restaurace-uradnice.cz", "web": "restaurace-uradnice.cz", "hodiny": "denně 11:00–23:00", "styl": "Česká kuchyně", "popis": "Tanková Plzeň, denní menu", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurant Café Modřany", "adresa": "Herrmannova 2223/26, Praha 12-Modřany", "telefon": "777 632 762", "email": "cafe@alzheimerhome.cz", "web": "restaurantcafe.cz", "hodiny": "Po–Pá 8:00–17:00", "styl": "Kavárna / restaurace", "popis": "U Modřanské rokle, polední menu", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Rosmarina (loď, dříve Port 62)", "adresa": "Vltavanů 105/5, Freestyle Park Modřany, Praha 4", "telefon": "733 762 237", "email": "", "web": "rosmarina.eu", "hodiny": "restaurace denně 11:00–22:00", "styl": "Restaurace na lodi", "popis": "Cca 160 míst, sportovní areál", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Vratislav", "adresa": "Sofijské nám. 3401/5, Praha 12-Modřany", "telefon": "607 614 529 / 244 466 597", "email": "", "web": "restauracevratislav.eu", "hodiny": "Po–Čt 10–22, Pá 10–24, So 11–24, Ne 11–23", "styl": "Česká kuchyně", "popis": "U Polikliniky Modřany, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Pivnice Modřany", "adresa": "Kutilova 3060, Praha 12-Modřany", "telefon": "604 343 424", "email": "", "web": "pivnicemodrany.cz", "hodiny": "Po–So 14–02, Ne 14–24", "styl": "Pivnice", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurant Parkgolf (Golf Hodkovičky)", "adresa": "Vltavanů 546, Praha 4-Modřany", "telefon": "727 955 393", "email": "restaurace@hodkovicky.cz", "web": "hodkovicky.cz/restaurace", "hodiny": "", "styl": "Česká a mezinárodní", "popis": "Terasa", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace U Fišmistrů", "adresa": "Dolnocholupická 259/23, Praha 12-Modřany", "telefon": "241 761 132", "email": "restaurace-ufismistru@seznam.cz", "web": "restauraceufismistru.cz", "hodiny": "Po–Pá 10:30–22, So 14–23, Ne 14–22", "styl": "Česká kuchyně", "popis": "Svatby, oslavy, rozvoz", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Otava", "adresa": "Pertoldova 3344/6, Praha 12-Modřany", "telefon": "774 666 364", "email": "mars.praha@email.cz", "web": "restauraceotava.eu", "hodiny": "denně 10:00–23:00", "styl": "Italská a česká, pizza", "popis": "Rozvoz pizzy", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Jaro Restaurace", "adresa": "Sofijské nám. 3405/2, Praha 12-Modřany", "telefon": "777 426 789", "email": "jarorestaurace@info.cz", "web": "", "hodiny": "denně 11:00–22:00", "styl": "Asijská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Fei He", "adresa": "Sofijské nám. 3406/1, Praha 12-Modřany", "telefon": "241 768 414", "email": "", "web": "", "hodiny": "denně 10:00–22:00", "styl": "Čínská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "BejkBuu", "adresa": "Sofijské nám. 3404/3, Praha 12-Modřany (OC Modřany)", "telefon": "775 750 390", "email": "info@bejkbuu.cz", "web": "bejkbuu.cz", "hodiny": "Po–St 10–22, Čt–Pá 10–23, So 11–24, Ne 11–22", "styl": "Řeznictví a restaurace, burgery", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Jemný Bistro", "adresa": "U Kina 3, Praha 12-Modřany (Modřanský biograf)", "telefon": "774 101 466", "email": "rezervacejb@gmail.com", "web": "", "hodiny": "", "styl": "Bistro, ryby", "popis": "Denně měněné menu, koncerty", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Pizzerie Gattino", "adresa": "Rilská 3173/1, Praha 12-Modřany", "telefon": "774 631 042 / 241 770 439", "email": "", "web": "", "hodiny": "Po–Čt, Ne 11–23, Pá–So 11–24", "styl": "Pizzerie", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Želivka", "adresa": "Vazovova 3229/1, Praha 12-Modřany", "telefon": "244 403 105", "email": "", "web": "", "hodiny": "Po–Čt, Ne 13–24, Pá–So 13–01", "styl": "Restaurace / hospoda", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Mungo Restaurant", "adresa": "U Klubu 63/2, Praha 12-Modřany", "telefon": "775 625 944", "email": "info@mungorestaurant.cz", "web": "mungorestaurant.cz", "hodiny": "denně 10:00–21:00", "styl": "Vietnamská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Pizzeria il Pinocchio", "adresa": "Komořanská 157/11, Praha 12-Modřany", "telefon": "735 544 551", "email": "", "web": "ilpinocchio.cz", "hodiny": "Po–Čt, Ne 11–22, Pá–So 11–23", "styl": "Pizzerie", "popis": "Rozvoz", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Bistro Dobrý jídlo", "adresa": "Kutilova 3061/2, Praha 12-Modřany", "telefon": "774 403 990", "email": "dobryjidlopraha4@seznam.cz", "web": "", "hodiny": "Po–Pá 10:30–15:00", "styl": "Bistro, polední menu", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "U Krkovice", "adresa": "Mezi Vodami 255/21, Praha 12-Modřany", "telefon": "703 035 179", "email": "", "web": "", "hodiny": "Po–Pá 10:30–15", "styl": "Restaurace", "popis": "Na místě dříve U Tří Bernardýnů (zavřeno)", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Point Bistro", "adresa": "Komořanská 2229/49, Praha 12-Modřany", "telefon": "725 555 350", "email": "", "web": "pointbistro.cz", "hodiny": "denně 8–20", "styl": "Bistro", "popis": "Snídaně, obědy, večeře", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Pod Vinicí", "adresa": "Chuchelská 1721/6, Praha 12-Modřany", "telefon": "241 773 867 / 776 365 308", "email": "", "web": "podvinici.cz", "hodiny": "Po–Pá 15:00–22:30, So 12:00–22:30", "styl": "Rodinná restaurace", "popis": "zahrádka, oslavy", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Chorvatská rybí restaurace Deco", "adresa": "Obchodní nám. 25/3, Praha 12-Modřany", "telefon": "244 464 217 / 777 913 566", "email": "", "web": "", "hodiny": "denně 11:30–23:00", "styl": "Rybí restaurace / chorvatská", "popis": "u nádraží Modřany, decorestaurace.webnode.cz", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Labe (Modřanské Labe)", "adresa": "Mráčkova 3059/5, Praha 12-Modřany", "telefon": "777 660 918 / 241 761 667", "email": "", "web": "", "hodiny": "", "styl": "", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Jídelna Modřanka", "adresa": "Soukalova 3355/3 (Poliklinika Modřany), Praha-Modřany", "telefon": "241 047 325", "email": "", "web": "", "hodiny": "Po–Pá 07:00–15:00", "styl": "Jídelna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Stodola Modřany", "adresa": "Chuchelská 6/1, Praha 12-Modřany", "telefon": "775 886 639", "email": "", "web": "", "hodiny": "Po–Út 12–19, St–Pá 11–22, So 12–23, Ne 12–22", "styl": "Bistro", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Restaurace Na Pekařce", "adresa": "Pod Pekařkou 224/46, Praha 4-Podolí", "telefon": "724 770 772", "email": "info@napekarce.cz", "web": "napekarce.cz", "hodiny": "Po–So 11–24, Ne 11–23", "styl": "Česká kuchyně", "popis": "Tanková Plzeň, velká terasa", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Restaurace Podolská kotva", "adresa": "Podolské nábřeží 46/20, Praha 4-Podolí", "telefon": "608 506 898", "email": "info@podolskakotva.cz", "web": "podolskakotva.cz", "hodiny": "11:00–23:00, Ne do 22:00", "styl": "Česká kuchyně, gril", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Restaurace Podolka", "adresa": "Podolské nábřeží (přístav 1), Praha 4-Podolí", "telefon": "774 115 166", "email": "podoli@restauracepodolka.cz", "web": "restauracepodolka.cz", "hodiny": "11:30–22/23", "styl": "Česká a moderní", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Qin Yuan Chun", "adresa": "Podolské nábřeží 9/28, Praha 4-Podolí", "telefon": "608 837 738", "email": "", "web": "", "hodiny": "denně 10:00–22:00", "styl": "Čínská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Žluté lázně", "adresa": "Podolské nábřeží 1184/3, Praha 4-Podolí", "telefon": "777 404 084", "email": "info@taiko.cz", "web": "zlutelazne.cz", "hodiny": "denně 9:00–22:00", "styl": "Areál s barem a pizzerií", "popis": "Sezónní provoz", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Hostinec U Kaštanu", "adresa": "Nádražní 116, Vrané nad Vltavou", "telefon": "257 760 350", "email": "", "web": "", "hodiny": "", "styl": "Česká kuchyně", "popis": "50 míst, letní zahrada, svatby a oslavy", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Občerstvovna ve dvoře", "adresa": "Nádražní 102, Vrané nad Vltavou", "telefon": "602 208 723", "email": "", "web": "facebook.com/obcerstvovnavedvore", "hodiny": "Čt–Pá 17–22, So 12–22, Ne 12–21", "styl": "Gril, burgery", "popis": "", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Paluba Vrané nad Vltavou", "adresa": "Březovská 192, Vrané nad Vltavou", "telefon": "773 881 712", "email": "", "web": "", "hodiny": "St–Po 17–24", "styl": "Hospoda", "popis": "Nově zrekonstruovaná hospoda", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "All'infinito (Pizza Vrané)", "adresa": "Nádražní 190, Vrané nad Vltavou", "telefon": "728 123 123", "email": "", "web": "pizzavrane.cz", "hodiny": "St–Ne 11–21", "styl": "Italská, pizza", "popis": "Jen rozvoz", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Penzion Kaskáda", "adresa": "U Elektrárny 624, Vrané nad Vltavou", "telefon": "739 004 111 / 605 203 570", "email": "penzion@penzionkaskada.cz", "web": "penzionkaskada.cz", "hodiny": "", "styl": "Penzion s akcemi", "popis": "Svatby, rauty, firemní večírky", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Restaurace Olivův pivovar", "adresa": "Za Radnicí 739, Dolní Břežany", "telefon": "241 403 697", "email": "restaurace@olivuvpivovar.cz", "web": "olivuvpivovar.cz", "hodiny": "Po–So 10:30–23, Ne 10:30–21:30", "styl": "Česká kuchyně, vlastní pivo", "popis": "86 míst", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Restovna", "adresa": "Pražská 260, Jíloviště", "telefon": "725 518 811", "email": "restovna@restovna.cz", "web": "restovna.cz", "hodiny": "Po–Čt 11–22, Pá–So 11–23, Ne 11:30–21", "styl": "Restaurace s penzionem, pizza", "popis": "", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Palace Inn", "adresa": "Všenorská 45, Jíloviště", "telefon": "724 598 005", "email": "info@palace-inn.eu", "web": "palace-inn.eu", "hodiny": "denně 11:00–23:00", "styl": "Česká a mezinárodní, gril", "popis": "Hotel a grill restaurace", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Restaurace Tornádo", "adresa": "U Kazína 410, Praha-Lipence", "telefon": "725 800 014", "email": "", "web": "restauracetornado.cz", "hodiny": "Po–Pá 15–22, So 12–23, Ne 12–20", "styl": "Česká kuchyně", "popis": "Country restaurace", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Trnovská krčma", "adresa": "Trnová 20, Trnová", "telefon": "775 449 254", "email": "", "web": "trnovska-krcma.cz", "hodiny": "St–Pá 15:30–21/22, So–Ne 12–22/20", "styl": "Česká kuchyně", "popis": "Zahrada, akce", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Restaurace V Pivovaře", "adresa": "K Pivovaru 1, Davle", "telefon": "602 148 880", "email": "", "web": "hotelvpivovaredavle.webnode.cz", "hodiny": "Čt 11–20, Pá–So 11–21, Ne 11–18", "styl": "Česká a mezinárodní, pizza", "popis": "Bowling, zahrada", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Taverna Thessaloniki", "adresa": "Vltavská 168, Davle", "telefon": "257 770 225", "email": "taverna.thessaloniki@email.cz", "web": "tavernathessaloniki.cz", "hodiny": "Út–Ne 12–22", "styl": "Řecká", "popis": "", "overeno": "ano"}];
+/* ====== JAZYKY: čeština (výchozí), ukrajinština, angličtina ======
+   Šablony e-mailů a telefonátů zůstávají česky (posílají se české firmě). Překládá se rozhraní, nadpisy a vysvětlení. */
+const LANGS=[["cs","🇨🇿","Čeština"],["uk","🇺🇦","Українська"],["en","🇬🇧","English"]];
+const I18N={
+cs:{
+ modePrace:"Hledám práci",modeSluzba:"Hledám službu / info",search:"Hledat…",area:"Lokalita",all:"Všude",azChip:"Vše A–Z",
+ nForms:["podnik","podniky","podniků"],total:"{n} {podniky} celkem",
+ tabFirmy:"Firmy",tabMoje:"Moje",tabNavody:"Návody",tabOnas:"O aplikaci",
+ details:"Podrobnosti",call:"Zavolat",write:"Napsat",map:"Mapa",menuWeb:"Menu / web",showMap:"Ukázat na mapě",
+ fPhone:"Telefon",fEmail:"E-mail",fHours:"Otevřeno",openNow:"Teď otevřeno",closed:"Zavřeno",incomplete:"Neúplné",incompleteT:"Některé údaje chybí",
+ newTag:"Nové",hiring:"Hledá lidi",hiringDet:"Hledá: {txt}",checked:"ověřeno {d}",
+ share:"Sdílet",shareTxt:"{n} – v aplikaci Práce napřímo",linkCopied:"Odkaz zkopírován",fix:"Opravit údaje / Jsem majitel",atmo:"Hodnocení zaměstnavatele (Atmoskop)",
+ save:"Uložit",saved:"Uloženo do Moje",removed:"Odebráno z Moje",autoSaved:"Zapsáno do Moje: {s}",
+ st_ulozeno:"Uloženo",st_napsano:"Napsáno",st_volano:"Voláno",st_pohovor:"Pohovor",st_nabidka:"Nabídka",st_odmitnuto:"Odmítnuto",
+ mojeH:"Moje",mojeAll:"Vše",mojeLead:"Podniky, které sis uložil nebo oslovil. Po klepnutí na Zavolat nebo Napsat se sem zapíšou samy.",
+ mojeLeadS:"Podniky, které sis uložil hvězdičkou.",mojeEmpty:"Zatím tu nic nemáš",mojeEmptyT:"Klepni na hvězdičku u podniku. Když firmě zavoláš nebo napíšeš, zapíše se sem sama i s datem.",
+ last:"Naposledy {d}",history:"Historie",note:"Poznámka (s kým jsi mluvil, co řekli…)",gone:"Tento podnik už v seznamu není.",remind:"Uplynul týden – ozvi se znovu",remindBtn:"Text na připomenutí",remove:"Odebrat",
+ near:"Nejblíž mně",nearOn:"Řazeno podle vzdálenosti",nearErr:"Polohu se nepodařilo zjistit. Povol ji v nastavení prohlížeče.",nearNoGps:"U části podniků zatím polohu nemáme, jsou na konci.",
+ mapBtn:"Mapa",listBtn:"Seznam",mapNone:"Pro tento výběr zatím nemáme polohy podniků. Postupně doplňujeme.",mapPart:"Na mapě {n} z {m} podniků (u ostatních zatím chybí poloha).",navigate:"Navigovat",
+ newHint:"Od tvé minulé návštěvy přibylo: <b>{n}</b>.",newShow:"Ukázat",newH:"Nové od minulé návštěvy",back:"Zpět",backAll:"Všechny druhy",allFirms:"Všechny podniky",
+ areaHint:"<b>Vyber svou lokalitu</b> – ukážeme podniky blízko tebe.",closeHint:"Zavřít nápovědu",
+ idxLead:"{n} druhů podniků{a}. Klepni na druh a zobrazí se podniky.",inArea:" v lokalitě {a}",nothing:"Nic nenalezeno",tryArea:"Zkus jinou lokalitu.",tryAll:"V této lokalitě zatím nic nemáme. Zkus „Všude“.",tryWord:"Zkus jiné slovo.",
+ oborSoon:"Obor {o} připravujeme",oborSoonT:"Další obory přibudou.",oborNone:"{o} v lokalitě {a} zatím nemáme",oborNoneT:"Databázi postupně doplňujeme. Zkus jiný obor nebo jinou lokalitu.",tryOther:"Zkus jiné slovo nebo jinou lokalitu.",
+ refine:"Upřesnit druh ({n})",druhyLbl:"Druhy podniků",live:"Data načtena živě z tabulky",dataAt:"Data k {d}",loading:"Načítám…",
+ copied:"Zkopírováno",numCopied:"Číslo zkopírováno",
+ navH:"Návody",forWrite:"Pro tlačítko Napsat",copyBtn:"Zkopírovat",useWrite:"Použít pro Napsat",copiedTpl:"Zkopírováno – přepiš části v [závorkách]",selected:"Text je označený – zkopíruj ho",tplSet:"Tlačítko Napsat teď použije tento text",whenSay:"Když řeknou…",
+ shOpening:"Otevírám Mail…",shFor:"Zpráva pro {n}",shHas:"Adresa: <strong>{e}</strong>. V Mailu přepiš části v [závorkách] a přilož životopis přes sponku. Pokud se Mail neotevřel, zkopíruj text a adresu ručně.",
+ shNo:"Tahle firma nemá v databázi e-mail. Nejlepší je zavolat, nebo text zkopírovat a poslat přes jejich web či Facebook.",shText:"Text (můžeš upravit)",shOpen:"Otevřít v Mailu",shCopy:"Zkopírovat text",shAddr:"Zkopírovat adresu",addrCopied:"Adresa zkopírována",shOther:"Vybrat jiný text",close:"Zavřít",
+ wSkip:"Přeskočit",wQ1:"Co hledáš?",wL1:"Podle toho ti ukážeme ty správné podniky.",wPraceT:"Hledám práci",wPraceD:"Firmy v okolí, kterým můžeš rovnou zavolat nebo napsat. S hotovými texty.",wSluzbaT:"Hledám službu nebo podnik",wSluzbaD:"Kde mají otevřeno, kam na jídlo, autoservis, lékař, řemeslník…",
+ wQ2:"Kde?",wL2:"Vyber lokalitu, kde hledáš. Kdykoli ji pak změníš nahoře.",wQ3:"Co tě zajímá?",wL3:"{a}{n} {podniky}. Vyber obor, nebo projdi všechno podle abecedy.",wAz:"Vše A–Z (podle druhu)",wBack:"← Zpět",langQ:"Jazyk",
+ rerun:"Spustit průvodce znovu",tplNote:""
+},
+uk:{
+ modePrace:"Шукаю роботу",modeSluzba:"Шукаю послугу / інфо",search:"Пошук…",area:"Район",all:"Усюди",azChip:"Усе А–Я",
+ nForms:["підприємство","підприємства","підприємств"],total:"{n} {podniky} загалом",
+ tabFirmy:"Фірми",tabMoje:"Моє",tabNavody:"Поради",tabOnas:"Про застосунок",
+ details:"Детальніше",call:"Подзвонити",write:"Написати",map:"Мапа",menuWeb:"Меню / сайт",showMap:"Показати на мапі",
+ fPhone:"Телефон",fEmail:"E-mail",fHours:"Відчинено",openNow:"Зараз відчинено",closed:"Зачинено",incomplete:"Неповні дані",incompleteT:"Деякі дані відсутні",
+ newTag:"Нове",hiring:"Шукає працівників",hiringDet:"Шукає: {txt}",checked:"перевірено {d}",
+ share:"Поділитися",shareTxt:"{n} – у застосунку Práce napřímo",linkCopied:"Посилання скопійовано",fix:"Виправити дані / Я власник",atmo:"Відгуки про роботодавця (Atmoskop)",
+ save:"Зберегти",saved:"Збережено в «Моє»",removed:"Видалено з «Моє»",autoSaved:"Записано в «Моє»: {s}",
+ st_ulozeno:"Збережено",st_napsano:"Написав(-ла)",st_volano:"Дзвонив(-ла)",st_pohovor:"Співбесіда",st_nabidka:"Пропозиція",st_odmitnuto:"Відмова",
+ mojeH:"Моє",mojeAll:"Усе",mojeLead:"Фірми, які ви зберегли або з якими зв'язалися. Після «Подзвонити» чи «Написати» вони з'являються тут автоматично.",
+ mojeLeadS:"Фірми, які ви зберегли зірочкою.",mojeEmpty:"Тут поки нічого немає",mojeEmptyT:"Натисніть зірочку біля фірми. Коли ви подзвоните чи напишете фірмі, вона з'явиться тут сама разом із датою.",
+ last:"Останній раз {d}",history:"Історія",note:"Нотатка (з ким говорили, що сказали…)",gone:"Цієї фірми вже немає в списку.",remind:"Минув тиждень – нагадайте про себе",remindBtn:"Текст нагадування",remove:"Видалити",
+ near:"Найближче до мене",nearOn:"Відсортовано за відстанню",nearErr:"Не вдалося визначити місцезнаходження. Дозвольте його в налаштуваннях браузера.",nearNoGps:"Для частини фірм ми ще не маємо розташування, вони в кінці.",
+ mapBtn:"Мапа",listBtn:"Список",mapNone:"Для цього вибору ще немає розташування фірм. Поступово доповнюємо.",mapPart:"На мапі {n} з {m} фірм (для інших поки немає розташування).",navigate:"Маршрут",
+ newHint:"З вашого минулого візиту додано: <b>{n}</b>.",newShow:"Показати",newH:"Нове з минулого візиту",back:"Назад",backAll:"Усі види",allFirms:"Усі фірми",
+ areaHint:"<b>Оберіть свій район</b> – покажемо фірми поруч із вами.",closeHint:"Закрити підказку",
+ idxLead:"{n} видів підприємств{a}. Натисніть на вид, щоб побачити фірми.",inArea:" у районі {a}",nothing:"Нічого не знайдено",tryArea:"Спробуйте інший район.",tryAll:"У цьому районі поки нічого немає. Спробуйте «Усюди».",tryWord:"Спробуйте інше слово.",
+ oborSoon:"Галузь {o} готуємо",oborSoonT:"Інші галузі з'являться згодом.",oborNone:"{o} у районі {a} поки немає",oborNoneT:"Базу поступово доповнюємо. Спробуйте іншу галузь або інший район.",tryOther:"Спробуйте інше слово або інший район.",
+ refine:"Уточнити вид ({n})",druhyLbl:"Види підприємств",live:"Дані завантажено з таблиці",dataAt:"Дані станом на {d}",loading:"Завантаження…",
+ copied:"Скопійовано",numCopied:"Номер скопійовано",
+ navH:"Поради",forWrite:"Для кнопки «Написати»",copyBtn:"Скопіювати",useWrite:"Використати для «Написати»",copiedTpl:"Скопійовано – замініть частини в [дужках]",selected:"Текст виділено – скопіюйте його",tplSet:"Кнопка «Написати» тепер використає цей текст",whenSay:"Якщо вам скажуть…",
+ shOpening:"Відкриваю пошту…",shFor:"Повідомлення для {n}",shHas:"Адреса: <strong>{e}</strong>. У листі замініть частини в [дужках] і додайте резюме через скріпку. Якщо пошта не відкрилася, скопіюйте текст і адресу вручну.",
+ shNo:"Ця фірма не має e-mail у базі. Найкраще подзвонити або скопіювати текст і надіслати через їхній сайт чи Facebook.",shText:"Текст (чеською, можна змінити)",shOpen:"Відкрити в пошті",shCopy:"Скопіювати текст",shAddr:"Скопіювати адресу",addrCopied:"Адресу скопійовано",shOther:"Вибрати інший текст",close:"Закрити",
+ wSkip:"Пропустити",wQ1:"Що ви шукаєте?",wL1:"Відповідно до цього покажемо потрібні фірми.",wPraceT:"Шукаю роботу",wPraceD:"Фірми поруч, яким можна одразу подзвонити або написати. З готовими текстами чеською.",wSluzbaT:"Шукаю послугу або заклад",wSluzbaD:"Що зараз відчинено, де поїсти, автосервіс, лікар, майстер…",
+ wQ2:"Де?",wL2:"Оберіть район пошуку. Змінити його можна будь-коли вгорі.",wQ3:"Що вас цікавить?",wL3:"{a}{n} {podniky}. Оберіть галузь або перегляньте все за абеткою.",wAz:"Усе А–Я (за видом)",wBack:"← Назад",langQ:"Мова",
+ rerun:"Запустити помічника знову",
+ tplNote:"Тексти нижче – чеською. Ви надсилаєте або кажете їх чеському роботодавцю, тому вони залишаються чеською. Замініть частини в [дужках] своїми даними. Якщо не розумієте текст, вставте його в будь-який AI-чат і попросіть: «Переклади українською»."
+},
+en:{
+ modePrace:"Looking for work",modeSluzba:"Looking for a service",search:"Search…",area:"Area",all:"Everywhere",azChip:"All A–Z",
+ nForms:["business","businesses","businesses"],total:"{n} {podniky} in total",
+ tabFirmy:"Businesses",tabMoje:"Mine",tabNavody:"Guides",tabOnas:"About",
+ details:"Details",call:"Call",write:"Write",map:"Map",menuWeb:"Menu / website",showMap:"Show on map",
+ fPhone:"Phone",fEmail:"E-mail",fHours:"Open",openNow:"Open now",closed:"Closed",incomplete:"Incomplete",incompleteT:"Some details are missing",
+ newTag:"New",hiring:"Hiring",hiringDet:"Looking for: {txt}",checked:"checked {d}",
+ share:"Share",shareTxt:"{n} – in the Práce napřímo app",linkCopied:"Link copied",fix:"Fix details / I'm the owner",atmo:"Employer reviews (Atmoskop)",
+ save:"Save",saved:"Saved to Mine",removed:"Removed from Mine",autoSaved:"Added to Mine: {s}",
+ st_ulozeno:"Saved",st_napsano:"Emailed",st_volano:"Called",st_pohovor:"Interview",st_nabidka:"Offer",st_odmitnuto:"Rejected",
+ mojeH:"Mine",mojeAll:"All",mojeLead:"Businesses you saved or contacted. They appear here automatically after you tap Call or Write.",
+ mojeLeadS:"Businesses you saved with the star.",mojeEmpty:"Nothing here yet",mojeEmptyT:"Tap the star on a business. When you call or write to a business, it appears here automatically with the date.",
+ last:"Last {d}",history:"History",note:"Note (who you spoke to, what they said…)",gone:"This business is no longer in the list.",remind:"A week has passed – follow up",remindBtn:"Follow-up text",remove:"Remove",
+ near:"Nearest to me",nearOn:"Sorted by distance",nearErr:"Couldn't get your location. Allow it in your browser settings.",nearNoGps:"Some businesses don't have a location yet; they are at the end.",
+ mapBtn:"Map",listBtn:"List",mapNone:"No business locations for this selection yet. We're adding them.",mapPart:"{n} of {m} businesses on the map (others have no location yet).",navigate:"Directions",
+ newHint:"Added since your last visit: <b>{n}</b>.",newShow:"Show",newH:"New since your last visit",back:"Back",backAll:"All types",allFirms:"All businesses",
+ areaHint:"<b>Choose your area</b> – we'll show businesses near you.",closeHint:"Close hint",
+ idxLead:"{n} types of business{a}. Tap a type to see the businesses.",inArea:" in {a}",nothing:"Nothing found",tryArea:"Try another area.",tryAll:"Nothing in this area yet. Try “Everywhere”.",tryWord:"Try another word.",
+ oborSoon:"{o} coming soon",oborSoonT:"More sectors are coming.",oborNone:"No {o} in {a} yet",oborNoneT:"We're adding businesses step by step. Try another sector or area.",tryOther:"Try another word or area.",
+ refine:"Narrow down ({n})",druhyLbl:"Types of business",live:"Live data from the spreadsheet",dataAt:"Data as of {d}",loading:"Loading…",
+ copied:"Copied",numCopied:"Number copied",
+ navH:"Guides",forWrite:"For the Write button",copyBtn:"Copy",useWrite:"Use for Write",copiedTpl:"Copied – replace the parts in [brackets]",selected:"Text is selected – copy it",tplSet:"The Write button will now use this text",whenSay:"If they say…",
+ shOpening:"Opening Mail…",shFor:"Message for {n}",shHas:"Address: <strong>{e}</strong>. In Mail, replace the parts in [brackets] and attach your CV. If Mail didn't open, copy the text and address manually.",
+ shNo:"This business has no e-mail in our database. Best to call, or copy the text and send it via their website or Facebook.",shText:"Text (in Czech, you can edit it)",shOpen:"Open in Mail",shCopy:"Copy text",shAddr:"Copy address",addrCopied:"Address copied",shOther:"Choose another text",close:"Close",
+ wSkip:"Skip",wQ1:"What are you looking for?",wL1:"We'll show you the right businesses.",wPraceT:"Looking for work",wPraceD:"Local businesses you can call or write to directly. With ready-made texts in Czech.",wSluzbaT:"Looking for a service or place",wSluzbaD:"What's open now, where to eat, car repair, doctor, tradesperson…",
+ wQ2:"Where?",wL2:"Choose the area. You can change it any time at the top.",wQ3:"What are you interested in?",wL3:"{a}{n} {podniky}. Choose a sector or browse everything A–Z.",wAz:"All A–Z (by type)",wBack:"← Back",langQ:"Language",
+ rerun:"Run the guide again",
+ tplNote:"The texts below are in Czech. You send or say them to a Czech employer, so they stay in Czech. Replace the parts in [brackets] with your details. If you don't understand a text, paste it into any AI chat and ask: “Translate this into English”."
+}};
+const OBOR_T={uk:{Gastronomie:"Гастрономія",Obchod:"Торгівля",Služby:"Послуги",Doprava:"Транспорт",Průmysl:"Промисловість",Zdravotnictví:"Медицина"},
+ en:{Gastronomie:"Food & drink",Obchod:"Shops",Služby:"Services",Doprava:"Transport",Průmysl:"Industry",Zdravotnictví:"Healthcare"}};
+/* Návody: překlad názvů sekcí, úvodů, nadpisů a vysvětlení. Samotné texty (x) zůstávají česky. */
+const NAV_T={
+uk:{
+ email:{name:"E-mail",intro:"Оберіть текст, скопіюйте його і замініть частини в квадратних дужках. Для варіанта, який ви налаштуєте для кнопки «Написати», застосунок сам підставить назву фірми. Резюме додайте в пошті через скріпку."},
+ "e-kratky":{t:"Короткий запит",w:"Підходить майже всюди. Короткий лист прочитають навіть у розпал роботи."},
+ "e-provozni":{t:"Адміністратор / керівник зміни",w:"На керівні посади. Покажіть, що розумієте роботу закладу, а не лише обслуговування."},
+ "e-obsluha":{t:"Офіціант / офіціантка / бармен",w:"Для залу та бару. Наголосіть на надійності та роботі у вихідні."},
+ "e-kuchyne":{t:"Кухар / помічник на кухні",w:"На кухню. Напишіть, яку кухню вмієте готувати і чи впораєтеся зі стравами на замовлення."},
+ "e-brigada":{t:"Підробіток / вихідні / сезон",w:"Студенти, додатковий заробіток, літні тераси та заміські заклади."},
+ "e-pripominka":{t:"Нагадування через тиждень",w:"Якщо за тиждень ніхто не відповів. Коротко й ввічливо."},
+ "e-potelefonu":{t:"Після дзвінка – надсилаю резюме",w:"Якщо по телефону сказали «надішліть резюме». Надішліть того ж дня."},
+ telefon:{name:"Телефон",intro:"Дзвоніть поза піковими годинами. У гастрономії найкраще між 14 і 16 годиною або вранці до відкриття. Опівдні та ввечері ні в кого немає часу. Майте під рукою папір і запишіть ім'я людини, з якою говорите."},
+ "t-prvni":{t:"Перший дзвінок",w:"Ви нікого не знаєте, дзвоните на номер закладу."},
+ "t-jmenem":{t:"Дзвінок власнику на ім'я",w:"Якщо знаєте ім'я адміністратора чи власника."},
+ "t-pripominka":{t:"Нагадування через тиждень",w:"Якщо минулого разу сказали «подзвоніть наступного тижня» або не відповіли на лист."},
+ "t-poemailu":{t:"Після надісланого листа",w:"Через два-три дні після листа, на який ніхто не відповів."},
+ osobne:{name:"Особисто",intro:"Особистий візит у гастрономії часто працює найкраще. Вас побачать, і якщо ви підходите, можете почати одразу."},
+ "o-postup":{t:"Як це зробити",w:"Перед тим, як вирушити."},
+ "o-veta":{t:"Перша фраза біля бару",w:"Для першого враження."},
+ otazky:{name:"Питання",intro:"Про що запитати, коли вас запрошують на співбесіду чи пробну зміну. Ви покажете зацікавленість і уникнете неприємних сюрпризів."},
+ "q-podminky":{t:"Умови роботи",w:"Запитайте до початку роботи."},
+ "q-provoz":{t:"Питання про роботу закладу",w:"На керівні посади. Покажете, що мислите як адміністратор."},
+ ai:{name:"Резюме з AI",intro:"Напишіть резюме самі, але з AI це займе кілька хвилин. Спочатку підготуйте дані, потім скопіюйте завдання, доповніть своїми даними і вставте в чат з AI. Усі наведені AI мають безкоштовну версію. Резюме для чеської фірми має бути чеською – AI його так і напише."},
+ "a-ai":{t:"Який AI використати безкоштовно",w:"Достатньо одного. Усі мають безкоштовну версію і працюють у телефоні та на комп'ютері."},
+ "a-pripravit":{t:"Що підготувати заздалегідь",w:"Перш ніж відкрити AI. З підготовленими даними впораєтеся за 10 хвилин. Не пишіть в AI номер паспорта, рахунку чи персональний ідентифікаційний номер."},
+ "a-fotky":{t:"Завдання: резюме з фото та нотаток",w:"Якщо маєте старе резюме або дані лише на папері."},
+ "a-co":{t:"Що має містити резюме",w:"Достатньо однієї сторінки. Керівник читає його 20 секунд."},
+ "a-vytvor":{t:"Завдання: створи резюме",w:"Вставте в чат з AI і замініть частини в квадратних дужках."},
+ "a-uprav":{t:"Завдання: адаптуй для конкретної фірми",w:"Коли хочете резюме або лист під одну фірму."},
+ "a-zkontroluj":{t:"Завдання: перевір і скороти",w:"Коли резюме вже маєте."},
+ "a-pohovor":{t:"Завдання: підготуй мене до співбесіди",w:"За день до співбесіди або пробної зміни."},
+ "a-pdf":{t:"Як зробити PDF",w:"PDF потім додасте в листі через скріпку."},
+ qa:[["„Teď nikoho nehledáme.“ – Зараз нікого не шукаємо.","Подякуйте і залиште контакт: „Rozumím. Můžu vám poslat životopis, kdyby se něco uvolnilo? A můžu se ozvat zase za měsíc?“ (Розумію. Можу надіслати резюме на випадок, якщо щось звільниться? І можу зателефонувати через місяць?) У гастрономії люди часто змінюються, за два тижні все може бути інакше."],
+  ["„Pošlete životopis na e-mail.“ – Надішліть резюме на e-mail.","Запитайте: „Komu ho mám dát k rukám?“ (На чиє ім'я його надіслати?) Надішліть того ж дня і в темі напишіть, що ви говорили по телефону. Текст знайдете в розділі E-mail."],
+  ["„Majitel tu teď není.“ – Власника зараз немає.","„Kdy ho zastihnu nejlépe? A jak se jmenuje?“ (Коли його найкраще застати? І як його звати?) Потім подзвоніть у цей час і зверніться на ім'я."],
+  ["„Kolik byste chtěl?“ – Скільки б ви хотіли?","Майте готовий діапазон, а не одне число: „Představuju si [od–do] čistého měsíčně, záleží na úvazku a směnách. Co nabízíte vy?“ (Уявляю собі [від–до] чистими на місяць, залежить від навантаження та змін. Що пропонуєте ви?)"],
+  ["„Můžete přijít na zkušební směnu?“ – Можете прийти на пробну зміну?","Скажіть так і запитайте: „Kdy a v kolik? Co si mám vzít s sebou? Je zkušební směna placená?“ (Коли і о котрій? Що взяти з собою? Пробна зміна оплачується?)"]]
+},
+en:{
+ email:{name:"E-mail",intro:"Choose a text, copy it and replace the parts in square brackets. For the version you set for the Write button, the app fills in the business name. Attach your CV in Mail with the paperclip."},
+ "e-kratky":{t:"Short enquiry",w:"Works almost anywhere. A short e-mail gets read even on a busy shift."},
+ "e-provozni":{t:"Manager / shift leader",w:"For management roles. Show that you understand running the place, not just serving."},
+ "e-obsluha":{t:"Waiter / waitress / bartender",w:"For floor and bar. Stress reliability and weekends."},
+ "e-kuchyne":{t:"Cook / kitchen assistant",w:"For the kitchen. Say what cuisine you can cook and whether you can do à la carte."},
+ "e-brigada":{t:"Part-time / weekends / season",w:"Students, extra income, summer terraces and countryside places."},
+ "e-pripominka":{t:"Follow-up after a week",w:"When nobody replies within a week. Short and polite."},
+ "e-potelefonu":{t:"After a call – sending my CV",w:"When they say on the phone “send us your CV”. Send it the same day."},
+ telefon:{name:"Phone",intro:"Call outside rush hours. In restaurants, best between 2 and 4 pm or in the morning before opening. At lunchtime and in the evening nobody has time. Keep paper at hand and write down the name of the person you speak to."},
+ "t-prvni":{t:"First call",w:"You don't know anyone; you call the business number."},
+ "t-jmenem":{t:"Calling the owner by name",w:"When you know the name of the manager or owner."},
+ "t-pripominka":{t:"Follow-up after a week",w:"When last time they said “call next week” or didn't reply to your e-mail."},
+ "t-poemailu":{t:"After an e-mail",w:"Two or three days after an e-mail nobody replied to."},
+ osobne:{name:"In person",intro:"Visiting in person often works best in hospitality. They see you, and if you fit, you can start right away."},
+ "o-postup":{t:"How to do it",w:"Before you go."},
+ "o-veta":{t:"Opening line at the bar",w:"For the first impression."},
+ otazky:{name:"Questions",intro:"What to ask when invited to an interview or a trial shift. You show interest and avoid unpleasant surprises."},
+ "q-podminky":{t:"Working conditions",w:"Ask before you start."},
+ "q-provoz":{t:"Questions about the business",w:"For management roles. Shows you think like a manager."},
+ ai:{name:"CV with AI",intro:"Write your CV yourself, but with AI it takes a few minutes. Prepare your details first, then copy the prompt, fill in your details and paste it into an AI chat. All the AIs below have a free version. A CV for a Czech business should be in Czech – the AI will write it that way."},
+ "a-ai":{t:"Which AI to use for free",w:"One is enough. All have a free version and work on phone and computer."},
+ "a-pripravit":{t:"What to prepare in advance",w:"Before you open the AI. With your details ready it takes 10 minutes. Don't put your ID, passport or bank account numbers into the AI."},
+ "a-fotky":{t:"Prompt: CV from photos and notes",w:"When you have an old CV or notes on paper only."},
+ "a-co":{t:"What a CV should contain",w:"One page is enough. Managers read it in 20 seconds."},
+ "a-vytvor":{t:"Prompt: create a CV",w:"Paste into an AI chat and replace the parts in square brackets."},
+ "a-uprav":{t:"Prompt: tailor it to one business",w:"When you want a CV or e-mail made for one particular business."},
+ "a-zkontroluj":{t:"Prompt: check and shorten",w:"When you already have a CV."},
+ "a-pohovor":{t:"Prompt: prepare me for an interview",w:"The day before an interview or trial shift."},
+ "a-pdf":{t:"How to make a PDF",w:"Then attach the PDF in Mail with the paperclip."},
+ qa:[["„Teď nikoho nehledáme.“ – We're not hiring right now.","Thank them and leave your contact: „Rozumím. Můžu vám poslat životopis, kdyby se něco uvolnilo? A můžu se ozvat zase za měsíc?“ (I understand. Can I send you my CV in case something opens up? And may I get in touch again in a month?) Staff change often in hospitality – in two weeks everything may be different."],
+  ["„Pošlete životopis na e-mail.“ – Send your CV by e-mail.","Ask: „Komu ho mám dát k rukám?“ (Who should I address it to?) Send it the same day and mention in the subject that you spoke on the phone. You'll find the text in the E-mail section."],
+  ["„Majitel tu teď není.“ – The owner isn't here now.","„Kdy ho zastihnu nejlépe? A jak se jmenuje?“ (When is the best time to catch him? And what's his name?) Then call at that time and address him by name."],
+  ["„Kolik byste chtěl?“ – How much would you like?","Have a range ready, not one number: „Představuju si [od–do] čistého měsíčně, záleží na úvazku a směnách. Co nabízíte vy?“ (I'm thinking [from–to] net per month, depending on hours and shifts. What do you offer?)"],
+  ["„Můžete přijít na zkušební směnu?“ – Can you come for a trial shift?","Say yes and ask: „Kdy a v kolik? Co si mám vzít s sebou? Je zkušební směna placená?“ (When and at what time? What should I bring? Is the trial shift paid?)"]]
+}};
+/* Stránka O aplikaci ve třech jazycích (HTML). */
+const ABOUT_T={
+cs:`<section class="item"><h3>Práce napřímo</h3><p>Firmy ve vašem okolí s přímým kontaktem. Hledáte práci? Zavolejte nebo napište firmě rovnou, bez inzerátů a agentur. Hledáte službu? Najdete tu obchody, autoservisy, kadeřnictví, dopravu a další služby kolem sebe.</p></section>
+<section class="item"><h3>Proč vznikla</h3><p>Aplikace vznikla, protože jsem sám hledal práci a chtěl jsem firmy oslovovat napřímo.</p><p class="sign">Michal Mamula, zakladatel projektu Práce napřímo</p></section>
+<section class="item"><h3>Kontakt</h3><p>Dotazy, nápady i chyby pište na <a class="link" href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a>.</p><div class="row">{addBtn}{fixBtn}</div></section>
+<section class="item"><h3>Pro firmy</h3><ul><li><strong>Základní zápis</strong> – zdarma. Stačí napsat přes tlačítko „Chybí tu vaše firma?“.</li><li><strong>Hledáte lidi?</strong> – napište nám, u vaší firmy se zobrazí štítek „Hledá lidi“ i s pozicemi.</li><li><strong>Zvýraznění</strong><span class="soon">připravujeme</span> – firma se ukáže nahoře ve svém oboru a lokalitě, viditelně označená jako „Doporučeno“.</li><li><strong>Banner</strong><span class="soon">připravujeme</span> – reklamní pruh v aplikaci.</li></ul><div class="row">{hireBtn}<a class="btn" href="mailto:domecekcafe@gmail.com?subject=Zv%C3%BDrazn%C4%9Bn%C3%AD%20firmy%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo">Mám zájem o zvýraznění</a></div></section>
+<section class="item"><h3>Ochrana údajů</h3><ul><li>Údaje o firmách pochází z veřejných zdrojů: webů firem, obchodního a živnostenského rejstříku a veřejných katalogů. Zobrazujeme jen firemní kontakty.</li><li>Chcete své údaje opravit nebo odstranit? Napište nám přes „Oprava údajů“, vyřídíme to.</li><li>U živnostníků, lékařů a dalších podnikajících osob jména nezobrazujeme. Uvádíme jen druh služby, adresu provozovny a pracovní kontakt.</li><li>Aplikace nic neodesílá o vás. Uložené podniky, poznámky a jazyk zůstávají jen ve vašem telefonu.</li><li>Polohu použijeme jen ve vašem telefonu pro řazení podle vzdálenosti, nikam ji neposíláme. Mapové podklady © přispěvatelé OpenStreetMap.</li><li>Návštěvnost měříme anonymně přes GoatCounter, bez cookies.</li></ul></section>`,
+uk:`<section class="item"><h3>Práce napřímo</h3><p>Фірми поруч із вами з прямими контактами. Шукаєте роботу? Подзвоніть або напишіть фірмі напряму, без оголошень і агентств. Шукаєте послугу? Тут є магазини, автосервіси, перукарні, транспорт та інші послуги поруч.</p></section>
+<section class="item"><h3>Чому застосунок з'явився</h3><p>Застосунок з'явився, бо я сам шукав роботу і хотів звертатися до фірм напряму.</p><p class="sign">Міхал Мамула, засновник проєкту Práce napřímo</p></section>
+<section class="item"><h3>Контакт</h3><p>Питання, ідеї та помилки пишіть на <a class="link" href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a> (можна українською).</p><div class="row">{addBtn}{fixBtn}</div></section>
+<section class="item"><h3>Для фірм</h3><ul><li><strong>Базовий запис</strong> – безкоштовно.</li><li><strong>Шукаєте працівників?</strong> – напишіть нам, і біля вашої фірми з'явиться позначка «Шукає працівників».</li><li><strong>Виділення</strong><span class="soon">готуємо</span> – фірма буде вгорі у своїй галузі та районі з позначкою «Рекомендовано».</li></ul><div class="row">{hireBtn}</div></section>
+<section class="item"><h3>Захист даних</h3><ul><li>Дані про фірми з відкритих джерел: сайтів фірм, торгового та промислового реєстру і публічних каталогів. Показуємо лише робочі контакти.</li><li>Імена підприємців і лікарів не показуємо – лише вид послуги, адресу та робочий контакт.</li><li>Застосунок нічого не надсилає про вас. Збережені фірми, нотатки та мова залишаються лише у вашому телефоні.</li><li>Місцезнаходження використовується лише у вашому телефоні для сортування за відстанню і нікуди не надсилається. Мапи © учасники OpenStreetMap.</li><li>Відвідуваність вимірюємо анонімно через GoatCounter, без cookies.</li><li>Переклад українською готувався з допомогою AI. Якщо побачите помилку, напишіть нам.</li></ul></section>`,
+en:`<section class="item"><h3>Práce napřímo</h3><p>Local businesses with direct contacts. Looking for work? Call or write to a business directly, without job ads or agencies. Looking for a service? Find shops, car repair, hairdressers, transport and other services near you.</p></section>
+<section class="item"><h3>Why it exists</h3><p>I built this app because I was looking for work myself and wanted to contact businesses directly.</p><p class="sign">Michal Mamula, founder of Práce napřímo</p></section>
+<section class="item"><h3>Contact</h3><p>Questions, ideas and bugs: <a class="link" href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a>.</p><div class="row">{addBtn}{fixBtn}</div></section>
+<section class="item"><h3>For businesses</h3><ul><li><strong>Basic listing</strong> – free.</li><li><strong>Hiring?</strong> – write to us and your business will show a “Hiring” label.</li><li><strong>Featured listing</strong><span class="soon">coming soon</span> – shown at the top of your sector and area, marked “Recommended”.</li></ul><div class="row">{hireBtn}</div></section>
+<section class="item"><h3>Privacy</h3><ul><li>Business details come from public sources: company websites, business registers and public directories. We only show business contacts.</li><li>We don't show names of sole traders or doctors – only the type of service, address and work contact.</li><li>The app sends nothing about you. Saved businesses, notes and language stay on your phone only.</li><li>Your location is used only on your phone to sort by distance and is never sent anywhere. Map data © OpenStreetMap contributors.</li><li>We measure visits anonymously with GoatCounter, no cookies.</li></ul></section>`
+};
+const ABOUT_BTN={cs:["Chybí tu vaše firma?","Oprava údajů","Hledáme lidi – přidat štítek"],uk:["Вашої фірми тут немає?","Виправлення даних","Шукаємо працівників"],en:["Is your business missing?","Fix details","We're hiring – add label"]};
+
+const DRUH_T={uk:{"restaurace – česká": "ресторан – чеська кухня", "restaurace – mezinárodní / moderní": "ресторан – міжнародна / сучасна кухня", "pizzerie": "піцерія", "italská restaurace": "італійський ресторан", "asijská restaurace": "азійський ресторан", "vietnamská restaurace": "в'єтнамський ресторан", "indická / nepálská restaurace": "індійський / непальський ресторан", "řecká / balkánská restaurace": "грецький / балканський ресторан", "mexická restaurace": "мексиканський ресторан", "steakhouse / gril": "стейк-хаус / гриль", "rybí restaurace": "рибний ресторан", "veganská / vegetariánská restaurace": "веганський / вегетаріанський ресторан", "hotelová restaurace": "ресторан при готелі", "motorest": "придорожній ресторан", "výletní restaurace": "заміський ресторан", "hospoda / pivnice": "паб / пивна", "minipivovar": "міні-пивоварня", "vinárna / vinný bar": "винний бар", "koktejlový bar": "коктейль-бар", "sportovní bar / herna s barem": "спорт-бар / бар з ігровими автоматами", "klub / hudební klub": "клуб / музичний клуб", "bistro": "бістро", "kebab / gyros": "кебаб / гірос", "burgery": "бургерна", "rychlé občerstvení / stánek": "фастфуд / кіоск", "poke / bowl": "поке / боули", "sushi bar": "суші-бар", "rozvoz jídla / jídlo s sebou": "доставка їжі / їжа на виніс", "food truck": "фудтрак", "kavárna": "кав'ярня", "cukrárna": "кондитерська", "bubble tea / čajovna": "бабл-ті / чайна", "zmrzlinárna": "морозиво", "jídelna / polední menu": "їдальня / обіднє меню", "závodní / školní jídelna": "заводська / шкільна їдальня", "catering": "кейтеринг", "hotel": "готель", "penzion": "пансіонат", "ubytovna / hostel": "гуртожиток / хостел", "kemp / chatová osada": "кемпінг / котеджне містечко", "supermarket / hypermarket": "супермаркет / гіпермаркет", "diskont": "дискаунтер", "večerka / smíšené zboží": "мінімаркет / продукти", "pekárna": "пекарня", "řeznictví / uzenářství": "м'ясна крамниця / ковбаси", "zelenina a ovoce": "овочі та фрукти", "prodejna ryb": "рибна крамниця", "farmářský obchod / bedýnky": "фермерська крамниця / овочеві набори", "lahůdky": "делікатеси", "vinotéka / alkohol": "винна крамниця / алкоголь", "pivotéka": "крамниця пива", "kávy a čaje": "кава і чай", "bio / zdravá výživa": "органічні продукти / здорове харчування", "asijské potraviny": "азійські продукти", "trafika / tabák": "кіоск / тютюн", "cukrovinky / pralinky": "солодощі / цукерки", "drogerie": "побутова хімія та косметика", "parfumerie / kosmetika": "парфумерія / косметика", "prodejna zdravotních potřeb": "медичні товари", "stavebniny": "будматеріали", "železářství / nářadí": "господарські товари / інструменти", "barvy a laky": "фарби та лаки", "koupelny / sanita / topení": "ванні кімнати / сантехніка / опалення", "obklady a dlažby": "плитка", "podlahy": "підлоги", "kuchyňská studia": "кухні на замовлення", "nábytek": "меблі", "bytové doplňky / dekorace": "декор для дому", "elektro / domácí spotřebiče": "електроніка / побутова техніка", "svítidla": "світильники", "zámky a kování": "замки та фурнітура", "okna a dveře": "вікна та двері", "zahradnictví": "садовий центр", "květinářství": "квітковий магазин", "zverimex / chovatelské potřeby": "зоомагазин", "krmiva": "корми", "zahradní technika": "садова техніка", "oblečení": "одяг", "obuv": "взуття", "dětské oblečení": "дитячий одяг", "sportovní oblečení / vybavení": "спортивний одяг / спорядження", "spodní prádlo": "білизна", "svatební salon / půjčovna šatů": "весільний салон / прокат суконь", "galanterie / látky": "галантерея / тканини", "kožená galanterie / tašky": "шкіряні вироби / сумки", "šperky / zlatnictví": "ювелірні вироби", "hodinky": "годинники", "bižuterie": "біжутерія", "knihkupectví": "книгарня", "papírnictví": "канцтовари", "hračky": "іграшки", "sportovní potřeby": "спорттовари", "cyklo prodejna": "веломагазин", "outdoor / turistika": "туристичне спорядження", "hudební nástroje": "музичні інструменти", "foto / elektronika": "фото / електроніка", "mobilní telefony": "мобільні телефони", "počítače": "комп'ютери", "herní obchod / deskovky": "ігри / настільні ігри", "dárky / suvenýry": "подарунки / сувеніри", "umělecké potřeby / výtvarné": "товари для творчості", "rybářské a lovecké potřeby": "товари для риболовлі та полювання", "autodíly": "автозапчастини", "autosalon / prodej aut": "автосалон / продаж авто", "pneumatiky": "шини", "motocykly / skútry": "мотоцикли / скутери", "autobaterie": "акумулятори", "bazar / second hand": "комісійний / секонд-хенд", "antikvariát / starožitnosti": "букіністика / антикваріат", "zastavárna": "ломбард", "e-shop s výdejnou": "інтернет-магазин з пунктом видачі", "čerpací stanice": "автозаправка", "velkoobchod": "оптова торгівля", "pohřební potřeby / kamenictví": "ритуальні товари / камінь", "kominík": "сажотрус", "instalatér": "сантехнік", "topenář": "майстер з опалення", "elektrikář": "електрик", "zámečník / klíče": "слюсар / ключі", "malíř / natěrač": "маляр", "truhlář": "столяр", "tesař": "тесля", "pokrývač": "покрівельник", "klempíř": "бляхар", "podlahář": "майстер з підлог", "obkladač": "плиточник", "zedník / stavební firma": "муляр / будівельна фірма", "sklenář": "скляр", "čalouník": "оббивник меблів", "hodinový manžel": "майстер на годину", "montáž oken a dveří": "монтаж вікон і дверей", "kamnář / krby": "пічник / каміни", "studnař": "криничник", "rekonstrukce bytů": "ремонт квартир", "opravy domácích spotřebičů": "ремонт побутової техніки", "opravy PC a notebooků": "ремонт комп'ютерів і ноутбуків", "opravy mobilů": "ремонт телефонів", "opravy kol": "ремонт велосипедів", "švec / opravy obuvi": "швець / ремонт взуття", "krejčí / úpravy oděvů": "кравець / ремонт одягу", "hodinář": "годинникар", "brusič / ostření nožů": "заточування ножів", "opravy šicích strojů": "ремонт швейних машин", "opravy elektroniky / TV": "ремонт електроніки / телевізорів", "autoservis": "автосервіс", "pneuservis": "шиномонтаж", "karosárna / lakovna": "кузовний ремонт / фарбування", "myčka aut / ruční mytí": "автомийка", "STK / emise": "техогляд / викиди", "autoškola": "автошкола", "autoskla": "автоскло", "tažná zařízení": "фаркопи", "autoelektrikář": "автоелектрик", "půjčovna aut": "прокат авто", "autočalounictví": "перетяжка салону авто", "motoservis": "мотосервіс", "úklid domácností / firem": "прибирання квартир / офісів", "čistírna oděvů": "хімчистка", "prádelna / mandl": "пральня", "čištění koberců a čalounění": "чистка килимів і меблів", "mytí oken": "миття вікон", "deratizace / dezinsekce": "дератизація / дезінсекція", "čištění odpadů / kanalizace": "прочищення каналізації", "vyklízení / odvoz odpadu": "прибирання / вивезення сміття", "kadeřnictví": "перукарня", "holičství / barber": "барбершоп", "kosmetika": "косметичний салон", "manikúra / nehtové studio": "манікюр / нігтьова студія", "pedikúra": "педикюр", "masáže": "масаж", "solárium": "солярій", "tetování / piercing": "тату / пірсинг", "řasy a obočí": "вії та брови", "depilace / laser": "депіляція / лазер", "wellness / sauna": "велнес / сауна", "psí salon / stříhání psů": "грумінг для собак", "psí hotel / hlídání zvířat": "готель для собак / догляд за тваринами", "výcvik psů / psí škola": "дресирування собак", "venčení psů": "вигул собак", "chovatelská stanice": "розплідник", "útulek": "притулок для тварин", "banka / pobočka": "банк / відділення", "bankomat / směnárna": "банкомат / обмін валют", "pojišťovna": "страхова компанія", "účetní / daňový poradce": "бухгалтер / податковий консультант", "advokát / notář": "адвокат / нотаріус", "realitní kancelář": "агентство нерухомості", "finanční poradce": "фінансовий консультант", "pošta / Balíkovna / výdejna": "пошта / пункт видачі посилок", "mateřská škola / školka": "дитячий садок", "základní škola": "школа (1–9 клас)", "jazyková škola": "мовна школа", "doučování": "репетиторство", "hudební škola / ZUŠ": "музична / мистецька школа", "taneční škola": "школа танців", "dětská skupina / hlídání dětí": "дитяча група / няня", "kroužky pro děti": "гуртки для дітей", "plavecká škola": "школа плавання", "fitness / posilovna": "фітнес / тренажерний зал", "jóga / pilates": "йога / пілатес", "bojové sporty": "бойові мистецтва", "bazén / koupaliště": "басейн", "tenis / squash / badminton": "теніс / сквош / бадмінтон", "bowling / kulečník": "боулінг / більярд", "golf": "гольф", "jízdárna / koně": "кінний клуб", "půjčovna lodí / kol": "прокат човнів / велосипедів", "sportovní klub": "спортивний клуб", "escape room / zábava": "квест-кімната / розваги", "dětské hřiště / herna": "дитячий майданчик / ігрова кімната", "divadlo": "театр", "kino": "кінотеатр", "knihovna": "бібліотека", "galerie / muzeum": "галерея / музей", "kulturní dům / sál": "будинок культури / зал", "pořádání akcí / svatby": "організація подій / весіль", "DJ / hudba na akce": "діджей / музика на свята", "fotograf": "фотограф", "kameraman / video": "відеооператор", "zahradník / údržba zeleně": "садівник / догляд за зеленню", "kácení stromů / arborista": "видалення дерев / арборист", "zámečnictví (výroba)": "слюсарна майстерня", "bazény a zastínění": "басейни та затінення", "pronájem techniky / nářadí": "прокат техніки / інструментів", "úschovna / sklady": "камера схову / склади", "tisk / kopírování": "друк / копіювання", "reklama / polep aut": "реклама / обклеювання авто", "IT služby / weby": "IT-послуги / сайти", "překlady": "переклади", "sázková kancelář": "букмекерська контора", "pohřební služba": "ритуальні послуги", "seznamka / agentura": "шлюбне агентство", "bezpečnostní agentura": "охоронна агенція", "personální agentura": "кадрове агентство", "klíčová služba / nonstop": "аварійне відкриття дверей / цілодобово", "taxi": "таксі", "autobusová doprava / zájezdy": "автобусні перевезення / тури", "limuzíny / svatební auta": "лімузини / весільні авто", "přívoz / lodní doprava": "пором / річковий транспорт", "nákladní autodoprava": "вантажні перевезення", "kontejnery / odvoz suti": "контейнери / вивезення будсміття", "stěhovací firma": "переїзди", "kurýrní služba": "кур'єрська служба", "odtahová služba": "евакуатор", "mezinárodní doprava": "міжнародні перевезення", "speditér / logistika": "експедитор / логістика", "půjčovna dodávek": "прокат фургонів", "půjčovna karavanů": "прокат автобудинків", "půjčovna přívěsů": "прокат причепів", "potravinářská výroba": "харчове виробництво", "strojírenství / kovovýroba": "машинобудування / металообробка", "dřevovýroba": "деревообробка", "plasty": "пластмаси", "textilní výroba": "текстильне виробництво", "tiskárna": "друкарня", "chemie / čisticí prostředky": "хімія / мийні засоби", "elektrotechnická výroba": "електротехнічне виробництво", "stavební výroba / betonárna": "будівельне виробництво / бетонний завод", "pivovar (výroba)": "пивоварня (виробництво)", "sklad / distribuční centrum": "склад / розподільчий центр", "recyklace / sběrný dvůr": "переробка / пункт прийому відходів", "sběrna surovin / výkup kovů": "прийом вторсировини / металобрухту", "stavební firma (velká)": "будівельна компанія (велика)", "zemní práce": "земляні роботи", "projekce / architekt": "проєктування / архітектор", "praktický lékař": "сімейний лікар", "praktický lékař pro děti (pediatr)": "дитячий лікар (педіатр)", "zubař": "стоматолог", "zubní hygiena": "гігієна зубів", "ortodoncie": "ортодонтія", "gynekolog": "гінеколог", "kožní lékař": "дерматолог", "oční lékař": "офтальмолог", "ORL (ušní, nosní, krční)": "ЛОР", "ortoped": "ортопед", "neurolog": "невролог", "kardiolog": "кардіолог", "interna": "терапевт (внутрішні хвороби)", "psychiatr": "психіатр", "psycholog / psychoterapie": "психолог / психотерапія", "urolog": "уролог", "alergolog": "алерголог", "logoped": "логопед", "chirurgie": "хірургія", "poliklinika / zdravotní středisko": "поліклініка / медичний центр", "nemocnice": "лікарня", "pohotovost": "невідкладна допомога", "laboratoř / odběry": "лабораторія / забір крові", "rehabilitace / fyzioterapie": "реабілітація / фізіотерапія", "domácí péče / home care": "догляд вдома", "domov pro seniory": "будинок для літніх людей", "hospic / paliativní péče": "хоспіс / паліативна допомога", "záchranná služba": "швидка допомога", "lékárna": "аптека", "optika": "оптика", "zdravotnické potřeby": "медичні товари", "sluchadla": "слухові апарати", "výživový poradce": "дієтолог", "léčitel / alternativní medicína": "альтернативна медицина", "masér (léčebný)": "лікувальний масаж", "veterinář": "ветеринар"},en:{"restaurace – česká": "restaurant – Czech", "restaurace – mezinárodní / moderní": "restaurant – international / modern", "pizzerie": "pizzeria", "italská restaurace": "Italian restaurant", "asijská restaurace": "Asian restaurant", "vietnamská restaurace": "Vietnamese restaurant", "indická / nepálská restaurace": "Indian / Nepali restaurant", "řecká / balkánská restaurace": "Greek / Balkan restaurant", "mexická restaurace": "Mexican restaurant", "steakhouse / gril": "steakhouse / grill", "rybí restaurace": "fish restaurant", "veganská / vegetariánská restaurace": "vegan / vegetarian restaurant", "hotelová restaurace": "hotel restaurant", "motorest": "roadside restaurant", "výletní restaurace": "countryside restaurant", "hospoda / pivnice": "pub / beer hall", "minipivovar": "microbrewery", "vinárna / vinný bar": "wine bar", "koktejlový bar": "cocktail bar", "sportovní bar / herna s barem": "sports bar / gaming bar", "klub / hudební klub": "club / music club", "bistro": "bistro", "kebab / gyros": "kebab / gyros", "burgery": "burgers", "rychlé občerstvení / stánek": "fast food / stand", "poke / bowl": "poke / bowls", "sushi bar": "sushi bar", "rozvoz jídla / jídlo s sebou": "food delivery / takeaway", "food truck": "food truck", "kavárna": "café", "cukrárna": "pastry shop", "bubble tea / čajovna": "bubble tea / tea room", "zmrzlinárna": "ice cream shop", "jídelna / polední menu": "canteen / lunch menu", "závodní / školní jídelna": "company / school canteen", "catering": "catering", "hotel": "hotel", "penzion": "guesthouse", "ubytovna / hostel": "workers' hostel / hostel", "kemp / chatová osada": "campsite / cabins", "supermarket / hypermarket": "supermarket / hypermarket", "diskont": "discount store", "večerka / smíšené zboží": "convenience store", "pekárna": "bakery", "řeznictví / uzenářství": "butcher", "zelenina a ovoce": "fruit and vegetables", "prodejna ryb": "fishmonger", "farmářský obchod / bedýnky": "farm shop / veg boxes", "lahůdky": "delicatessen", "vinotéka / alkohol": "wine shop / liquor", "pivotéka": "craft beer shop", "kávy a čaje": "coffee and tea shop", "bio / zdravá výživa": "organic / health food", "asijské potraviny": "Asian grocery", "trafika / tabák": "newsagent / tobacco", "cukrovinky / pralinky": "sweets / chocolates", "drogerie": "drugstore", "parfumerie / kosmetika": "perfumery / cosmetics", "prodejna zdravotních potřeb": "medical supplies shop", "stavebniny": "building materials", "železářství / nářadí": "hardware / tools", "barvy a laky": "paints and varnishes", "koupelny / sanita / topení": "bathrooms / plumbing / heating", "obklady a dlažby": "tiles", "podlahy": "flooring", "kuchyňská studia": "kitchen studios", "nábytek": "furniture", "bytové doplňky / dekorace": "home decor", "elektro / domácí spotřebiče": "electronics / home appliances", "svítidla": "lighting", "zámky a kování": "locks and hardware", "okna a dveře": "windows and doors", "zahradnictví": "garden centre", "květinářství": "florist", "zverimex / chovatelské potřeby": "pet shop", "krmiva": "animal feed", "zahradní technika": "garden machinery", "oblečení": "clothing", "obuv": "shoes", "dětské oblečení": "children's clothing", "sportovní oblečení / vybavení": "sportswear / equipment", "spodní prádlo": "underwear", "svatební salon / půjčovna šatů": "bridal shop / dress hire", "galanterie / látky": "haberdashery / fabrics", "kožená galanterie / tašky": "leather goods / bags", "šperky / zlatnictví": "jewellery", "hodinky": "watches", "bižuterie": "costume jewellery", "knihkupectví": "bookshop", "papírnictví": "stationery", "hračky": "toys", "sportovní potřeby": "sporting goods", "cyklo prodejna": "bike shop", "outdoor / turistika": "outdoor / hiking", "hudební nástroje": "musical instruments", "foto / elektronika": "photo / electronics", "mobilní telefony": "mobile phones", "počítače": "computers", "herní obchod / deskovky": "games / board games", "dárky / suvenýry": "gifts / souvenirs", "umělecké potřeby / výtvarné": "art supplies", "rybářské a lovecké potřeby": "fishing and hunting", "autodíly": "car parts", "autosalon / prodej aut": "car dealer", "pneumatiky": "tyres", "motocykly / skútry": "motorcycles / scooters", "autobaterie": "car batteries", "bazar / second hand": "second-hand shop", "antikvariát / starožitnosti": "antiquarian / antiques", "zastavárna": "pawnshop", "e-shop s výdejnou": "online shop with pickup point", "čerpací stanice": "petrol station", "velkoobchod": "wholesale", "pohřební potřeby / kamenictví": "funeral supplies / stonemason", "kominík": "chimney sweep", "instalatér": "plumber", "topenář": "heating engineer", "elektrikář": "electrician", "zámečník / klíče": "locksmith / keys", "malíř / natěrač": "painter / decorator", "truhlář": "carpenter / joiner", "tesař": "carpenter (structural)", "pokrývač": "roofer", "klempíř": "tinsmith", "podlahář": "floor layer", "obkladač": "tiler", "zedník / stavební firma": "bricklayer / builder", "sklenář": "glazier", "čalouník": "upholsterer", "hodinový manžel": "handyman", "montáž oken a dveří": "window and door fitting", "kamnář / krby": "stove and fireplace fitter", "studnař": "well digger", "rekonstrukce bytů": "flat renovation", "opravy domácích spotřebičů": "appliance repair", "opravy PC a notebooků": "PC and laptop repair", "opravy mobilů": "phone repair", "opravy kol": "bike repair", "švec / opravy obuvi": "cobbler / shoe repair", "krejčí / úpravy oděvů": "tailor / alterations", "hodinář": "watchmaker", "brusič / ostření nožů": "knife sharpening", "opravy šicích strojů": "sewing machine repair", "opravy elektroniky / TV": "electronics / TV repair", "autoservis": "car repair", "pneuservis": "tyre service", "karosárna / lakovna": "body shop / paint shop", "myčka aut / ruční mytí": "car wash", "STK / emise": "vehicle inspection (STK)", "autoškola": "driving school", "autoskla": "car glass", "tažná zařízení": "tow bars", "autoelektrikář": "auto electrician", "půjčovna aut": "car rental", "autočalounictví": "car upholstery", "motoservis": "motorcycle service", "úklid domácností / firem": "home / office cleaning", "čistírna oděvů": "dry cleaner", "prádelna / mandl": "laundry", "čištění koberců a čalounění": "carpet and upholstery cleaning", "mytí oken": "window cleaning", "deratizace / dezinsekce": "pest control", "čištění odpadů / kanalizace": "drain cleaning", "vyklízení / odvoz odpadu": "clearance / waste removal", "kadeřnictví": "hairdresser", "holičství / barber": "barber", "kosmetika": "beauty salon", "manikúra / nehtové studio": "manicure / nail studio", "pedikúra": "pedicure", "masáže": "massage", "solárium": "tanning salon", "tetování / piercing": "tattoo / piercing", "řasy a obočí": "lashes and brows", "depilace / laser": "hair removal / laser", "wellness / sauna": "wellness / sauna", "psí salon / stříhání psů": "dog grooming", "psí hotel / hlídání zvířat": "dog hotel / pet sitting", "výcvik psů / psí škola": "dog training", "venčení psů": "dog walking", "chovatelská stanice": "breeder", "útulek": "animal shelter", "banka / pobočka": "bank / branch", "bankomat / směnárna": "ATM / currency exchange", "pojišťovna": "insurance", "účetní / daňový poradce": "accountant / tax adviser", "advokát / notář": "lawyer / notary", "realitní kancelář": "estate agent", "finanční poradce": "financial adviser", "pošta / Balíkovna / výdejna": "post office / parcel point", "mateřská škola / školka": "kindergarten", "základní škola": "primary school", "jazyková škola": "language school", "doučování": "tutoring", "hudební škola / ZUŠ": "music / art school", "taneční škola": "dance school", "dětská skupina / hlídání dětí": "childcare / babysitting", "kroužky pro děti": "children's clubs", "plavecká škola": "swimming school", "fitness / posilovna": "fitness / gym", "jóga / pilates": "yoga / pilates", "bojové sporty": "martial arts", "bazén / koupaliště": "swimming pool", "tenis / squash / badminton": "tennis / squash / badminton", "bowling / kulečník": "bowling / billiards", "golf": "golf", "jízdárna / koně": "riding stables", "půjčovna lodí / kol": "boat / bike rental", "sportovní klub": "sports club", "escape room / zábava": "escape room / entertainment", "dětské hřiště / herna": "playground / play room", "divadlo": "theatre", "kino": "cinema", "knihovna": "library", "galerie / muzeum": "gallery / museum", "kulturní dům / sál": "community centre / hall", "pořádání akcí / svatby": "events / weddings", "DJ / hudba na akce": "DJ / event music", "fotograf": "photographer", "kameraman / video": "videographer", "zahradník / údržba zeleně": "gardener / landscaping", "kácení stromů / arborista": "tree felling / arborist", "zámečnictví (výroba)": "metalwork (manufacturing)", "bazény a zastínění": "pools and shading", "pronájem techniky / nářadí": "equipment / tool hire", "úschovna / sklady": "storage", "tisk / kopírování": "printing / copying", "reklama / polep aut": "advertising / car wraps", "IT služby / weby": "IT services / websites", "překlady": "translations", "sázková kancelář": "betting shop", "pohřební služba": "funeral services", "seznamka / agentura": "dating agency", "bezpečnostní agentura": "security company", "personální agentura": "recruitment agency", "klíčová služba / nonstop": "emergency locksmith / 24 h", "taxi": "taxi", "autobusová doprava / zájezdy": "coach transport / tours", "limuzíny / svatební auta": "limousines / wedding cars", "přívoz / lodní doprava": "ferry / boat transport", "nákladní autodoprava": "road haulage", "kontejnery / odvoz suti": "skips / rubble removal", "stěhovací firma": "removals", "kurýrní služba": "courier", "odtahová služba": "towing", "mezinárodní doprava": "international transport", "speditér / logistika": "freight forwarding / logistics", "půjčovna dodávek": "van hire", "půjčovna karavanů": "camper hire", "půjčovna přívěsů": "trailer hire", "potravinářská výroba": "food production", "strojírenství / kovovýroba": "engineering / metalwork", "dřevovýroba": "woodworking", "plasty": "plastics", "textilní výroba": "textile production", "tiskárna": "printing house", "chemie / čisticí prostředky": "chemicals / cleaning products", "elektrotechnická výroba": "electrical manufacturing", "stavební výroba / betonárna": "construction materials / concrete plant", "pivovar (výroba)": "brewery (production)", "sklad / distribuční centrum": "warehouse / distribution centre", "recyklace / sběrný dvůr": "recycling / waste collection yard", "sběrna surovin / výkup kovů": "scrap / metal buyer", "stavební firma (velká)": "construction company (large)", "zemní práce": "earthworks", "projekce / architekt": "design / architect", "praktický lékař": "GP", "praktický lékař pro děti (pediatr)": "paediatrician", "zubař": "dentist", "zubní hygiena": "dental hygiene", "ortodoncie": "orthodontics", "gynekolog": "gynaecologist", "kožní lékař": "dermatologist", "oční lékař": "eye doctor", "ORL (ušní, nosní, krční)": "ENT", "ortoped": "orthopaedist", "neurolog": "neurologist", "kardiolog": "cardiologist", "interna": "internal medicine", "psychiatr": "psychiatrist", "psycholog / psychoterapie": "psychologist / psychotherapy", "urolog": "urologist", "alergolog": "allergist", "logoped": "speech therapist", "chirurgie": "surgery", "poliklinika / zdravotní středisko": "polyclinic / health centre", "nemocnice": "hospital", "pohotovost": "emergency care", "laboratoř / odběry": "lab / blood tests", "rehabilitace / fyzioterapie": "rehabilitation / physiotherapy", "domácí péče / home care": "home care", "domov pro seniory": "care home", "hospic / paliativní péče": "hospice / palliative care", "záchranná služba": "ambulance service", "lékárna": "pharmacy", "optika": "optician", "zdravotnické potřeby": "medical supplies", "sluchadla": "hearing aids", "výživový poradce": "nutritionist", "léčitel / alternativní medicína": "alternative medicine", "masér (léčebný)": "therapeutic massage", "veterinář": "vet"}};
 const OBORY = ["Gastronomie","Obchod","Služby","Doprava","Průmysl","Zdravotnictví"];
 
 let firmy = EMBEDDED.slice();
 let dataSource = "embedded";
-const st = {obor:"Gastronomie", area:"", q:"", sec:"email", mode:"prace", druh:""};
+const st = {obor:"Gastronomie", area:"", q:"", sec:"email", mode:"prace", druh:"", lang:"cs", near:null, view:"list", pin:"", nove:false, mf:""};
 const $ = s => document.querySelector(s);
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
 const store = {get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- jazyk ---------- */
+function T(k,v){let s=(I18N[st.lang]&&I18N[st.lang][k]);if(s==null)s=I18N.cs[k];if(s==null)return k;
+  if(v)s=String(s).replace(/\{(\w+)\}/g,(m,x)=>v[x]!=null?v[x]:m);return s}
+function pl(n){const f=T("nForms");if(st.lang==="en")return n===1?f[0]:f[1];
+  if(st.lang==="uk"){const a=n%10,b=n%100;return a===1&&b!==11?f[0]:a>=2&&a<=4&&(b<10||b>=20)?f[1]:f[2]}
+  return n===1?f[0]:n>=2&&n<=4?f[1]:f[2]}
+function nT(k,n,v){return T(k,Object.assign({n,podniky:pl(n)},v||{}))}
+const oborName=o=>st.lang==="cs"?o:((OBOR_T[st.lang]||{})[o]||o);
+const druhName=d=>st.lang==="cs"?d:((DRUH_T[st.lang]||{})[d]||d);
+const LOC={cs:"cs-CZ",uk:"uk-UA",en:"en-GB"};
+function fmtDate(iso){if(!iso)return"";const d=new Date(iso+"T12:00:00");if(isNaN(d))return iso;return d.toLocaleDateString(LOC[st.lang],{day:"numeric",month:"numeric",year:"numeric"})}
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+function isoOf(s){s=String(s||"").trim();let m=s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return m[1]+"-"+m[2].padStart(2,"0")+"-"+m[3].padStart(2,"0");
+  m=s.match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/);return m?m[3]+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0"):""}
 
 /* ---------- měření (GoatCounter) ---------- */
 const zdroj = (()=>{
@@ -299,7 +509,7 @@ const ICON = {
 };
 
 function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
-async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg||"Zkopírováno");return true}catch(e){return false}}
+async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg||T("copied"));return true}catch(e){return false}}
 function firstPhone(t){const m=String(t||"").match(/\+?[\d ]{9,}/);return m?m[0].replace(/\s/g,""):""}
 function webUrl(w){if(!w)return"";return /^https?:/.test(w)?w:"https://"+w}
 
@@ -497,24 +707,71 @@ const DEFAULT_TPL="e-kratky";
 let defTpl=store.get("tpl")||DEFAULT_TPL;
 function tplById(id){for(const s of SECS)for(const it of s.items)if(it.id===id)return it;return null}
 function splitMail(x){const m=x.match(/^Předmět: (.*)\n\n([\s\S]*)$/);return m?{subj:m[1],body:m[2]}:{subj:"Zájem o práci",body:x}}
+const navT=(id,f)=>{const n=(NAV_T[st.lang]||{})[id];return n&&n[f]};
 
 function renderGuide(){
-  $("#gchips").innerHTML=SECS.map(s=>`<button class="chip" aria-pressed="${s.id===st.sec}" data-sec="${s.id}">${s.name} <small>${s.items.length+(s.qa?s.qa.length:0)}</small></button>`).join("");
+  $("#gchips").innerHTML=SECS.map(s=>`<button class="chip" aria-pressed="${s.id===st.sec}" data-sec="${s.id}">${esc(navT(s.id,"name")||s.name)} <small>${s.items.length+(s.qa?s.qa.length:0)}</small></button>`).join("");
   const s=SECS.find(x=>x.id===st.sec)||SECS[0];
-  let h=`<div class="sec-intro"><h2>${esc(s.name)}</h2><p class="lead">${esc(s.intro)}</p></div>`;
-  h+=s.items.map(it=>`<article class="item"><h3>${esc(it.t)}${s.id==="email"&&it.id===defTpl?'<span class="default-badge">Pro tlačítko Napsat</span>':""}</h3>
-    <p class="when">${esc(it.w)}</p><pre>${esc(it.x)}</pre>
-    <div class="row"><button class="btn primary" data-copy-item="${it.id}">${ICON.copy} Zkopírovat</button>
-    ${s.id==="email"&&it.id!==defTpl?`<button class="btn" data-def="${it.id}">Použít pro Napsat</button>`:""}</div></article>`).join("");
-  if(s.qa) h+=`<div class="sec-intro"><h2>Když řeknou…</h2></div>`+s.qa.map(([q,a])=>`<details class="qa"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
+  let h=`<div class="sec-intro"><h2>${esc(navT(s.id,"name")||s.name)}</h2><p class="lead">${esc(navT(s.id,"intro")||s.intro)}</p></div>`;
+  if(st.lang!=="cs") h+=`<p class="note">${esc(T("tplNote"))}</p>`;
+  h+=s.items.map(it=>`<article class="item" id="it-${it.id}"><h3>${esc(navT(it.id,"t")||it.t)}${s.id==="email"&&it.id===defTpl?`<span class="default-badge">${esc(T("forWrite"))}</span>`:""}</h3>
+    <p class="when">${esc(navT(it.id,"w")||it.w)}</p><pre lang="cs">${esc(it.x)}</pre>
+    <div class="row"><button class="btn primary" data-copy-item="${it.id}">${ICON.copy} ${esc(T("copyBtn"))}</button>
+    ${s.id==="email"&&it.id!==defTpl?`<button class="btn" data-def="${it.id}">${esc(T("useWrite"))}</button>`:""}</div></article>`).join("");
+  if(s.qa){const qa=st.lang!=="cs"&&NAV_T[st.lang]&&NAV_T[st.lang].qa||s.qa;
+    h+=`<div class="sec-intro"><h2>${esc(T("whenSay"))}</h2></div>`+qa.map(([q,a])=>`<details class="qa"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}
   $("#guide").innerHTML=h;
 }
 $("#gchips").addEventListener("click",e=>{const b=e.target.closest("[data-sec]");if(!b)return;st.sec=b.dataset.sec;renderGuide();window.scrollTo(0,0);track("navod-"+st.sec,true)});
 $("#guide").addEventListener("click",async e=>{
   const c=e.target.closest("[data-copy-item]");
-  if(c){const it=tplById(c.dataset.copyItem);if(!await copy(it.x,"Zkopírováno – přepiš části v [závorkách]")){const pre=c.closest(".item").querySelector("pre");const r=document.createRange();r.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast("Text je označený – zkopíruj ho")}track("kopirovat-"+it.id);return}
+  if(c){const it=tplById(c.dataset.copyItem);if(!await copy(it.x,T("copiedTpl"))){const pre=c.closest(".item").querySelector("pre");const r=document.createRange();r.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast(T("selected"))}track("kopirovat-"+it.id);return}
   const d=e.target.closest("[data-def]");
-  if(d){defTpl=d.dataset.def;store.set("tpl",defTpl);renderGuide();toast("Tlačítko Napsat teď použije tento text")}
+  if(d){defTpl=d.dataset.def;store.set("tpl",defTpl);renderGuide();toast(T("tplSet"))}
+});
+
+/* ---------- Moje: uložené podniky a přehled oslovení (jen v telefonu) ---------- */
+const STAVY=["ulozeno","napsano","volano","pohovor","nabidka","odmitnuto"];
+const RANK={ulozeno:0,napsano:1,volano:1,pohovor:2,nabidka:3,odmitnuto:3};
+let MO=store.get("moje")||{};
+const fkey=f=>(f.nazev||"")+"|"+(f.adresa||"");
+function saveMoje(){store.set("moje",MO);renderTabBadge()}
+function setStav(f,s,auto){
+  const k=fkey(f);const e=MO[k]||{name:f.nazev,area:f.oblast,h:[],n:""};
+  if(auto&&MO[k]&&RANK[e.s]>RANK[s])return false;
+  if(e.s===s&&auto&&e.d===today())return false;
+  e.s=s;e.d=today();e.h=(e.h||[]).concat([[s,e.d]]).slice(-20);MO[k]=e;saveMoje();return true;
+}
+function toggleSave(f){const k=fkey(f);if(MO[k]){delete MO[k];saveMoje();toast(T("removed"));track("moje-odebrat")}else{setStav(f,"ulozeno");toast(T("saved"));track("moje-ulozit")}}
+function renderTabBadge(){const n=Object.keys(MO).length;const b=$("#tab-moje .badge");b.textContent=n;b.hidden=!n}
+function daysSince(iso){return Math.floor((Date.now()-new Date(iso+"T12:00:00"))/864e5)}
+function renderMoje(){
+  const sl=st.mode==="sluzba";
+  const entries=Object.entries(MO).sort((a,b)=>(b[1].d||"").localeCompare(a[1].d||""));
+  const cnt={};entries.forEach(([,e])=>cnt[e.s]=(cnt[e.s]||0)+1);
+  if(st.mf&&!cnt[st.mf])st.mf="";
+  $("#mchips").innerHTML=sl||!entries.length?"":`<button class="chip" aria-pressed="${!st.mf}" data-mf="">${esc(T("mojeAll"))} <small>${entries.length}</small></button>`+
+    STAVY.filter(s=>cnt[s]).map(s=>`<button class="chip" aria-pressed="${st.mf===s}" data-mf="${s}">${esc(T("st_"+s))} <small>${cnt[s]}</small></button>`).join("");
+  if(!entries.length){$("#moje").innerHTML=`<p class="lead">${esc(T(sl?"mojeLeadS":"mojeLead"))}</p><div class="empty"><strong>${esc(T("mojeEmpty"))}</strong>${esc(T("mojeEmptyT"))}</div>`;return}
+  const idx=new Map();firmy.forEach((f,i)=>idx.set(fkey(f),i));
+  $("#moje").innerHTML=`<p class="lead">${esc(T(sl?"mojeLeadS":"mojeLead"))}</p><div class="list">`+entries.filter(([,e])=>sl||!st.mf||e.s===st.mf).map(([k,e])=>{
+    const i=idx.get(k);
+    const panel=sl?"":`<div class="mpanel" data-k="${esc(k)}">
+      <div class="mst" role="group">${STAVY.map(s=>`<button data-st="${s}" aria-pressed="${e.s===s}">${esc(T("st_"+s))}</button>`).join("")}</div>
+      ${(e.s==="napsano"||e.s==="volano")&&daysSince(e.d)>=7?`<div class="remind"><span>${esc(T("remind"))}</span><button data-remind="${e.s}">${esc(T("remindBtn"))}</button></div>`:""}
+      <div class="mmeta">${esc(T("last",{d:fmtDate(e.d)}))}${(e.h||[]).length>1?` · ${esc(T("history"))}: ${e.h.map(([s,d])=>esc(T("st_"+s))+" "+esc(fmtDate(d))).join(", ")}`:""}</div>
+      <textarea data-note placeholder="${esc(T("note"))}" aria-label="${esc(T("note"))}">${esc(e.n||"")}</textarea></div>`;
+    if(i==null) return `<article class="card"><div class="top"><div><h3>${esc(e.name)}</h3><div class="addr">${esc(T("gone"))}</div></div><button class="star" aria-pressed="true" data-unsave="${esc(k)}" aria-label="${esc(T("remove"))}">★</button></div>${panel}</article>`;
+    return card(firmy[i],i,panel);
+  }).join("")+`</div>`;
+}
+$("#mchips").addEventListener("click",e=>{const b=e.target.closest("[data-mf]");if(!b)return;st.mf=b.dataset.mf;renderMoje()});
+$("#moje").addEventListener("input",e=>{const t=e.target.closest("[data-note]");if(!t)return;const k=t.closest("[data-k]").dataset.k;if(MO[k]){MO[k].n=t.value;store.set("moje",MO)}});
+$("#moje").addEventListener("click",e=>{
+  const s=e.target.closest("[data-st]");if(s){const k=s.closest("[data-k]").dataset.k;const en=MO[k];if(en){en.s=s.dataset.st;en.d=today();en.h=(en.h||[]).concat([[en.s,en.d]]).slice(-20);saveMoje();track("moje-stav-"+en.s);renderMoje()}return}
+  const r=e.target.closest("[data-remind]");if(r){st.sec=r.dataset.remind==="volano"?"telefon":"email";show("navody");const id=r.dataset.remind==="volano"?"t-pripominka":"e-pripominka";setTimeout(()=>document.getElementById("it-"+id)?.scrollIntoView({block:"start"}),50);return}
+  const u=e.target.closest("[data-unsave]");if(u){delete MO[u.dataset.unsave];saveMoje();renderMoje();return}
+  cardClick(e,true);
 });
 
 /* ---------- seznam firem ---------- */
@@ -523,13 +780,14 @@ const AZ="__AZ";
 const cap=s=>{s=String(s||"");return s.charAt(0).toUpperCase()+s.slice(1)};
 function hasDruhy(){return firmy.some(f=>f.druh)}
 function druhCounts(pool){const c=new Map();pool.forEach(f=>{if(f.druh)c.set(f.druh,(c.get(f.druh)||0)+1)});return c}
+let COLL=new Intl.Collator("cs",{sensitivity:"base",numeric:true});
 function idxHtml(counts,withLetters){
-  const items=[...counts.entries()].sort((a,b)=>ABC.compare(a[0],b[0]));
+  const items=[...counts.entries()].map(([d,n])=>[d,n,druhName(d)]).sort((a,b)=>COLL.compare(a[2],b[2]));
   let h="",last="";
-  for(const [d,n] of items){
-    const L=norm(d).charAt(0).toUpperCase();
+  for(const [d,n,dn] of items){
+    const L=(st.lang==="uk"?dn:norm(dn)).charAt(0).toUpperCase();
     if(withLetters&&L!==last){h+=`<h3>${esc(L)}</h3>`;last=L}
-    h+=`<button data-druh="${esc(d)}"><span>${esc(cap(d))}</span><small>${n}</small></button>`;
+    h+=`<button data-druh="${esc(d)}"><span>${esc(cap(dn))}</span><small>${n}</small></button>`;
   }
   return `<div class="idx">${h}</div>`;
 }
@@ -537,23 +795,24 @@ function renderSugg(){
   const box=$("#sugg");const q=norm(st.q).trim();
   if(q.length<2||!hasDruhy()){box.hidden=true;box.innerHTML="";return}
   const pool=firmy.filter(f=>!st.area||f.oblast===st.area);
-  const m=[...druhCounts(pool).entries()].filter(([d])=>norm(d).split(/[\s\/–-]+/).some(w=>w.startsWith(q))||norm(d).includes(q))
-    .sort((a,b)=>b[1]-a[1]||ABC.compare(a[0],b[0])).slice(0,6);
+  const hit=d=>[d,druhName(d)].some(x=>{const n=norm(x);return n.split(/[\s\/–-]+/).some(w=>w.startsWith(q))||n.includes(q)});
+  const m=[...druhCounts(pool).entries()].filter(([d])=>hit(d))
+    .sort((a,b)=>b[1]-a[1]||COLL.compare(druhName(a[0]),druhName(b[0]))).slice(0,6);
   if(!m.length){box.hidden=true;box.innerHTML="";return}
-  box.innerHTML=`<div class="lbl">Druhy podniků${st.area?" · "+esc(shortArea(st.area)):""}</div>`+m.map(([d,n])=>`<button data-druh="${esc(d)}"><span>${esc(cap(d))}</span><small>${n}</small></button>`).join("");
+  box.innerHTML=`<div class="lbl">${esc(T("druhyLbl"))}${st.area?" · "+esc(shortArea(st.area)):""}</div>`+m.map(([d,n])=>`<button data-druh="${esc(d)}"><span>${esc(cap(druhName(d)))}</span><small>${n}</small></button>`).join("");
   box.hidden=false;
 }
-function pickDruh(d,from){st.druh=d;st.obor=AZ;st.q="";$("#q").value="";track("druh-"+d);if(from)track("druh-z-"+from);render();window.scrollTo(0,0)}
+function pickDruh(d,from){st.druh=d;st.obor=AZ;st.nove=false;st.q="";$("#q").value="";track("druh-"+d);if(from)track("druh-z-"+from);render();window.scrollTo(0,0)}
 function renderChips(){
   // jen obory, které mají aspoň jeden podnik; ostatní se objeví samy, až se naplní
   const active=OBORY.filter(o=>firmy.some(f=>f.obor===o));
   if(active.length&&!active.includes(st.obor)&&st.obor!==AZ) st.obor=active[0];
   const tot=firmy.filter(f=>!st.area||f.oblast===st.area).length;
-  const az=hasDruhy()?`<button class="chip az" aria-pressed="${st.obor===AZ}" data-o="${AZ}">Vše A–Z <small>${tot}</small></button>`:"";
+  const az=hasDruhy()?`<button class="chip az" aria-pressed="${st.obor===AZ&&!st.nove&&!st.pin}" data-o="${AZ}">${esc(T("azChip"))} <small>${tot}</small></button>`:"";
   $("#chips").innerHTML = az+active.map(o=>{
     const all=firmy.filter(f=>f.obor===o);
     const n=st.area?all.filter(f=>f.oblast===st.area).length:all.length;
-    return `<button class="chip" aria-pressed="${o===st.obor}" data-o="${o}">${o} <small>${n}</small></button>`}).join("");
+    return `<button class="chip" aria-pressed="${o===st.obor&&!st.nove&&!st.pin}" data-o="${o}">${esc(oborName(o))} <small>${n}</small></button>`}).join("");
 }
 const MOBIL=matchMedia("(max-width:600px)");
 MOBIL.addEventListener("change",()=>{if(typeof firmy!=="undefined")renderAreas()});
@@ -572,7 +831,7 @@ function shortArea(a){return String(a||"").replace(/^Praha\s*-\s*/,"")}
 function renderAreas(){
   const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
   if(!areas.includes(st.area)) st.area="";
-  $("#area").innerHTML=`<option value="">Všude</option>`+areas.map(a=>`<option value="${esc(a)}" ${a===st.area?"selected":""}>${esc(shortArea(a))}</option>`).join("");
+  $("#area").innerHTML=`<option value="">${esc(T("all"))}</option>`+areas.map(a=>`<option value="${esc(a)}" ${a===st.area?"selected":""}>${esc(shortArea(a))}</option>`).join("");
 }
 function mapUrl(f){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([f.nazev,f.adresa,f.mesto&&!String(f.adresa).includes(f.mesto)?f.mesto:""].filter(Boolean).join(", "))}
 /* ---------- otevírací doba: "Po–Pá 10–20, So zavřeno", "denně 11–22 (Pá–So do 23)", "sezóna 1. 4.–15. 10.; …" ---------- */
@@ -584,7 +843,7 @@ function parseHours(h){
   let s=String(h),season=null,out=null;
   const sm=s.match(/sezóna\s*(\d{1,2})\.\s*(\d{1,2})\.\s*[–-]\s*(\d{1,2})\.\s*(\d{1,2})\.\s*;?/i);
   if(sm){season=[+sm[2]*100+ +sm[1],+sm[4]*100+ +sm[3]];s=s.replace(sm[0],"")}
-  if(/non-?stop|24\s*\/\s*7|24\s*hodin/i.test(s)) out={sched:Array(7).fill([0,1440]),season};
+  if(/non-?stop|24\s*\/\s*7|24\s*hodin|^\s*0\s*[–-]\s*24\s*$/i.test(s)) out={sched:Array(7).fill([0,1440]),season};
   else if(!/sezónně|dle počasí|za příznivého/i.test(s)){
     s=s.replace(/\(([^)]*)\)/g,", $1").replace(/^(?!denně)[a-zěščřžýáíéůúň]+\s+/,"");
     const tm=x=>{const [a,b]=x.split(":");return +a*60+(+b||0)};
@@ -614,60 +873,133 @@ function isOpen(h,now=new Date()){
   return false;
 }
 function openRank(h){const o=isOpen(h);return o===true?0:o===null?1:2} // otevřeno, neznámo, zavřeno
-function card(f,i){
+
+/* ---------- Nové od minulé návštěvy, Hledá lidi, vzdálenost ---------- */
+const VISIT=(()=>{const v=store.get("visit")||{};const t=today();if(v.cur!==t){v.last=v.cur||"";v.cur=t;store.set("visit",v)}return v})();
+const NEWREF=VISIT.last||"";
+const isNew=f=>!!(NEWREF&&f.pridano&&f.pridano>NEWREF);
+function hiring(f){if(!f.nabira)return null;const [txt,d]=String(f.nabira).split("|").map(x=>x.trim());const iso=isoOf(d||"");
+  if(iso&&daysSince(iso)>60)return null;return {txt:txt||"",d:iso}}
+function km(f){if(!st.near||f.lat==null)return null;const R=6371,r=x=>x*Math.PI/180;const dLa=r(f.lat-st.near.lat),dLo=r(f.lng-st.near.lng);
+  const a=Math.sin(dLa/2)**2+Math.cos(r(st.near.lat))*Math.cos(r(f.lat))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(a))}
+function fmtKm(k){return k<1?Math.round(k*1000/50)*50+" m":(Math.round(k*10)/10).toLocaleString(LOC[st.lang])+" km"}
+function shareUrl(f){return location.origin+location.pathname+"?p="+encodeURIComponent(f.nazev)+"&zdroj=sdileni"}
+function fixHref(f){const subj=`Oprava údajů – ${f.nazev}`;const body=`Dobrý den,\n\nu podniku ${f.nazev} (${f.adresa||""}) v aplikaci Práce napřímo prosím o opravu / doplnění:\n\n[co je špatně nebo co doplnit – telefon, otevírací doba, e-mail, hledáme lidi…]\n\nJsem: [majitel / zaměstnanec / zákazník]\n`;
+  return `mailto:domecekcafe@gmail.com?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`}
+
+const HDAY={uk:{Po:"Пн",Út:"Вт",St:"Ср",Čt:"Чт",Pá:"Пт",So:"Сб",Ne:"Нд",denně:"щодня",zavřeno:"зачинено",nonstop:"цілодобово",sezóna:"сезон",do:"до","po telefonické domluvě":"за телефонною домовленістю"},
+ en:{Po:"Mon",Út:"Tue",St:"Wed",Čt:"Thu",Pá:"Fri",So:"Sat",Ne:"Sun",denně:"daily",zavřeno:"closed",nonstop:"24/7",sezóna:"season",do:"until","po telefonické domluvě":"by phone appointment"}};
+function hoursText(h){const m=HDAY[st.lang];if(!m||!h)return h||"";return String(h).replace(/po telefonické domluvě|denně|zavřeno|nonstop|sezóna|\bdo\b|Po|Út|St|Čt|Pá|So|Ne/g,x=>m[x]||x)}
+function card(f,i,extra){
   const ph=firstPhone(f.telefon);
   const addr=[f.adresa,f.mesto&&f.mesto!==f.oblast&&!String(f.adresa||"").includes(f.mesto)?f.mesto:""].filter(Boolean).join(", ");
   const sluzba=st.mode==="sluzba";
-  const facts=[["Telefon",f.telefon],["E-mail",f.email],["Otevřeno",sluzba?"":f.hodiny]].filter(x=>x[1]);
+  const facts=[[T("fPhone"),f.telefon],[T("fEmail"),f.email],[T("fHours"),sluzba?"":hoursText(f.hodiny)]].filter(x=>x[1]);
   const open=sluzba?isOpen(f.hodiny):null;
-  const hours=sluzba&&f.hodiny?`<div class="hours">${open===null?"":`<span class="state ${open?"open":"closed"}">${open?"Teď otevřeno":"Zavřeno"}</span>`}<span class="txt">${esc(f.hodiny)}</span></div>`:"";
+  const hours=sluzba&&f.hodiny?`<div class="hours">${open===null?"":`<span class="state ${open?"open":"closed"}">${esc(T(open?"openNow":"closed"))}</span>`}<span class="txt">${esc(hoursText(f.hodiny))}</span></div>`:"";
+  const hi=!sluzba?hiring(f):null;
+  const k=km(f);
+  const saved=MO[fkey(f)];
+  const druhLine=st.lang!=="cs"&&f.druh?cap(druhName(f.druh)):f.styl;
   const links=[!sluzba&&f.web?`<a class="link" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(f.web.replace(/^https?:\/\//,""))} ↗</a>`:"",
-    !sluzba&&f.adresa?`<a class="link" href="${mapUrl(f)}" target="_blank" rel="noopener">Ukázat na mapě ↗</a>`:""].filter(Boolean);
-  const more=f.popis||facts.length||links.length;
+    !sluzba&&f.adresa?`<a class="link" href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("showMap"))} ↗</a>`:"",
+    !sluzba?`<a class="link" href="https://www.google.com/search?q=${encodeURIComponent("atmoskop "+f.nazev)}" target="_blank" rel="noopener" data-ev="atmoskop">${esc(T("atmo"))} ↗</a>`:"",
+    `<button class="link linkbtn" data-share="${i}">${esc(T("share"))}</button>`,
+    `<a class="link" href="${fixHref(f)}" data-ev="opravit-udaje">${esc(T("fix"))}</a>`].filter(Boolean);
+  const tags=[isNew(f)?`<span class="tag new">${esc(T("newTag"))}</span>`:"",hi?`<span class="tag hire">${esc(T("hiring"))}</span>`:"",
+    /částečně|neověřeno/i.test(f.overeno||"")?`<span class="tag" title="${esc(T("incompleteT"))}">${esc(T("incomplete"))}</span>`:""].filter(Boolean).join("");
+  const stLine=saved&&!sluzba&&!extra&&saved.s!=="ulozeno"?`<div class="mstate">✓ ${esc(T("st_"+saved.s))} · ${esc(fmtDate(saved.d))}</div>`:"";
   return `<article class="card">
-    <div class="top"><div><h3>${esc(f.nazev)}</h3>${f.styl?`<div class="meta">${esc(f.styl)}</div>`:""}${addr?`<div class="addr">${esc(addr)}</div>`:""}${hours}</div>
-    ${/částečně|neověřeno/i.test(f.overeno||"")?`<span class="tag" title="Některé údaje chybí">Neúplné</span>`:""}</div>
-    ${more?`<details class="more"><summary>Podrobnosti</summary><div class="inner">
+    <div class="top"><div><h3>${esc(f.nazev)}</h3>${druhLine?`<div class="meta">${esc(druhLine)}</div>`:""}${addr?`<div class="addr">${esc(addr)}${k!=null?` · <span class="dist">${fmtKm(k)}</span>`:""}</div>`:""}${hours}${stLine}</div>
+    <div class="side"><button class="star" data-star="${i}" aria-pressed="${!!saved}" aria-label="${esc(T("save"))}">${saved?"★":"☆"}</button>${tags?`<div class="tags">${tags}</div>`:""}</div></div>
+    ${hi&&hi.txt?`<div class="hire-line">${esc(T("hiringDet",{txt:hi.txt}))}${hi.d?` <span>(${esc(T("checked",{d:fmtDate(hi.d)}))})</span>`:""}</div>`:""}
+    <details class="more"><summary>${esc(T("details"))}</summary><div class="inner">
+      ${st.lang!=="cs"&&f.styl?`<p class="desc">${esc(f.styl)}</p>`:""}
       ${f.popis?`<p class="desc">${esc(f.popis)}</p>`:""}
-      ${facts.length?`<dl class="facts">${facts.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`:""}
-      ${links.join("")}</div></details>`:""}
+      ${facts.length?`<dl class="facts">${facts.map(([kk,v])=>`<div><dt>${esc(kk)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`:""}
+      ${links.join("")}</div></details>
     <div class="actions">
-      <a class="btn primary" ${ph?`href="tel:${ph}"`:'aria-disabled="true"'} data-call="${i}">${ICON.tel} Zavolat</a>
+      <a class="btn primary" ${ph?`href="tel:${ph}"`:'aria-disabled="true"'} data-call="${i}">${ICON.tel} ${esc(T("call"))}</a>
       ${sluzba
-        ?(f.adresa?`<a class="btn" href="${mapUrl(f)}" target="_blank" rel="noopener">Mapa</a>`:`<a class="btn" aria-disabled="true">Mapa</a>`)+(f.web?`<a class="btn soft wide" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">Menu / web ↗</a>`:"")
-        :`<button class="btn" data-mail="${i}">${ICON.mail} Napsat</button>`}
-    </div></article>`;
+        ?(f.adresa?`<a class="btn" href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("map"))}</a>`:`<a class="btn" aria-disabled="true">${esc(T("map"))}</a>`)+(f.web?`<a class="btn soft wide" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(T("menuWeb"))} ↗</a>`:"")
+        :`<button class="btn" data-mail="${i}">${ICON.mail} ${esc(T("write"))}</button>`}
+    </div>${extra||""}</article>`;
 }
+
+/* ---------- mapa (Leaflet + OpenStreetMap, načte se až při prvním otevření) ---------- */
+let LMAP=null,leafletP=null;
+function loadLeaflet(){if(window.L)return Promise.resolve();if(leafletP)return leafletP;
+  leafletP=new Promise((ok,ko)=>{const c=document.createElement("link");c.rel="stylesheet";c.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";document.head.appendChild(c);
+    const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";s.onload=ok;s.onerror=ko;document.head.appendChild(s)});return leafletP}
+async function drawMap(items){
+  const box=$("#map");if(!box)return;
+  try{await loadLeaflet()}catch(e){box.textContent=T("mapNone");return}
+  if(LMAP){LMAP.remove();LMAP=null}
+  const pts=items.filter(([f])=>f.lat!=null);
+  LMAP=L.map(box,{scrollWheelZoom:false});
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(LMAP);
+  const b=[];
+  pts.forEach(([f,i])=>{const ph=firstPhone(f.telefon);
+    const m=L.circleMarker([f.lat,f.lng],{radius:8,weight:2,color:getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()||"#0F6B5C",fillOpacity:.85}).addTo(LMAP);
+    m.bindPopup(`<div class="pop"><b>${esc(f.nazev)}</b>${f.druh?`<span>${esc(cap(druhName(f.druh)))}</span>`:""}${st.mode==="sluzba"&&f.hodiny?`<span>${esc(hoursText(f.hodiny))}</span>`:""}
+      <div class="pop-a">${ph?`<a href="tel:${ph}" data-call="${i}">${esc(T("call"))}</a>`:""}<a href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("navigate"))}</a></div></div>`);
+    b.push([f.lat,f.lng])});
+  if(st.near){L.circleMarker([st.near.lat,st.near.lng],{radius:7,color:"#2563eb",fillColor:"#2563eb",fillOpacity:1}).addTo(LMAP);b.push([st.near.lat,st.near.lng])}
+  if(b.length)LMAP.fitBounds(b,{padding:[30,30],maxZoom:16});else LMAP.setView([49.975,14.394],13);
+}
+
+function toolsHtml(n){return `<div class="tools"><button class="tool" data-near aria-pressed="${!!st.near}">📍 ${esc(T("near"))}</button><button class="tool" data-view="${st.view==="map"?"list":"map"}" aria-pressed="${st.view==="map"}">${st.view==="map"?"☰ "+esc(T("listBtn")):"🗺 "+esc(T("mapBtn"))}</button></div>`}
+
 function render(){
   renderAreas(); renderChips(); renderSugg(); renderHint();
   if(st.obor===AZ&&!hasDruhy()) st.obor="Gastronomie";
   const q=norm(st.q);
   const inArea=firmy.filter(f=>!st.area||f.oblast===st.area);
-  if(st.obor===AZ&&!st.druh&&!q){
-    const c=druhCounts(inArea);
-    $("#count").textContent=`${inArea.length} ${inArea.length===1?"podnik":inArea.length<5&&inArea.length>0?"podniky":"podniků"} celkem`;
-    $("#firmy").innerHTML=`<p class="idx-lead">${c.size} druhů podniků${st.area?" v lokalitě "+esc(shortArea(st.area)):""}. Klepni na druh a zobrazí se podniky.</p>`+(c.size?idxHtml(c,true):`<div class="empty"><strong>Nic nenalezeno</strong>Zkus jinou lokalitu.</div>`);
+  const tot=inArea.length;
+  $("#count").textContent=nT("total",tot);
+  if(LMAP&&(st.view!=="map")){LMAP.remove();LMAP=null}
+  if(st.pin){
+    const items=firmy.map((f,i)=>[f,i]).filter(([f])=>f.nazev===st.pin);
+    $("#firmy").innerHTML=`<div class="druhbar"><button data-unpin="1">← ${esc(T("allFirms"))}</button></div>`+(items.length?`<div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div>`:`<div class="empty">${esc(dataSource==="live"?T("nothing"):T("loading"))}</div>`);
     return;
   }
-  const list=firmy.map((f,i)=>[f,i]).filter(([f])=>(st.obor===AZ||f.obor===st.obor) && (!st.druh||f.druh===st.druh) && (!st.area||f.oblast===st.area) &&
-    (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,f.druh].join(" ")).includes(q)))
-    .sort((a,b)=>(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):0)||ABC.compare(a[0].nazev||"",b[0].nazev||""));
-  const tot=firmy.filter(f=>!st.area||f.oblast===st.area).length;
-  $("#count").textContent=`${tot} ${tot===1?"podnik":tot<5&&tot>0?"podniky":"podniků"} celkem`;
-  const status=`<p class="status">${dataSource==="live"?"Data načtena živě z tabulky":"Data k "+DATA_DATE}</p>`;
-  if(!list.length){
-    if(st.druh||st.obor===AZ){$("#firmy").innerHTML=(st.druh?`<div class="druhbar"><button data-back="1">← Zpět</button><strong>${esc(cap(st.druh))}</strong></div>`:"")+`<div class="empty"><strong>Nic nenalezeno</strong>${st.area?"V této lokalitě zatím nic nemáme. Zkus „Všude“.":"Zkus jiné slovo."}</div>`;return}
-    const none=!firmy.some(f=>f.obor===st.obor);
-    $("#firmy").innerHTML=`<div class="empty"><strong>${none?`Obor ${esc(st.obor)} připravujeme`:st.area&&!st.q?`${esc(st.obor)} v lokalitě ${esc(shortArea(st.area))} zatím nemáme`:"Nic nenalezeno"}</strong>${none?"Další obory přibudou.":st.area&&!st.q?"Databázi postupně doplňujeme. Zkus jiný obor nebo jinou lokalitu.":"Zkus jiné slovo nebo jinou lokalitu."}</div>`;return;
+  if(st.obor===AZ&&!st.druh&&!q&&!st.nove){
+    const c=druhCounts(inArea);
+    $("#firmy").innerHTML=`<p class="idx-lead">${esc(T("idxLead",{n:c.size,a:st.area?T("inArea",{a:shortArea(st.area)}):""}))}</p>`+(c.size?idxHtml(c,true):`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(T("tryArea"))}</div>`);
+    return;
   }
-  const groups={};list.forEach(x=>(groups[x[0].oblast]??=[]).push(x));
-  const ord=areaOrder(firmy.filter(f=>st.obor===AZ||f.obor===st.obor).map(f=>f.oblast));
+  const allObory=st.obor===AZ||st.nove;
+  let list=firmy.map((f,i)=>[f,i]).filter(([f])=>(allObory||f.obor===st.obor) && (!st.druh||f.druh===st.druh) && (!st.area||f.oblast===st.area) && (!st.nove||isNew(f)) &&
+    (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,f.druh,druhName(f.druh)].join(" ")).includes(q)));
+  list.forEach(x=>x[2]=km(x[0]));
+  list.sort((a,b)=>(st.near?(a[2]==null)-(b[2]==null)||(a[2]??0)-(b[2]??0):0)||(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):(!hiring(a[0]))-(!hiring(b[0])))||ABC.compare(a[0].nazev||"",b[0].nazev||""));
+  const status=`<p class="status">${esc(dataSource==="live"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`;
   let top="";
-  if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.obor===AZ?"Všechny druhy":esc(st.obor)}</button><strong>${esc(cap(st.druh))}</strong></div>`;
-  else if(st.obor!==AZ&&!q){const c=druhCounts(inArea.filter(f=>f.obor===st.obor));if(c.size>1)top=`<details class="subidx"><summary>Upřesnit druh (${c.size})</summary>${idxHtml(c,false)}</details>`}
-  $("#firmy").innerHTML=Object.entries(groups).sort((x,y)=>ord.indexOf(x[0])-ord.indexOf(y[0])).map(([a,items])=>
-    `<section class="area"><h2>${esc(shortArea(a))} · ${items.length}</h2><div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div></section>`).join("")+status;
-  if(top) $("#firmy").insertAdjacentHTML("afterbegin",top);
+  if(st.nove) top=`<div class="druhbar"><button data-back="1">← ${esc(T("back"))}</button><strong>${esc(T("newH"))}</strong></div>`;
+  else if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.obor===AZ?esc(T("backAll")):esc(oborName(st.obor))}</button><strong>${esc(cap(druhName(st.druh)))}</strong></div>`;
+  else if(st.obor!==AZ&&!q){const c=druhCounts(inArea.filter(f=>f.obor===st.obor));if(c.size>1)top=`<details class="subidx"><summary>${esc(T("refine",{n:c.size}))}</summary>${idxHtml(c,false)}</details>`}
+  if(!list.length){
+    if(st.druh||st.obor===AZ||st.nove){$("#firmy").innerHTML=top+`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(st.area?T("tryAll"):T("tryWord"))}</div>`;return}
+    const none=!firmy.some(f=>f.obor===st.obor);
+    $("#firmy").innerHTML=`<div class="empty"><strong>${esc(none?T("oborSoon",{o:oborName(st.obor)}):st.area&&!st.q?T("oborNone",{o:oborName(st.obor),a:shortArea(st.area)}):T("nothing"))}</strong>${esc(none?T("oborSoonT"):st.area&&!st.q?T("oborNoneT"):T("tryOther"))}</div>`;return;
+  }
+  top+=toolsHtml(list.length);
+  if(st.near&&list.some(x=>x[2]==null))top+=`<p class="status">${esc(T("nearOn"))}. ${esc(T("nearNoGps"))}</p>`;
+  if(st.view==="map"){
+    const n=list.filter(([f])=>f.lat!=null).length;
+    $("#firmy").innerHTML=top+(n?`<div id="map"></div>${n<list.length?`<p class="status">${esc(T("mapPart",{n,m:list.length}))}</p>`:""}`:`<div class="empty">${esc(T("mapNone"))}</div>`);
+    if(n)drawMap(list);
+    return;
+  }
+  let body;
+  if(st.near) body=`<div class="list">${list.map(([f,i])=>card(f,i)).join("")}</div>`;
+  else{
+    const groups={};list.forEach(x=>(groups[x[0].oblast]??=[]).push(x));
+    const ord=areaOrder(firmy.filter(f=>allObory||f.obor===st.obor).map(f=>f.oblast));
+    body=Object.entries(groups).sort((x,y)=>ord.indexOf(x[0])-ord.indexOf(y[0])).map(([a,items])=>
+      `<section class="area"><h2>${esc(shortArea(a))} · ${items.length}</h2><div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div></section>`).join("");
+  }
+  $("#firmy").innerHTML=top+body+status;
 }
 
 /* ---------- kontakt ---------- */
@@ -682,50 +1014,79 @@ function showSheet(f,m){
   document.querySelector(".sheet-bg")?.remove();
   const has=!!f.email;
   const bg=document.createElement("div");bg.className="sheet-bg";
-  bg.innerHTML=`<div class="sheet" role="dialog" aria-label="Zpráva pro ${esc(f.nazev)}">
-    <h3>${has?"Otevírám Mail…":"Zpráva pro "+esc(f.nazev)}</h3>
-    ${has?`<p class="hint">Adresa: <strong>${esc(f.email)}</strong>. V Mailu přepiš části v [závorkách] a přilož životopis přes sponku. Pokud se Mail neotevřel, zkopíruj text a adresu ručně.</p>`
-      :`<p class="hint">Tahle firma nemá v databázi e-mail. Nejlepší je zavolat, nebo text zkopírovat a poslat přes jejich web či Facebook.</p>`}
-    <div class="field"><label for="msgtxt">Text (můžeš upravit)</label><textarea id="msgtxt">${esc(m.body)}</textarea></div>
+  bg.innerHTML=`<div class="sheet" role="dialog" aria-label="${esc(T("shFor",{n:f.nazev}))}">
+    <h3>${has?esc(T("shOpening")):esc(T("shFor",{n:f.nazev}))}</h3>
+    ${has?`<p class="hint">${T("shHas",{e:esc(f.email)})}</p>`:`<p class="hint">${esc(T("shNo"))}</p>`}
+    <div class="field"><label for="msgtxt">${esc(T("shText"))}</label><textarea id="msgtxt" lang="cs">${esc(m.body)}</textarea></div>
     <div class="actions">
-      ${has?`<a class="btn primary" id="sendmail" href="${mailHref(f,m.subj,m.body)}">${ICON.mail} Otevřít v Mailu</a>`:""}
-      <button class="btn${has?"":" primary"}" id="copymsg">Zkopírovat text</button>
-      ${has?`<button class="btn wide" id="copyaddr">Zkopírovat adresu</button>`:""}
-      <button class="btn wide" id="othertpl">Vybrat jiný text</button>
+      ${has?`<a class="btn primary" id="sendmail" href="${mailHref(f,m.subj,m.body)}">${ICON.mail} ${esc(T("shOpen"))}</a>`:""}
+      <button class="btn${has?"":" primary"}" id="copymsg">${esc(T("shCopy"))}</button>
+      ${has?`<button class="btn wide" id="copyaddr">${esc(T("shAddr"))}</button>`:""}
+      <button class="btn wide" id="othertpl">${esc(T("shOther"))}</button>
     </div>
-    <button class="btn" id="closesheet">Zavřít</button></div>`;
+    <button class="btn" id="closesheet">${esc(T("close"))}</button></div>`;
   document.body.appendChild(bg);
   const ta=bg.querySelector("#msgtxt");
   ta.addEventListener("input",()=>{const a=bg.querySelector("#sendmail");if(a)a.href=mailHref(f,m.subj,ta.value)});
-  bg.querySelector("#copymsg").onclick=async()=>{if(!await copy(ta.value)){ta.select();toast("Text je označený – zkopíruj ho")}};
-  bg.querySelector("#copyaddr")?.addEventListener("click",()=>copy(f.email,"Adresa zkopírována"));
+  bg.querySelector("#copymsg").onclick=async()=>{if(!await copy(ta.value)){ta.select();toast(T("selected"))}};
+  bg.querySelector("#copyaddr")?.addEventListener("click",()=>copy(f.email,T("addrCopied")));
   bg.querySelector("#othertpl").onclick=()=>{bg.remove();st.sec="email";show("navody")};
   bg.querySelector("#closesheet").onclick=()=>bg.remove();
   bg.addEventListener("click",e=>{if(e.target===bg)bg.remove()});
 }
+function autoLog(f,s){if(st.mode!=="prace")return;if(setStav(f,s,true)){toast(T("autoSaved",{s:T("st_"+s)}));if(!$("#view-firmy").hidden)setTimeout(render,0)}}
+async function shareFirm(f){const url=shareUrl(f),title=f.nazev,text=T("shareTxt",{n:f.nazev});track("sdilet");
+  if(navigator.share){try{await navigator.share({title,text,url});return}catch(e){if(e&&e.name==="AbortError")return}}
+  copy(url,T("linkCopied"))}
 
 /* ---------- události ---------- */
-$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.druh="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();window.scrollTo(0,0)});
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.druh="";st.nove=false;st.pin="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();window.scrollTo(0,0)});
 $("#sugg").addEventListener("click",e=>{const b=e.target.closest("[data-druh]");if(b)pickDruh(b.dataset.druh,"hledani")});
 $("#area").addEventListener("change",e=>{st.area=e.target.value;store.set("area",st.area);store.set("areaPicked",true);render()});
-$("#q").addEventListener("input",e=>{st.q=e.target.value;if(st.druh&&st.q)st.druh="";render()});
+$("#q").addEventListener("input",e=>{st.q=e.target.value;if(st.druh&&st.q)st.druh="";st.pin="";render()});
+function cardClick(e,inMoje){
+  const m=e.target.closest("[data-mail]");if(m){const f=firmy[+m.dataset.mail];autoLog(f,"napsano");compose(f);if(inMoje)renderMoje();return true}
+  const t=e.target.closest("[data-call]");if(t){track("zavolat");const f=firmy[+t.dataset.call];const ph=firstPhone(f.telefon);if(ph)copy(ph,T("numCopied"));autoLog(f,"volano");if(inMoje)setTimeout(renderMoje,0);return true}
+  const s=e.target.closest("[data-star]");if(s){toggleSave(firmy[+s.dataset.star]);inMoje?renderMoje():render();return true}
+  const sh=e.target.closest("[data-share]");if(sh){shareFirm(firmy[+sh.dataset.share]);return true}
+  const ev=e.target.closest("[data-ev]");if(ev){track(ev.dataset.ev);return true}
+  return false;
+}
 $("#firmy").addEventListener("click",e=>{
   const dz=e.target.closest("[data-druh]");if(dz){if(st.obor===AZ)pickDruh(dz.dataset.druh,"rejstrik");else{st.druh=dz.dataset.druh;track("druh-"+st.druh);render();window.scrollTo(0,0)}return}
-  if(e.target.closest("[data-back]")){st.druh="";render();window.scrollTo(0,0);return}
-  const m=e.target.closest("[data-mail]");if(m){compose(firmy[+m.dataset.mail]);return}
-  const t=e.target.closest("[data-call]");if(t){track("zavolat");const ph=firstPhone(firmy[+t.dataset.call].telefon);if(ph)copy(ph,"Číslo zkopírováno")}
+  if(e.target.closest("[data-back]")){if(st.nove)st.nove=false;else st.druh="";render();window.scrollTo(0,0);return}
+  if(e.target.closest("[data-unpin]")){st.pin="";history.replaceState(null,"",location.pathname);render();return}
+  if(e.target.closest("[data-near]")){
+    if(st.near){st.near=null;render();return}
+    if(!navigator.geolocation){toast(T("nearErr"));return}
+    navigator.geolocation.getCurrentPosition(p=>{st.near={lat:p.coords.latitude,lng:p.coords.longitude};track("v-okoli");render()},()=>toast(T("nearErr")),{enableHighAccuracy:false,timeout:10000,maximumAge:300000});return}
+  const v=e.target.closest("[data-view]");if(v){st.view=v.dataset.view;if(st.view==="map")track("mapa");render();return}
+  cardClick(e,false);
 });
+document.addEventListener("click",e=>{const a=e.target.closest(".pop [data-call]");if(a){track("zavolat");const f=firmy[+a.dataset.call];autoLog(f,"volano")}});
 function show(tab){
-  ["firmy","navody","onas"].forEach(n=>{$("#view-"+n).hidden=n!==tab;$("#tab-"+n).setAttribute("aria-selected",n===tab)});
+  ["firmy","moje","navody","onas"].forEach(n=>{$("#view-"+n).hidden=n!==tab;$("#tab-"+n).setAttribute("aria-selected",n===tab)});
   if(tab==="navody"){renderGuide();track("zalozka-navody",true)}
-  if(tab==="onas") track("zalozka-o-aplikaci",true);
+  if(tab==="moje"){renderMoje();track("zalozka-moje",true)}
+  if(tab==="onas"){renderAbout();track("zalozka-o-aplikaci",true)}
+  if(tab==="firmy")render();
   window.scrollTo(0,0);
 }
-$("#rerun").onclick=()=>{show("firmy");startWizard()};
-$("#tab-firmy").onclick=()=>show("firmy");$("#tab-navody").onclick=()=>show("navody");$("#tab-onas").onclick=()=>show("onas");
+$("#tab-firmy").onclick=()=>show("firmy");$("#tab-moje").onclick=()=>show("moje");$("#tab-navody").onclick=()=>show("navody");$("#tab-onas").onclick=()=>show("onas");
+
+/* ---------- O aplikaci ---------- */
+function renderAbout(){
+  const B=ABOUT_BTN[st.lang]||ABOUT_BTN.cs;
+  const add=`<a class="btn primary" href="mailto:domecekcafe@gmail.com?subject=${encodeURIComponent("Chybí firma – Práce napřímo")}&body=${encodeURIComponent("Dobrý den,\n\nprosím o doplnění firmy do aplikace Práce napřímo:\n\nNázev:\nObor (gastronomie, obchod, služby, doprava, průmysl, zdravotnictví):\nAdresa:\nTelefon:\nFiremní e-mail:\nWeb:\nOtevírací doba:\nKrátký popis:\n")}">${esc(B[0])}</a>`;
+  const fix=`<a class="btn" href="mailto:domecekcafe@gmail.com?subject=${encodeURIComponent("Oprava údajů – Práce napřímo")}&body=${encodeURIComponent("Dobrý den,\n\nu firmy ………… v aplikaci Práce napřímo prosím o opravu / odstranění těchto údajů:\n\n")}">${esc(B[1])}</a>`;
+  const hire=`<a class="btn" href="mailto:domecekcafe@gmail.com?subject=${encodeURIComponent("Hledáme lidi – Práce napřímo")}&body=${encodeURIComponent("Dobrý den,\n\nnaše firma hledá lidi. Prosím o přidání štítku „Hledá lidi“:\n\nNázev firmy:\nAdresa:\nHledané pozice:\nKontakt pro uchazeče (telefon / e-mail):\n")}" data-ev="hledame-lidi">${esc(B[2])}</a>`;
+  $("#about").innerHTML=`<button class="btn soft" id="rerun">${esc(T("rerun"))}</button>`+(ABOUT_T[st.lang]||ABOUT_T.cs).replace("{addBtn}",add).replace("{fixBtn}",fix).replace("{hireBtn}",hire);
+  $("#rerun").onclick=()=>{show("firmy");startWizard()};
+}
 
 /* ---------- živá data z veřejné tabulky ---------- */
 function parseCSV(t){const r=[];let row=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==","){row.push(c);c=""}else if(ch=="\n"){row.push(c);r.push(row);row=[];c=""}else if(ch!="\r")c+=ch}row.push(c);r.push(row);return r}
+function prep(f){const m=String(f.gps||"").match(/(-?\d+(?:\.\d+)?)\s*[,;]\s*(-?\d+(?:\.\d+)?)/);if(m){f.lat=+m[1];f.lng=+m[2]}else{f.lat=null;f.lng=null}f.pridano=isoOf(f.pridano);return f}
 async function loadLive(){
   if(!LIVE_CSV_URL && !SHEET_ID) return;
   try{
@@ -737,21 +1098,24 @@ async function loadLive(){
     if(!res) return;
     const rows=parseCSV(await res.text());
     const h=rows[0].map(x=>norm(x).trim());
-    const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"]};
+    const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"],
+      pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"]};
     const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
     if(ix("nazev")<0) return;
-    const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh"];
-    const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return o});
-    if(data.length){firmy=data;dataSource="live";render()}
+    const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps"];
+    const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return prep(o)});
+    if(data.length){firmy=data;dataSource="live";render();if(!$("#view-moje").hidden)renderMoje();renderHint()}
   }catch(e){/* zůstanou vložená data */}
 }
+firmy.forEach(prep);
 
 /* hlavička: při posouvání dolů se schová hledání, obory zůstanou */
 (()=>{let last=0,lock=0;const hdr=document.querySelector("#view-firmy header");
   const set=c=>{if(hdr.classList.contains("compact")===c)return;hdr.classList.toggle("compact",c);lock=Date.now()+400};
   addEventListener("scroll",()=>{const y=scrollY;
+    if(y<60){set(false);last=y;return}
     if(Date.now()<lock){last=y;return}
-    if(y<60||document.activeElement===$("#q")||document.activeElement===$("#area"))set(false);
+    if(document.activeElement===$("#q")||document.activeElement===$("#area"))set(false);
     else if(y>last+20)set(true);else if(y<last-40)set(false);
     if(Math.abs(y-last)>20)last=y;},{passive:true});})();
 /* ---------- průvodce při první návštěvě + navádění na další krok ---------- */
@@ -759,34 +1123,39 @@ function renderHint(){
   const h=$("#hint"),a=$("#area");
   const need=!st.area&&!store.get("areaPicked")&&!store.get("hintOff");
   a.classList.toggle("nudge",need);
-  if(need){h.innerHTML=`📍 <span><b>Vyber svou lokalitu</b> – ukážeme podniky blízko tebe.</span><button aria-label="Zavřít nápovědu">×</button>`;h.hidden=false}
+  const nNew=NEWREF?firmy.filter(f=>isNew(f)&&(!st.area||f.oblast===st.area)).length:0;
+  if(need){h.innerHTML=`📍 <span>${T("areaHint")}</span><button aria-label="${esc(T("closeHint"))}" data-x="area">×</button>`;h.hidden=false}
+  else if(nNew&&!st.nove&&store.get("newOff")!==NEWREF){h.innerHTML=`🆕 <span>${nT("newHint",nNew)} <a href="#" class="link" data-shownew>${esc(T("newShow"))}</a></span><button aria-label="${esc(T("closeHint"))}" data-x="new">×</button>`;h.hidden=false}
   else{h.hidden=true;h.innerHTML=""}
 }
-$("#hint").addEventListener("click",e=>{if(e.target.closest("button")){store.set("hintOff",true);renderHint()}});
+$("#hint").addEventListener("click",e=>{
+  if(e.target.closest("[data-shownew]")){e.preventDefault();st.nove=true;st.druh="";st.pin="";track("nove-ukazat");render();window.scrollTo(0,0);return}
+  const x=e.target.closest("[data-x]");if(x){if(x.dataset.x==="area")store.set("hintOff",true);else store.set("newOff",NEWREF);renderHint()}});
 const wiz={step:1};
+function langRow(){return `<div class="langs" role="group" aria-label="${esc(T("langQ"))}">${LANGS.map(([c,fl,n])=>`<button data-w="lang" data-v="${c}" aria-pressed="${st.lang===c}" lang="${c}">${fl} ${n}</button>`).join("")}</div>`}
 function wizShow(step){
   wiz.step=step;let el=$("#wiz");
   if(!el){el=document.createElement("div");el.id="wiz";el.className="wiz";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");document.body.appendChild(el);document.body.style.overflow="hidden"}
   const dots=`<div class="wiz-dots">${[1,2,3].map(i=>`<i class="${i<=step?"on":""}"></i>`).join("")}</div>`;
-  let h=`<div class="wiz-top">${dots}<button class="wiz-skip" data-w="skip">Přeskočit</button></div>`;
+  let h=`<div class="wiz-top">${dots}<button class="wiz-skip" data-w="skip">${esc(T("wSkip"))}</button></div>`;
   if(step===1){
-    h+=`<h2>Co hledáš?</h2><p class="lead">Podle toho ti ukážeme ty správné podniky.</p><div class="wiz-grid">
-      <button class="wiz-card prace" data-w="mode" data-v="prace"><span class="ico">💼</span><b>Hledám práci</b><span>Firmy v okolí, kterým můžeš rovnou zavolat nebo napsat. S hotovými texty.</span></button>
-      <button class="wiz-card sluzba" data-w="mode" data-v="sluzba"><span class="ico">🔧</span><b>Hledám službu nebo podnik</b><span>Kde mají otevřeno, kam na jídlo, autoservis, lékař, řemeslník…</span></button></div>`;
+    h+=`${langRow()}<h2>${esc(T("wQ1"))}</h2><p class="lead">${esc(T("wL1"))}</p><div class="wiz-grid">
+      <button class="wiz-card prace" data-w="mode" data-v="prace"><span class="ico">💼</span><b>${esc(T("wPraceT"))}</b><span>${esc(T("wPraceD"))}</span></button>
+      <button class="wiz-card sluzba" data-w="mode" data-v="sluzba"><span class="ico">🔧</span><b>${esc(T("wSluzbaT"))}</b><span>${esc(T("wSluzbaD"))}</span></button></div>`;
   } else if(step===2){
     const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
     const cnt=a=>firmy.filter(f=>f.oblast===a).length;
-    h+=`<h2>Kde?</h2><p class="lead">Vyber lokalitu, kde hledáš. Kdykoli ji pak změníš nahoře.</p><div class="wiz-grid two">
+    h+=`<h2>${esc(T("wQ2"))}</h2><p class="lead">${esc(T("wL2"))}</p><div class="wiz-grid two">
       ${areas.map(a=>`<button class="wiz-opt" data-w="area" data-v="${esc(a)}">${esc(shortArea(a))}<small>${cnt(a)}</small></button>`).join("")}
-      <button class="wiz-opt all" data-w="area" data-v="">Všude<small>${firmy.length}</small></button></div>
-      <button class="wiz-back" data-w="back">← Zpět</button>`;
+      <button class="wiz-opt all" data-w="area" data-v="">${esc(T("all"))}<small>${firmy.length}</small></button></div>
+      <button class="wiz-back" data-w="back">${esc(T("wBack"))}</button>`;
   } else {
     const pool=firmy.filter(f=>!st.area||f.oblast===st.area);
     const ob=OBORY.filter(o=>pool.some(f=>f.obor===o));
-    h+=`<h2>Co tě zajímá?</h2><p class="lead">${st.area?esc(shortArea(st.area))+": ":""}${pool.length} podniků. Vyber obor, nebo projdi všechno podle abecedy.</p><div class="wiz-grid two">
-      ${ob.map(o=>`<button class="wiz-opt" data-w="obor" data-v="${o}">${o}<small>${pool.filter(f=>f.obor===o).length}</small></button>`).join("")}
-      ${hasDruhy()?`<button class="wiz-opt all" data-w="obor" data-v="${AZ}">Vše A–Z (podle druhu)<small>${pool.length}</small></button>`:""}</div>
-      <button class="wiz-back" data-w="back">← Zpět</button>`;
+    h+=`<h2>${esc(T("wQ3"))}</h2><p class="lead">${esc(nT("wL3",pool.length,{a:st.area?shortArea(st.area)+": ":""}))}</p><div class="wiz-grid two">
+      ${ob.map(o=>`<button class="wiz-opt" data-w="obor" data-v="${o}">${esc(oborName(o))}<small>${pool.filter(f=>f.obor===o).length}</small></button>`).join("")}
+      ${hasDruhy()?`<button class="wiz-opt all" data-w="obor" data-v="${AZ}">${esc(T("wAz"))}<small>${pool.length}</small></button>`:""}</div>
+      <button class="wiz-back" data-w="back">${esc(T("wBack"))}</button>`;
   }
   el.innerHTML=h;el.scrollTop=0;
 }
@@ -795,20 +1164,42 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("#wiz [data-w]");if(!b)return;const w=b.dataset.w,v=b.dataset.v;
   if(w==="skip")return wizClose(false);
   if(w==="back")return wizShow(Math.max(1,wiz.step-1));
+  if(w==="lang"){setLang(v);return wizShow(1)}
   if(w==="mode"){st.mode=v;store.set("mode",v);applyMode();track("rezim-"+v);return wizShow(2)}
   if(w==="area"){st.area=v;store.set("area",v);store.set("areaPicked",true);return wizShow(3)}
   if(w==="obor"){st.obor=v;st.druh="";if(v!==AZ)store.set("obor",v);return wizClose(true)}
 });
 function startWizard(){wizShow(1)}
+
+/* ---------- přepínání jazyka ---------- */
+function applyLang(){
+  document.documentElement.lang=st.lang;
+  COLL=new Intl.Collator(st.lang,{sensitivity:"base",numeric:true});
+  document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=T(el.dataset.i18n));
+  $("#q").placeholder=T("search");$("#q").setAttribute("aria-label",T("search"));$("#area").setAttribute("aria-label",T("area"));
+  const L=LANGS.find(x=>x[0]===st.lang);document.querySelectorAll("[data-langbtn]").forEach(b=>{b.textContent=L[1]+" "+L[0].toUpperCase();b.setAttribute("aria-label",T("langQ")+": "+L[2])});
+}
+function setLang(l){if(!I18N[l])return;st.lang=l;store.set("lang",l);track("jazyk-"+l);applyLang();render();
+  if(!$("#view-navody").hidden)renderGuide();if(!$("#view-moje").hidden)renderMoje();if(!$("#view-onas").hidden)renderAbout()}
+document.addEventListener("click",e=>{if(!e.target.closest("[data-langbtn]"))return;
+  document.querySelector(".sheet-bg")?.remove();
+  const bg=document.createElement("div");bg.className="sheet-bg";
+  bg.innerHTML=`<div class="sheet" role="dialog" aria-label="${esc(T("langQ"))}"><h3>${esc(T("langQ"))}</h3>${langRow().replace(/data-w="lang"/g,'data-lang')}<button class="btn" id="closesheet">${esc(T("close"))}</button></div>`;
+  document.body.appendChild(bg);
+  bg.addEventListener("click",e=>{const b=e.target.closest("[data-lang]");if(b){setLang(b.dataset.v);bg.remove();return}if(e.target===bg||e.target.id==="closesheet")bg.remove()});
+});
+
 st.area=typeof store.get("area")==="string"?store.get("area"):"";
 st.obor=OBORY.includes(store.get("obor"))?store.get("obor"):"Gastronomie";
 st.mode=store.get("mode")==="sluzba"?"sluzba":"prace";
+st.lang=(()=>{const s=store.get("lang");if(I18N[s])return s;const n=(navigator.languages||[navigator.language||""]).map(x=>String(x).toLowerCase());return n.some(x=>x.startsWith("uk"))?"uk":"cs"})();
+try{const p=new URLSearchParams(location.search).get("p");if(p)st.pin=p;const l=new URLSearchParams(location.search).get("lang");if(I18N[l]){st.lang=l;store.set("lang",l)}}catch(e){}
 function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode)));
-  const sl=st.mode==="sluzba";document.documentElement.dataset.mode=st.mode;$("#tab-navody").hidden=sl;document.querySelector("nav.tabs").classList.toggle("two",sl);$("#q").placeholder="Hledat…"}
+  const sl=st.mode==="sluzba";document.documentElement.dataset.mode=st.mode;$("#tab-navody").hidden=sl}
 document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
-applyMode();
+applyLang();applyMode();renderTabBadge();
 render(); loadLive();
-const h0=(location.hash||"").slice(1); if(h0==="navody"||h0==="onas") show(h0);
-else if(!store.get("onb")) startWizard();
+const h0=(location.hash||"").slice(1); if(["navody","onas","moje"].includes(h0)) show(h0);
+else if(!store.get("onb")&&!st.pin) startWizard();
 </script>
 </body></html>
