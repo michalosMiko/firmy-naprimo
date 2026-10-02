@@ -424,8 +424,9 @@ $("#guide").addEventListener("click",async e=>{
 /* ---------- seznam firem ---------- */
 function renderChips(){
   $("#chips").innerHTML = OBORY.map(o=>{
-    const n=firmy.filter(f=>f.obor===o).length;
-    return `<button class="chip" aria-pressed="${o===st.obor}" data-o="${o}">${o} <small>${n||"brzy"}</small></button>`}).join("");
+    const all=firmy.filter(f=>f.obor===o);
+    const n=st.area?all.filter(f=>f.oblast===st.area).length:all.length;
+    return `<button class="chip" aria-pressed="${o===st.obor}" data-o="${o}">${o} <small>${all.length?n:"brzy"}</small></button>`}).join("");
 }
 const MOBIL=matchMedia("(max-width:600px)");
 MOBIL.addEventListener("change",()=>{if(typeof firmy!=="undefined")renderAreas()});
@@ -441,7 +442,7 @@ function areaOrder(list){
   return u.sort((a,b)=>rank(a)-rank(b)||(RAZENI_LOKALIT==="relevance"?cnt[b]-cnt[a]:0)||ABC.compare(a,b));
 }
 function renderAreas(){
-  const areas=areaOrder(firmy.filter(f=>f.obor===st.obor).map(f=>f.oblast));
+  const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
   if(!areas.includes(st.area)) st.area="";
   $("#area").innerHTML=`<option value="">${MOBIL.matches?"Lokality":"Všechny lokality"}</option>`+areas.map(a=>`<option ${a===st.area?"selected":""}>${esc(a)}</option>`).join("");
 }
@@ -464,7 +465,7 @@ function card(f,i){
     </div></article>`;
 }
 function render(){
-  renderChips(); renderAreas();
+  renderAreas(); renderChips();
   const q=norm(st.q);
   const list=firmy.map((f,i)=>[f,i]).filter(([f])=>f.obor===st.obor && (!st.area||f.oblast===st.area) &&
     (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis].join(" ")).includes(q)))
@@ -473,7 +474,7 @@ function render(){
   const status=`<p class="status">${dataSource==="live"?"Data načtena živě z tabulky":"Data k "+DATA_DATE}</p>`;
   if(!list.length){
     const none=!firmy.some(f=>f.obor===st.obor);
-    $("#firmy").innerHTML=`<div class="empty"><strong>${none?`Obor ${esc(st.obor)} připravujeme`:"Nic nenalezeno"}</strong>${none?"Zatím jsou v aplikaci podniky z gastronomie. Další obory přibudou.":"Zkus jiné slovo nebo jinou lokalitu."}</div>`;return;
+    $("#firmy").innerHTML=`<div class="empty"><strong>${none?`Obor ${esc(st.obor)} připravujeme`:st.area&&!st.q?`${esc(st.obor)} v lokalitě ${esc(st.area)} zatím nemáme`:"Nic nenalezeno"}</strong>${none?"Další obory přibudou.":st.area&&!st.q?"Databázi postupně doplňujeme. Zkus jiný obor nebo jinou lokalitu.":"Zkus jiné slovo nebo jinou lokalitu."}</div>`;return;
   }
   const groups={};list.forEach(x=>(groups[x[0].oblast]??=[]).push(x));
   const ord=areaOrder(firmy.filter(f=>f.obor===st.obor).map(f=>f.oblast));
@@ -516,7 +517,7 @@ function showSheet(f,m){
 }
 
 /* ---------- události ---------- */
-$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.area="";store.set("obor",st.obor);render();window.scrollTo(0,0)});
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;store.set("obor",st.obor);render();window.scrollTo(0,0)});
 $("#area").addEventListener("change",e=>{st.area=e.target.value;render()});
 $("#q").addEventListener("input",e=>{st.q=e.target.value;render()});
 $("#firmy").addEventListener("click",e=>{
