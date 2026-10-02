@@ -430,8 +430,18 @@ function renderChips(){
 const MOBIL=matchMedia("(max-width:600px)");
 MOBIL.addEventListener("change",()=>{if(typeof firmy!=="undefined")renderAreas()});
 const ABC=new Intl.Collator("cs",{sensitivity:"base",numeric:true});
+/* Pořadí lokalit: nejdřív NAHORU (v tomto pořadí), pak podle počtu podniků (nejplnější první).
+   Až budou lokality zaplněné, přepni RAZENI_LOKALIT na "abeceda". */
+const NAHORU=["Praha - Zbraslav"];
+const RAZENI_LOKALIT="relevance"; // "relevance" nebo "abeceda"
+function areaOrder(list){
+  const cnt={};list.forEach(a=>cnt[a]=(cnt[a]||0)+1);
+  const u=Object.keys(cnt);
+  const rank=a=>{const i=NAHORU.indexOf(a);return i<0?NAHORU.length:i};
+  return u.sort((a,b)=>rank(a)-rank(b)||(RAZENI_LOKALIT==="relevance"?cnt[b]-cnt[a]:0)||ABC.compare(a,b));
+}
 function renderAreas(){
-  const areas=[...new Set(firmy.filter(f=>f.obor===st.obor).map(f=>f.oblast))].sort(ABC.compare);
+  const areas=areaOrder(firmy.filter(f=>f.obor===st.obor).map(f=>f.oblast));
   if(!areas.includes(st.area)) st.area="";
   $("#area").innerHTML=`<option value="">${MOBIL.matches?"Lokality":"Všechny lokality"}</option>`+areas.map(a=>`<option ${a===st.area?"selected":""}>${esc(a)}</option>`).join("");
 }
@@ -458,7 +468,7 @@ function render(){
   const q=norm(st.q);
   const list=firmy.map((f,i)=>[f,i]).filter(([f])=>f.obor===st.obor && (!st.area||f.oblast===st.area) &&
     (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis].join(" ")).includes(q)))
-    .sort((a,b)=>ABC.compare(a[0].oblast||"",b[0].oblast||"")||ABC.compare(a[0].nazev||"",b[0].nazev||""));
+    .sort((a,b)=>ABC.compare(a[0].nazev||"",b[0].nazev||""));
   $("#count").textContent=`${list.length} ${list.length===1?"firma":list.length<5&&list.length>0?"firmy":"firem"}`;
   const status=`<p class="status">${dataSource==="live"?"Data načtena živě z tabulky":"Data k "+DATA_DATE}</p>`;
   if(!list.length){
@@ -466,7 +476,8 @@ function render(){
     $("#firmy").innerHTML=`<div class="empty"><strong>${none?`Obor ${esc(st.obor)} připravujeme`:"Nic nenalezeno"}</strong>${none?"Zatím jsou v aplikaci podniky z gastronomie. Další obory přibudou.":"Zkus jiné slovo nebo jinou lokalitu."}</div>`;return;
   }
   const groups={};list.forEach(x=>(groups[x[0].oblast]??=[]).push(x));
-  $("#firmy").innerHTML=Object.entries(groups).map(([a,items])=>
+  const ord=areaOrder(firmy.filter(f=>f.obor===st.obor).map(f=>f.oblast));
+  $("#firmy").innerHTML=Object.entries(groups).sort((x,y)=>ord.indexOf(x[0])-ord.indexOf(y[0])).map(([a,items])=>
     `<section class="area"><h2>${esc(a)} · ${items.length}</h2><div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div></section>`).join("")+status;
 }
 
