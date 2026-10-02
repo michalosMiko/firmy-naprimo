@@ -371,10 +371,12 @@ function renderChips(){
     const n=firmy.filter(f=>f.obor===o).length;
     return `<button class="chip" aria-pressed="${o===st.obor}" data-o="${o}">${o} <small>${n||"brzy"}</small></button>`}).join("");
 }
+const MOBIL=matchMedia("(max-width:600px)");
+MOBIL.addEventListener("change",()=>{if(typeof firmy!=="undefined")renderAreas()});
 function renderAreas(){
   const areas=[...new Set(firmy.filter(f=>f.obor===st.obor).map(f=>f.oblast))];
   if(!areas.includes(st.area)) st.area="";
-  $("#area").innerHTML=`<option value="">Všechny lokality</option>`+areas.map(a=>`<option ${a===st.area?"selected":""}>${esc(a)}</option>`).join("");
+  $("#area").innerHTML=`<option value="">${MOBIL.matches?"Lokality":"Všechny lokality"}</option>`+areas.map(a=>`<option ${a===st.area?"selected":""}>${esc(a)}</option>`).join("");
 }
 function card(f,i){
   const ph=firstPhone(f.telefon);
