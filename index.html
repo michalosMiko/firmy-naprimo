@@ -32,6 +32,9 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .search input,.search select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
 .search input{flex:1}
 .search select{flex:0 1 42%}
+.mode{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.mode button{border:0;background:none;border-radius:9px;padding:8px 6px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer}
+.mode button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:14px;font-weight:500;cursor:pointer;display:flex;gap:6px;align-items:center}
@@ -104,6 +107,10 @@ details.qa p{margin:8px 0 0}
 <div id="view-firmy">
 <header>
   <div class="brand"><h1>Práce napřímo</h1><span class="count" id="count"></span></div>
+  <div class="mode" role="group" aria-label="Co hledáte">
+    <button type="button" data-mode="prace" aria-pressed="true">Hledám práci</button>
+    <button type="button" data-mode="sluzba" aria-pressed="false">Hledám službu / info</button>
+  </div>
   <div class="search">
     <input id="q" type="search" placeholder="Hledat název, ulici, styl…" aria-label="Hledat">
     <select id="area" aria-label="Lokalita"></select>
@@ -133,7 +140,9 @@ details.qa p{margin:8px 0 0}
 // Kód z GoatCounteru: když je tvoje adresa https://pracenaprimo.goatcounter.com, napiš sem "pracenaprimo".
 const GOATCOUNTER = "pracenaprimo";
 // Veřejná tabulka s daty pro aplikaci (sdílení: Kdokoli s odkazem – čtenář).
-const SHEET_ID = "1laMArNns4afcvYHuNxF4RAIwrSLbiV0tg-Hcx_pN17o";
+const SHEET_ID = "1GiIxm_gEKfYM82QSHuPecCf0qYN57bqg6slXTOyhVO0";
+// Zveřejněné CSV veřejné tabulky (Soubor → Sdílet → Publikovat na webu → CSV). Má přednost před SHEET_ID.
+const LIVE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQy_EvO1KH-lHdOxbUpwskInMKIPH3_ljJEx5u6ukbyCr0xNijowDBu6DdddoKnSPB6pW11B3xESr_7/pub?output=csv";
 const DATA_DATE = "2. 10. 2026";
 /* ========================================== */
 
@@ -142,7 +151,7 @@ const OBORY = ["Gastronomie","Obchod","Služby","Doprava","Průmysl","Zdravotnic
 
 let firmy = EMBEDDED.slice();
 let dataSource = "embedded";
-const st = {obor:"Gastronomie", area:"", q:"", sec:"email"};
+const st = {obor:"Gastronomie", area:"", q:"", sec:"email", mode:"prace"};
 const $ = s => document.querySelector(s);
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
@@ -378,19 +387,22 @@ function renderAreas(){
   if(!areas.includes(st.area)) st.area="";
   $("#area").innerHTML=`<option value="">${MOBIL.matches?"Lokality":"Všechny lokality"}</option>`+areas.map(a=>`<option ${a===st.area?"selected":""}>${esc(a)}</option>`).join("");
 }
+function mapUrl(f){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([f.nazev,f.adresa,f.mesto&&!String(f.adresa).includes(f.mesto)?f.mesto:""].filter(Boolean).join(", "))}
 function card(f,i){
   const ph=firstPhone(f.telefon);
   const facts=[["Adresa",[f.adresa,f.mesto&&f.mesto!==f.oblast&&!String(f.adresa||"").includes(f.mesto)?f.mesto:""].filter(Boolean).join(", ")],["Telefon",f.telefon],["E-mail",f.email],["Otevřeno",f.hodiny]].filter(x=>x[1]);
   return `<article class="card">
     <div class="top"><div><h3>${esc(f.nazev)}</h3>${f.styl?`<div class="meta">${esc(f.styl)}</div>`:""}</div>
-    ${f.overeno==="částečně"?`<span class="tag" title="Některé údaje chybí">Neúplné</span>`:""}</div>
+    ${/částečně|neověřeno/i.test(f.overeno||"")?`<span class="tag" title="Některé údaje chybí">Neúplné</span>`:""}</div>
     ${f.popis?`<p class="desc">${esc(f.popis)}</p>`:""}
     <dl class="facts">${facts.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
     ${f.web?`<a class="link" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(f.web.replace(/^https?:\/\//,""))} ↗</a>`:""}
-    ${f.adresa?`<a class="link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([f.nazev,f.adresa,f.mesto&&!String(f.adresa).includes(f.mesto)?f.mesto:""].filter(Boolean).join(", "))}" target="_blank" rel="noopener">Ukázat na mapě ↗</a>`:""}
+    ${f.adresa?`<a class="link" href="${mapUrl(f)}" target="_blank" rel="noopener">Ukázat na mapě ↗</a>`:""}
     <div class="actions">
       <a class="btn primary" ${ph?`href="tel:${ph}"`:'aria-disabled="true"'} data-call="${i}">${ICON.tel} Zavolat</a>
-      <button class="btn" data-mail="${i}">${ICON.mail} Napsat</button>
+      ${st.mode==="sluzba"
+        ?(f.adresa?`<a class="btn" href="${mapUrl(f)}" target="_blank" rel="noopener">Mapa</a>`:(f.web?`<a class="btn" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">Web</a>`:`<a class="btn" aria-disabled="true">Mapa</a>`))
+        :`<button class="btn" data-mail="${i}">${ICON.mail} Napsat</button>`}
     </div></article>`;
 }
 function render(){
@@ -461,13 +473,18 @@ $("#tab-firmy").onclick=()=>show("firmy");$("#tab-navody").onclick=()=>show("nav
 /* ---------- živá data z veřejné tabulky ---------- */
 function parseCSV(t){const r=[];let row=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==","){row.push(c);c=""}else if(ch=="\n"){row.push(c);r.push(row);row=[];c=""}else if(ch!="\r")c+=ch}row.push(c);r.push(row);return r}
 async function loadLive(){
-  if(!SHEET_ID) return;
+  if(!LIVE_CSV_URL && !SHEET_ID) return;
   try{
-    const ctl=new AbortController();setTimeout(()=>ctl.abort(),6000);
-    const res=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`,{signal:ctl.signal});
-    if(!res.ok) return;
+    const ctl=new AbortController();setTimeout(()=>ctl.abort(),10000);
+    let res=null;
+    for(const u of [LIVE_CSV_URL, SHEET_ID&&`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`].filter(Boolean)){
+      try{const r=await fetch(u,{signal:ctl.signal,cache:"no-store"});if(r.ok&&!/^\s*</.test(await r.clone().text())){res=r;break}}catch(e){}
+    }
+    if(!res) return;
     const rows=parseCSV(await res.text());
-    const h=rows[0].map(x=>norm(x).trim());const ix=k=>h.indexOf(k);
+    const h=rows[0].map(x=>norm(x).trim());
+    const AL={oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"]};
+    const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
     if(ix("nazev")<0) return;
     const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno"];
     const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return o});
@@ -476,6 +493,10 @@ async function loadLive(){
 }
 
 st.obor=OBORY.includes(store.get("obor"))?store.get("obor"):"Gastronomie";
+st.mode=store.get("mode")==="sluzba"?"sluzba":"prace";
+function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode)));$("#q").placeholder=st.mode==="sluzba"?"Hledat službu, název, ulici…":"Hledat název, ulici, styl…"}
+document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
+applyMode();
 render(); loadLive();
 const h0=(location.hash||"").slice(1); if(h0==="navody") show("navody");
 </script>
