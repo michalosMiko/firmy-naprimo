@@ -107,7 +107,7 @@ details.subidx{background:var(--surface);border:1px solid var(--line);border-rad
 details.subidx summary{cursor:pointer;font-weight:600;font-size:14px}
 details.subidx .idx{margin-top:10px}
 
-main{padding:12px 16px calc(96px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:720px;margin:0 auto}
+main{padding:12px 16px calc(132px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:720px;margin:0 auto}
 .area h2{font-family:var(--display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:4px 2px 8px}
 .list{display:grid;gap:10px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;min-width:0}
@@ -1113,7 +1113,8 @@ firmy.forEach(prep);
 (()=>{let last=0,lock=0;const hdr=document.querySelector("#view-firmy header");
   const set=c=>{if(hdr.classList.contains("compact")===c)return;hdr.classList.toggle("compact",c);lock=Date.now()+400};
   addEventListener("scroll",()=>{const y=scrollY;
-    if(y<60){set(false);last=y;return}
+    /* krátká stránka: schování hlavičky by zkrátilo stránku a ta by „skákala“ zpět – nech hlavičku být */
+    if(y<60||document.documentElement.scrollHeight-innerHeight<320){set(false);last=y;return}
     if(Date.now()<lock){last=y;return}
     if(document.activeElement===$("#q")||document.activeElement===$("#area"))set(false);
     else if(y>last+20)set(true);else if(y<last-40)set(false);
