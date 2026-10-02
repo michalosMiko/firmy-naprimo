@@ -195,6 +195,9 @@ details.qa p{margin:8px 0 0}
 .pop{display:grid;gap:3px;font-family:var(--body);font-size:13.5px}
 .pop b{font-size:14.5px}.pop span{color:#5E6B68}
 .pop-a{display:flex;gap:12px;margin-top:4px}.pop-a a{font-weight:700}
+.mk{width:34px;height:34px;display:grid;place-items:center;background:transparent!important;border:0!important}.mk i{width:16px;height:16px;border-radius:50%;background:var(--accent);border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);display:block}.mk.me i{background:#2563eb;width:14px;height:14px}
+.leaflet-tooltip.lbl{background:rgba(255,255,255,.92);border:0;box-shadow:0 1px 3px rgba(0,0,0,.25);padding:1px 6px;font:600 11.5px/1.3 var(--body);color:#1a1f1e;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.leaflet-tooltip.lbl::before{display:none}
+#map.zoomed-out .leaflet-tooltip.lbl{display:none}
 .mpanel{display:grid;gap:8px;border-top:1px dashed var(--line);padding-top:10px}
 .mst{display:flex;flex-wrap:wrap;gap:6px}
 .mst button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer}
@@ -292,7 +295,7 @@ cs:{
  mojeLeadS:"Podniky, které sis uložil hvězdičkou.",mojeEmpty:"Zatím tu nic nemáš",mojeEmptyT:"Klepni na hvězdičku u podniku. Když firmě zavoláš nebo napíšeš, zapíše se sem sama i s datem.",
  last:"Naposledy {d}",history:"Historie",note:"Poznámka (s kým jsi mluvil, co řekli…)",gone:"Tento podnik už v seznamu není.",remind:"Uplynul týden – ozvi se znovu",remindBtn:"Text na připomenutí",remove:"Odebrat",
  near:"Nejblíž mně",nearOn:"Řazeno podle vzdálenosti",nearErr:"Polohu se nepodařilo zjistit. Povol ji v nastavení prohlížeče.",nearNoGps:"U části podniků zatím polohu nemáme, jsou na konci.",
- mapBtn:"Mapa",listBtn:"Seznam",mapNone:"Pro tento výběr zatím nemáme polohy podniků. Postupně doplňujeme.",mapPart:"Na mapě {n} z {m} podniků (u ostatních zatím chybí poloha).",navigate:"Navigovat",
+ mapBtn:"Mapa",listBtn:"Seznam",mapHint:"Klepněte na tečku: ukáže se název podniku a tlačítka Zavolat a Navigovat. Po přiblížení se u teček ukážou názvy.",youHere:"Tady jste",mapNone:"Pro tento výběr zatím nemáme polohy podniků. Postupně doplňujeme.",mapPart:"Na mapě {n} z {m} podniků (u ostatních zatím chybí poloha).",navigate:"Navigovat",
  newHint:"Od tvé minulé návštěvy přibylo: <b>{n}</b>.",newShow:"Ukázat",newH:"Nové od minulé návštěvy",back:"Zpět",backAll:"Všechny druhy",allFirms:"Všechny podniky",
  areaHint:"<b>Vyber svou lokalitu</b> – ukážeme podniky blízko tebe.",closeHint:"Zavřít nápovědu",
  idxLead:"{n} druhů podniků{a}. Klepni na druh a zobrazí se podniky.",inArea:" v lokalitě {a}",nothing:"Nic nenalezeno",tryArea:"Zkus jinou lokalitu.",tryAll:"V této lokalitě zatím nic nemáme. Zkus „Všude“.",tryWord:"Zkus jiné slovo.",
@@ -320,7 +323,7 @@ uk:{
  mojeLeadS:"Фірми, які ви зберегли зірочкою.",mojeEmpty:"Тут поки нічого немає",mojeEmptyT:"Натисніть зірочку біля фірми. Коли ви подзвоните чи напишете фірмі, вона з'явиться тут сама разом із датою.",
  last:"Останній раз {d}",history:"Історія",note:"Нотатка (з ким говорили, що сказали…)",gone:"Цієї фірми вже немає в списку.",remind:"Минув тиждень – нагадайте про себе",remindBtn:"Текст нагадування",remove:"Видалити",
  near:"Найближче до мене",nearOn:"Відсортовано за відстанню",nearErr:"Не вдалося визначити місцезнаходження. Дозвольте його в налаштуваннях браузера.",nearNoGps:"Для частини фірм ми ще не маємо розташування, вони в кінці.",
- mapBtn:"Мапа",listBtn:"Список",mapNone:"Для цього вибору ще немає розташування фірм. Поступово доповнюємо.",mapPart:"На мапі {n} з {m} фірм (для інших поки немає розташування).",navigate:"Маршрут",
+ mapBtn:"Мапа",listBtn:"Список",mapHint:"Натисніть на точку: з’явиться назва фірми та кнопки «Подзвонити» і «Маршрут». Після наближення біля точок з’являться назви.",youHere:"Ви тут",mapNone:"Для цього вибору ще немає розташування фірм. Поступово доповнюємо.",mapPart:"На мапі {n} з {m} фірм (для інших поки немає розташування).",navigate:"Маршрут",
  newHint:"З вашого минулого візиту додано: <b>{n}</b>.",newShow:"Показати",newH:"Нове з минулого візиту",back:"Назад",backAll:"Усі види",allFirms:"Усі фірми",
  areaHint:"<b>Оберіть свій район</b> – покажемо фірми поруч із вами.",closeHint:"Закрити підказку",
  idxLead:"{n} видів підприємств{a}. Натисніть на вид, щоб побачити фірми.",inArea:" у районі {a}",nothing:"Нічого не знайдено",tryArea:"Спробуйте інший район.",tryAll:"У цьому районі поки нічого немає. Спробуйте «Усюди».",tryWord:"Спробуйте інше слово.",
@@ -349,7 +352,7 @@ en:{
  mojeLeadS:"Businesses you saved with the star.",mojeEmpty:"Nothing here yet",mojeEmptyT:"Tap the star on a business. When you call or write to a business, it appears here automatically with the date.",
  last:"Last {d}",history:"History",note:"Note (who you spoke to, what they said…)",gone:"This business is no longer in the list.",remind:"A week has passed – follow up",remindBtn:"Follow-up text",remove:"Remove",
  near:"Nearest to me",nearOn:"Sorted by distance",nearErr:"Couldn't get your location. Allow it in your browser settings.",nearNoGps:"Some businesses don't have a location yet; they are at the end.",
- mapBtn:"Map",listBtn:"List",mapNone:"No business locations for this selection yet. We're adding them.",mapPart:"{n} of {m} businesses on the map (others have no location yet).",navigate:"Directions",
+ mapBtn:"Map",listBtn:"List",mapHint:"Tap a dot to see the business name with Call and Directions buttons. Zoom in to see names next to the dots.",youHere:"You are here",mapNone:"No business locations for this selection yet. We're adding them.",mapPart:"{n} of {m} businesses on the map (others have no location yet).",navigate:"Directions",
  newHint:"Added since your last visit: <b>{n}</b>.",newShow:"Show",newH:"New since your last visit",back:"Back",backAll:"All types",allFirms:"All businesses",
  areaHint:"<b>Choose your area</b> – we'll show businesses near you.",closeHint:"Close hint",
  idxLead:"{n} types of business{a}. Tap a type to see the businesses.",inArea:" in {a}",nothing:"Nothing found",tryArea:"Try another area.",tryAll:"Nothing in this area yet. Try “Everywhere”.",tryWord:"Try another word.",
@@ -940,12 +943,17 @@ async function drawMap(items){
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(LMAP);
   const b=[];
   pts.forEach(([f,i])=>{const ph=firstPhone(f.telefon);
-    const m=L.circleMarker([f.lat,f.lng],{radius:8,weight:2,color:getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()||"#0F6B5C",fillOpacity:.85}).addTo(LMAP);
+    /* tečka jako HTML prvek 34×34 px – na iPhonu se na ni dá spolehlivě klepnout */
+    const m=L.marker([f.lat,f.lng],{icon:L.divIcon({className:"mk",html:"<i></i>",iconSize:[34,34],iconAnchor:[17,17],popupAnchor:[0,-10],tooltipAnchor:[8,0]}),title:f.nazev,keyboard:true}).addTo(LMAP);
+    m.bindTooltip(esc(f.nazev),{permanent:true,direction:"right",offset:[-2,-8],className:"lbl"});
     m.bindPopup(`<div class="pop"><b>${esc(f.nazev)}</b>${f.druh?`<span>${esc(cap(druhName(f.druh)))}</span>`:""}${st.mode==="sluzba"&&f.hodiny?`<span>${esc(hoursText(f.hodiny))}</span>`:""}
       <div class="pop-a">${ph?`<a href="tel:${ph}" data-call="${i}">${esc(T("call"))}</a>`:""}<a href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("navigate"))}</a></div></div>`);
     b.push([f.lat,f.lng])});
-  if(st.near){L.circleMarker([st.near.lat,st.near.lng],{radius:7,color:"#2563eb",fillColor:"#2563eb",fillOpacity:1}).addTo(LMAP);b.push([st.near.lat,st.near.lng])}
+  if(st.near){L.marker([st.near.lat,st.near.lng],{icon:L.divIcon({className:"mk me",html:"<i></i>",iconSize:[34,34],iconAnchor:[17,17]}),zIndexOffset:1000}).addTo(LMAP).bindPopup(esc(T("youHere")));b.push([st.near.lat,st.near.lng])}
+  /* názvy u teček jen při přiblížení, jinak by se překrývaly */
+  const lbl=()=>box.classList.toggle("zoomed-out",LMAP.getZoom()<16);LMAP.on("zoomend",lbl);
   if(b.length)LMAP.fitBounds(b,{padding:[30,30],maxZoom:16});else LMAP.setView([49.975,14.394],13);
+  lbl();
 }
 
 function toolsHtml(n){return `<div class="tools"><button class="tool" data-near aria-pressed="${!!st.near}">📍 ${esc(T("near"))}</button><button class="tool" data-view="${st.view==="map"?"list":"map"}" aria-pressed="${st.view==="map"}">${st.view==="map"?"☰ "+esc(T("listBtn")):"🗺 "+esc(T("mapBtn"))}</button></div>`}
@@ -987,7 +995,7 @@ function render(){
   if(st.near&&list.some(x=>x[2]==null))top+=`<p class="status">${esc(T("nearOn"))}. ${esc(T("nearNoGps"))}</p>`;
   if(st.view==="map"){
     const n=list.filter(([f])=>f.lat!=null).length;
-    $("#firmy").innerHTML=top+(n?`<div id="map"></div>${n<list.length?`<p class="status">${esc(T("mapPart",{n,m:list.length}))}</p>`:""}`:`<div class="empty">${esc(T("mapNone"))}</div>`);
+    $("#firmy").innerHTML=top+(n?`<p class="status">${esc(T("mapHint"))}</p><div id="map"></div>${n<list.length?`<p class="status">${esc(T("mapPart",{n,m:list.length}))}</p>`:""}`:`<div class="empty">${esc(T("mapNone"))}</div>`);
     if(n)drawMap(list);
     return;
   }
