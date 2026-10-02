@@ -1,0 +1,732 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style><title>Práce napřímo</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Práce napřímo">
+<meta name="description" content="Oslovte podniky v okolí přímo – telefon, e-mail a hotové texty bez personalistů a inzerátů.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: app shell – sticky header s filtry, seznam karet podniků; záložka Návody s přepínačem bloků a kartami textů ke zkopírování; spodní lišta (Firmy / Návody) */
+:root{
+  --bg:#F3F5F4; --surface:#FFFFFF; --ink:#16211F; --muted:#5E6B68; --line:#DDE3E1;
+  --accent:#0F6B5C; --accent-ink:#FFFFFF; --accent-soft:#DCEFEA; --warn:#9A5B00; --warn-soft:#FBEBD3;
+  --display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1514; --surface:#18201F; --ink:#E8EEEC; --muted:#9AA8A5; --line:#2A3533;
+  --accent:#4FC2AC; --accent-ink:#06201B; --accent-soft:#163A34; --warn:#F2B866; --warn-soft:#3A2A12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1514; --surface:#18201F; --ink:#E8EEEC; --muted:#9AA8A5; --line:#2A3533;
+  --accent:#4FC2AC; --accent-ink:#06201B; --accent-soft:#163A34; --warn:#F2B866; --warn-soft:#3A2A12; color-scheme:dark}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:14px 16px 10px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.search{display:flex;gap:8px}
+.search input,.search select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.search input{flex:1}
+.search select{flex:0 1 40%;font-weight:600}
+.mode{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.mode button{border:0;background:none;border-radius:9px;padding:8px 6px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer}
+.mode button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:14px;font-weight:500;cursor:pointer;display:flex;gap:6px;align-items:center}
+.chip small{color:var(--muted);font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip[aria-pressed="true"] small{color:inherit;opacity:.7}
+.hcollapse{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;max-height:240px;overflow:hidden;transition:max-height .2s ease,opacity .2s ease,margin .2s ease}
+header.compact .hcollapse{max-height:0;opacity:0;margin-bottom:-10px;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.hcollapse{transition:none}}
+.addr{color:var(--muted);font-size:13.5px;margin-top:2px}
+details.more{font-size:13.5px}
+details.more summary{cursor:pointer;color:var(--accent);font-weight:600;list-style:none;display:inline-flex;align-items:center;gap:4px;padding:2px 0}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:"▾";font-size:12px}
+details.more[open] summary::after{content:"▴"}
+details.more .inner{display:grid;gap:8px;margin-top:8px}
+.hours{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;font-size:13.5px;margin-top:4px}
+.hours .txt{color:var(--muted)}
+.state{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.state.open{background:var(--accent-soft);color:var(--accent)}
+.state.closed{background:var(--line);color:var(--muted)}
+nav.tabs.two{grid-template-columns:repeat(2,1fr)}
+.sugg{display:grid;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;margin-top:-4px}
+.sugg button{display:flex;justify-content:space-between;gap:10px;background:none;border:0;border-radius:8px;padding:9px 10px;text-align:left;cursor:pointer;font-size:14.5px}
+.sugg button:hover,.sugg button:focus-visible{background:var(--accent-soft)}
+.sugg small,.idx small{color:var(--muted);font-variant-numeric:tabular-nums}
+.sugg .lbl{font-size:12px;color:var(--muted);padding:4px 10px 2px}
+.chip.az{font-weight:700}
+.idx{column-count:2;column-gap:10px}
+@media (min-width:600px){.idx{column-count:3}}
+.idx h3{font-family:var(--display);font-size:15px;color:var(--accent);margin:10px 2px 4px;break-after:avoid}
+.idx h3:first-child{margin-top:0}
+.idx button{display:flex;width:100%;justify-content:space-between;align-items:baseline;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:0 0 6px;font-size:14px;text-align:left;cursor:pointer;break-inside:avoid}
+.idx button:hover{border-color:var(--accent)}
+.idx-lead{margin:0 2px;color:var(--muted);font-size:13.5px}
+.druhbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.druhbar button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:600;cursor:pointer}
+.druhbar strong{font-size:15px}
+details.subidx{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+details.subidx summary{cursor:pointer;font-weight:600;font-size:14px}
+details.subidx .idx{margin-top:10px}
+
+main{padding:12px 16px calc(96px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:720px;margin:0 auto}
+.area h2{font-family:var(--display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:4px 2px 8px}
+.list{display:grid;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;min-width:0}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.top>div{min-width:0}
+.card h3{margin:0;font-size:17px;font-weight:600;line-height:1.25;text-wrap:balance}
+.meta{color:var(--muted);font-size:13.5px}
+.desc{font-size:14px;margin:0}
+.tag{flex:none;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--warn-soft);color:var(--warn);letter-spacing:.02em}
+.facts{display:grid;gap:3px;font-size:13.5px;margin:0}
+.facts div{display:flex;gap:8px;min-width:0}
+.facts dt{color:var(--muted);flex:0 0 64px}
+.facts dd{margin:0;min-width:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;user-select:text}
+.link{color:var(--accent);font-size:13.5px;text-decoration:none;font-weight:500;overflow-wrap:anywhere}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+.actions .wide{grid-column:1/-1}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;padding:11px 10px;font-weight:600;font-size:14.5px;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-align:center}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.soft{background:var(--accent-soft);border-color:var(--accent-soft);color:var(--ink)}
+.btn[aria-disabled="true"],.btn:disabled{opacity:.45;pointer-events:none}
+.btn svg{width:17px;height:17px;flex:none}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:22px 16px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+.status{font-size:12.5px;color:var(--muted);text-align:center;margin:0}
+
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:6px 16px calc(6px + env(safe-area-inset-bottom,0px))}
+.tab{background:none;border:0;padding:8px;display:grid;justify-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
+.tab svg{width:22px;height:22px}
+.tab[aria-selected="true"]{color:var(--accent)}
+
+/* Návody */
+.ghead{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:var(--bg);padding:14px 16px 10px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;border-bottom:1px solid var(--line)}
+.page-h{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02em;margin:0}
+.lead{margin:0;color:var(--muted)}
+.sec-intro{display:grid;gap:6px}
+.sec-intro h2{font-family:var(--display);font-weight:600;font-size:20px;margin:0;text-wrap:balance}
+.note{background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:13.5px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;min-width:0}
+.item h3{margin:0;font-size:16px;font-weight:600;text-wrap:balance}
+.when{margin:-4px 0 0;font-size:13px;color:var(--muted)}
+.item pre{margin:0;white-space:pre-wrap;font:inherit;font-size:14px;background:var(--bg);border-radius:10px;padding:12px;overflow-wrap:anywhere;user-select:text}
+.item .row{display:flex;gap:8px;flex-wrap:wrap}
+.item .row .btn{flex:1 1 140px}
+.default-badge{font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-left:6px;vertical-align:2px}
+.steps{margin:0;padding-left:22px;display:grid;gap:8px}
+details.qa{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+details.qa summary{cursor:pointer;font-weight:600}
+details.qa p{margin:8px 0 0}
+.about p{margin:0}
+.about .sign{color:var(--muted);font-size:13.5px}
+.about ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.about .soon{font-size:11.5px;font-weight:600;padding:2px 7px;border-radius:999px;background:var(--warn-soft);color:var(--warn);margin-left:4px;vertical-align:1px}
+
+/* sheet */
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:720px;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:12px;max-height:88%;overflow:auto}
+.sheet h3{margin:0;font-family:var(--display);font-size:20px}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+.field{display:grid;gap:5px}
+.field label{font-size:13px;font-weight:600}
+.field textarea{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;min-height:200px;resize:vertical}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:999px;font-size:13.5px;z-index:10;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
+</style></head><body>
+
+<div id="view-firmy">
+<header>
+  <div class="hcollapse">
+  <div class="brand"><h1>Práce napřímo</h1><span class="count" id="count"></span></div>
+  <div class="mode" role="group" aria-label="Co hledáte">
+    <button type="button" data-mode="prace" aria-pressed="true">Hledám práci</button>
+    <button type="button" data-mode="sluzba" aria-pressed="false">Hledám službu / info</button>
+  </div>
+  <div class="search">
+    <input id="q" type="search" placeholder="Hledat…" aria-label="Hledat">
+    <select id="area" aria-label="Lokalita"></select>
+  </div>
+  </div>
+  <div class="sugg" id="sugg" hidden></div>
+  <div class="chips" id="chips" role="toolbar" aria-label="Obory"></div>
+</header>
+<main id="firmy"></main>
+</div>
+
+<div id="view-navody" hidden>
+<div class="ghead">
+  <div class="brand"><h2 class="page-h">Návody</h2></div>
+  <div class="chips" id="gchips" role="toolbar" aria-label="Témata návodů"></div>
+</div>
+<main id="guide"></main>
+</div>
+
+<div id="view-onas" hidden>
+<div class="ghead"><div class="brand"><h2 class="page-h">O aplikaci</h2></div></div>
+<main class="about">
+  <section class="item">
+    <h3>Práce napřímo</h3>
+    <p>Firmy ve vašem okolí s přímým kontaktem. Hledáte práci? Zavolejte nebo napište firmě rovnou, bez inzerátů a agentur. Hledáte službu? Najdete tu obchody, autoservisy, kadeřnictví, dopravu a další služby kolem sebe.</p>
+  </section>
+  <section class="item">
+    <h3>Proč vznikla</h3>
+    <p>Aplikace vznikla, protože jsem sám hledal práci a chtěl jsem firmy oslovovat napřímo.</p>
+    <p class="sign">Michal Mamula, zakladatel projektu Práce napřímo</p>
+  </section>
+  <section class="item">
+    <h3>Kontakt</h3>
+    <p>Dotazy, nápady i chyby pište na <a class="link" href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a>.</p>
+    <div class="row">
+      <a class="btn primary" href="mailto:domecekcafe@gmail.com?subject=Chyb%C3%AD%20firma%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo&body=Dobr%C3%BD%20den%2C%0A%0Apros%C3%ADm%20o%20dopln%C4%9Bn%C3%AD%20firmy%20do%20aplikace%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo%3A%0A%0AN%C3%A1zev%3A%0AObor%20%28gastronomie%2C%20obchod%2C%20slu%C5%BEby%2C%20doprava%2C%20pr%C5%AFmysl%2C%20zdravotnictv%C3%AD%29%3A%0AAdresa%3A%0ATelefon%3A%0AFiremn%C3%AD%20e-mail%3A%0AWeb%3A%0AOtev%C3%ADrac%C3%AD%20doba%3A%0AKr%C3%A1tk%C3%BD%20popis%3A%0A">Chybí tu vaše firma?</a>
+      <a class="btn" href="mailto:domecekcafe@gmail.com?subject=Oprava%20%C3%BAdaj%C5%AF%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo&body=Dobr%C3%BD%20den%2C%0A%0Au%20firmy%20%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%20v%20aplikaci%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo%20pros%C3%ADm%20o%20opravu%20/%20odstran%C4%9Bn%C3%AD%20t%C4%9Bchto%20%C3%BAdaj%C5%AF%3A%0A%0A">Oprava údajů</a>
+    </div>
+  </section>
+  <section class="item">
+    <h3>Pro firmy</h3>
+    <ul>
+      <li><strong>Základní zápis</strong> – zdarma. Stačí napsat přes tlačítko „Chybí tu vaše firma?“.</li>
+      <li><strong>Zvýraznění</strong><span class="soon">připravujeme</span> – firma se ukáže nahoře ve svém oboru a lokalitě, viditelně označená jako „Doporučeno“.</li>
+      <li><strong>Banner</strong><span class="soon">připravujeme</span> – reklamní pruh v aplikaci.</li>
+    </ul>
+    <div class="row"><a class="btn" href="mailto:domecekcafe@gmail.com?subject=Zv%C3%BDrazn%C4%9Bn%C3%AD%20firmy%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo">Mám zájem o zvýraznění</a></div>
+  </section>
+  <section class="item">
+    <h3>Ochrana údajů</h3>
+    <ul>
+      <li>Údaje o firmách pochází z veřejných zdrojů: webů firem, obchodního a živnostenského rejstříku a veřejných katalogů. Zobrazujeme jen firemní kontakty.</li>
+      <li>Chcete své údaje opravit nebo odstranit? Napište nám přes „Oprava údajů“, vyřídíme to.</li>
+      <li>U živnostníků, lékařů a dalších podnikajících osob jména nezobrazujeme. Uvádíme jen druh služby, adresu provozovny a pracovní kontakt.</li>
+      <li>Aplikace nic neukládá ani neodesílá o vás. Texty z Návodů si jen kopírujete do svého e-mailu nebo telefonu.</li>
+      <li>Návštěvnost měříme anonymně přes GoatCounter, bez cookies.</li>
+    </ul>
+  </section>
+</main>
+</div>
+
+<nav class="tabs" role="tablist">
+  <button class="tab" role="tab" id="tab-firmy" aria-selected="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>Firmy</button>
+  <button class="tab" role="tab" id="tab-navody" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 7h6M9 11h6"/></svg>Návody</button>
+  <button class="tab" role="tab" id="tab-onas" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>O aplikaci</button>
+</nav>
+
+<script>
+/* ====== NASTAVENÍ (upravuj jen tady) ====== */
+// Kód z GoatCounteru: když je tvoje adresa https://pracenaprimo.goatcounter.com, napiš sem "pracenaprimo".
+const GOATCOUNTER = "pracenaprimo";
+// Veřejná tabulka s daty pro aplikaci (sdílení: Kdokoli s odkazem – čtenář).
+const SHEET_ID = "1GiIxm_gEKfYM82QSHuPecCf0qYN57bqg6slXTOyhVO0";
+// Zveřejněné CSV veřejné tabulky (Soubor → Sdílet → Publikovat na webu → CSV). Má přednost před SHEET_ID.
+const LIVE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQy_EvO1KH-lHdOxbUpwskInMKIPH3_ljJEx5u6ukbyCr0xNijowDBu6DdddoKnSPB6pW11B3xESr_7/pub?output=csv";
+const DATA_DATE = "2. 10. 2026";
+/* ========================================== */
+
+const EMBEDDED = [{"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Barabizna Restaurant – Café", "adresa": "Pod Špitálem 363, Praha-Zbraslav", "telefon": "608 548 333 / 773 735 765", "email": "barabizna@seznam.cz", "web": "barabizna.cz", "hodiny": "denně 11:00–23:00", "styl": "Mexická, Tex-Mex", "popis": "Velká restaurace se zahradou, svatby a firemní akce", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Zbraslavský Hostinec", "adresa": "U Národní galerie 471, Praha-Zbraslav", "telefon": "608 183 454", "email": "info@zbraslavskyhostinec.cz", "web": "zbraslavskyhostinec.cz", "hodiny": "denně 11:00–23:00", "styl": "Česká kuchyně", "popis": "Tradiční česká kuchyně, tankový Pilsner", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Restaurace U Přístavu", "adresa": "U Malé řeky 623, Praha-Zbraslav", "telefon": "257 923 708", "email": "info@restauraceupristavu.cz", "web": "restauraceupristavu.cz", "hodiny": "Po–Čt 11–23, Pá–So 11–24, Ne 11–21", "styl": "Česká kuchyně", "popis": "Výletní restaurace u řeky, sál na svatby a akce", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Rang De Basanti", "adresa": "Žitavského 496, Praha-Zbraslav", "telefon": "775 999 991", "email": "info@rangdebasanti.cz", "web": "rangdebasanti.cz", "hodiny": "denně 11:00–22:00", "styl": "Indická kuchyně", "popis": "Indická restaurace, rozvoz, catering", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Restaurace Stella", "adresa": "Pod Třešňovkou 234, Praha-Zbraslav", "telefon": "725 327 646", "email": "info@stellazbraslav.cz", "web": "stellazbraslav.cz", "hodiny": "Po–So 11–22, Ne 11–21", "styl": "Burgery, steaky, pasta, pizza", "popis": "Restaurace a pub, rozvoz, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Restaurant Škoda lásky", "adresa": "Zbraslavské náměstí 453, Praha-Zbraslav", "telefon": "257 923 316", "email": "info@skodalasky.cz", "web": "skodalasky.cz", "hodiny": "Út–St 11–22, Čt–So 11–23, Ne 11–21", "styl": "Česká a mezinárodní", "popis": "Salonek, zimní zahrada, zahrádka pro 100 lidí", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Darwin Hotel Restaurant", "adresa": "U Národní galerie 471, Praha-Zbraslav", "telefon": "776 639 196", "email": "info@darwinhotel.cz", "web": "darwinhotel.cz", "hodiny": "Po–Pá 7–23, So–Ne 11–23", "styl": "Hotelová restaurace", "popis": "4* hotel se dvěma restauracemi", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Babá cucina", "adresa": "U Národní galerie 482, Praha-Zbraslav", "telefon": "771 148 480", "email": "info@babacucina.cz", "web": "babacucina.cz", "hodiny": "denně 11:00–23:00", "styl": "Italská / mezinárodní", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Hostinec U Bláhů", "adresa": "Lipenecká 6, Praha-Zbraslav", "telefon": "608 122 794", "email": "", "web": "hostinecublahu.cz", "hodiny": "denně 11:00–22:00", "styl": "Česká hospoda", "popis": "Tankový Staropramen, hotovky, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Restaurace U Žemličků", "adresa": "Vilímkova 225, Praha-Zbraslav", "telefon": "602 274 571", "email": "restaurace@uzemlicku.cz", "web": "uzemlicku.cz", "hodiny": "Po–Pá 11:00–15:00", "styl": "Česká, polední menu", "popis": "Polední menu a minutky", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Pho Family Zbraslav", "adresa": "Elišky Přemyslovny 424, Praha-Zbraslav", "telefon": "775 951 868", "email": "", "web": "phofamilyzbraslav.eatbu.com", "hodiny": "Po–Pá 10:30–20, So 11–17", "styl": "Vietnamská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Stromeček", "adresa": "Elišky Přemyslovny 433, Praha-Zbraslav", "telefon": "792 534 374", "email": "ahoj@stromecek.fun", "web": "stromecek.fun", "hodiny": "denně 9:00–21:00", "styl": "Bistro / kavárna / pivo", "popis": "Rodinné bistro s hernou pro děti", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Bifé Prádelna (Kavárna Prádelna)", "adresa": "U Prádelny 668, Praha-Zbraslav", "telefon": "776 798 563", "email": "", "web": "", "hodiny": "Út–Pá 9–18, So–Ne 10–18", "styl": "Kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Hospůdka na Slavoji", "adresa": "Pod Havlínem 1302, Praha-Zbraslav", "telefon": "604 623 801", "email": "foodtriptruck@email.cz", "web": "skzbraslav.cz/restaurace", "hodiny": "Po–Čt, Ne 16–23, Pá–So 16–24", "styl": "Hospoda, studená kuchyně", "popis": "Hospoda u hřiště SK Zbraslav, letní terasa", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Auzzie", "adresa": "Elišky Přemyslovny 451, Praha-Zbraslav", "telefon": "737 875 297", "email": "", "web": "instagram.com/auzzie_zbraslav", "hodiny": "Po–Pá 10–20, So zavřeno, Ne 10–20", "styl": "Asijské bistro, bubble tea", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "UJP – kantýna Zbraslav", "adresa": "Nad Kamínkou 1345, Praha-Zbraslav (areál UJP PRAHA a.s.)", "telefon": "", "email": "", "web": "", "hodiny": "", "styl": "Závodní jídelna", "popis": "", "overeno": "částečně"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Istanbul kebab", "adresa": "Elišky Přemyslovny 443, Praha-Zbraslav", "telefon": "777 199 778", "email": "", "web": "", "hodiny": "Po–Čt, Ne 10–22, Pá–So 10–23", "styl": "Kebab / turecká", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev": "Pizza Padronissimo", "adresa": "Paškova 1511, Praha-Zbraslav", "telefon": "724 292 818", "email": "", "web": "", "hodiny": "Po–Pá 10–22, So–Ne 11–22", "styl": "Pizza, rozvoz", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Pivovar Horymír", "adresa": "Horymírovo nám. 1416/9, Praha-Radotín", "telefon": "702 182 199", "email": "info@pivovarhorymir.cz", "web": "pivovarhorymir.cz", "hodiny": "", "styl": "Minipivovar s restaurací", "popis": "Vlastní piva, bowling, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace Sokolovna Radotín", "adresa": "Vykoukových 622/2, Praha-Radotín", "telefon": "774 660 101", "email": "sokolovna.radotin@gmail.com", "web": "sokolovnaradotin.cz", "hodiny": "Po–Ne 11–22/23", "styl": "Česká a balkánská", "popis": "Restaurace s tradicí od roku 1931", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace Rozmarýn", "adresa": "nám. Osvoboditelů 26/1a, Praha-Radotín", "telefon": "257 811 694", "email": "info@restaurace-rozmaryn.cz", "web": "restaurace-rozmaryn.cz", "hodiny": "Po–Čt 11–22, Pá–So 11–23, Ne 11–21", "styl": "Česká kuchyně", "popis": "Zahrádka", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace Na Viničkách", "adresa": "Na Viničkách 551/1, Praha-Radotín", "telefon": "733 307 772", "email": "", "web": "restauracenavinickach.cz", "hodiny": "Po–Čt, Ne 11–23, Pá–So 11–24", "styl": "Česká kuchyně", "popis": "Zahrada, hotovky, polední menu", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace pivní Sanatorium", "adresa": "Štěrková 549/15, Praha-Radotín", "telefon": "606 360 305", "email": "", "web": "", "hodiny": "Út–Pá 16–23, So 11:30–23, Ne 11:30–22", "styl": "Pivnice", "popis": "Salonek, terasa", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Čínská restaurace Jia Le Yuan", "adresa": "Karlická 33/1, Praha-Radotín", "telefon": "608 207 107", "email": "", "web": "", "hodiny": "Po–So 10:30–22:30", "styl": "Čínská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Šárovo Bistro", "adresa": "Šárovo kolo 932/1, Praha-Radotín", "telefon": "728 067 724", "email": "info@sarovobistro.cz", "web": "sarovobistro.cz", "hodiny": "sezóna 1. 4.–15. 10.; Po–Pá 15–22, So 9–23, Ne 9–22", "styl": "Gril, česká kuchyně", "popis": "Bistro u Berounky na cyklostezce", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Motorest U Vodáka", "adresa": "Výpadová 1037/26, Praha-Radotín", "telefon": "257 811 519", "email": "", "web": "", "hodiny": "", "styl": "Motorest", "popis": "Kapacita 90 míst, zahrada", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Drak v Exilu (billiard klub)", "adresa": "nám. Osvoboditelů 1372, Praha-Radotín", "telefon": "731 314 428", "email": "", "web": "", "hodiny": "denně 11–22", "styl": "Hospoda", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Pizza na zavolanou", "adresa": "Horymírovo nám. 1416/9, Praha-Radotín", "telefon": "777 045 045", "email": "", "web": "", "hodiny": "Po–Pá 10–22, So–Ne 11–22", "styl": "Pizza, rozvoz", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Pizza na Rohu", "adresa": "Zderazská 46/2, Praha-Radotín", "telefon": "777 121 755", "email": "", "web": "", "hodiny": "Po–Pá 10–22, So–Ne 11–22", "styl": "Pizza, bistro, rozvoz", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "LUNA EXPRES", "adresa": "Vrážská 1513, Praha-Radotín", "telefon": "733 189 330", "email": "", "web": "", "hodiny": "Po–Pá 10–20", "styl": "Pizzerie", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Café U nás", "adresa": "Věštínská 1569, Praha-Radotín", "telefon": "733 684 743", "email": "", "web": "", "hodiny": "Po–Pá 8–19, So 9–19, Ne 13–19", "styl": "Kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Bistro U Ondřeje", "adresa": "Výpadová, Praha-Radotín", "telefon": "", "email": "", "web": "", "hodiny": "St–Pá 15:30–22, So 10–22, Ne 12–20", "styl": "Hospoda / bistro u cyklostezky", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Radotín", "obor": "Gastronomie", "nazev": "Restaurace Soul.ad Lipence", "adresa": "Oddechová 886, Praha 5-Lipence", "telefon": "778 718 400", "email": "", "web": "", "hodiny": "Po–St, Ne 8–21, Čt–So 8–22", "styl": "Restaurace", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Restaurace Bolleta", "adresa": "Karlštejnská 255, Černošice", "telefon": "251 641 009", "email": "info@bolleta.cz", "web": "bolleta.cz", "hodiny": "Po–Čt 11–23, Pá 11–01, So 12–01, Ne 12–22", "styl": "Moderní / ryby, maso, burgery", "popis": "Letní terasa s grilem, catering", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Bistro Pláž Mokropsy", "adresa": "Na Drahách, Černošice-Mokropsy", "telefon": "731 118 472", "email": "info@bolleta.cz", "web": "plazmokropsy.cz", "hodiny": "sezónně, za příznivého počasí", "styl": "Street food, bar", "popis": "Kontejnerové bistro u řeky (patří k Bolletě)", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Restaurace Pod lípou", "adresa": "Dobřichovická 754, Černošice", "telefon": "775 711 131", "email": "restaurace-pod-lipou@seznam.cz", "web": "restaurace-pod-lipou.cz", "hodiny": "denně 11–22 (Pá–So do 23)", "styl": "Česká kuchyně", "popis": "Polední menu, točené pivo", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Restaurace Stadion", "adresa": "Fügnerova 1244, Černošice", "telefon": "606 575 226", "email": "", "web": "stadion-restaurace.cz", "hodiny": "Po–Čt, Ne 11–22, Pá–So 11–23", "styl": "Česká kuchyně", "popis": "Dětské hřiště", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Club Kino", "adresa": "Fügnerova 263, Černošice", "telefon": "604 204 588", "email": "", "web": "clubkino.cz", "hodiny": "St–Čt 16–23, Pá–So 11:30–02, Ne 11:30–22", "styl": "Minutková kuchyně, klub", "popis": "Restaurace a hudební klub, 92 míst", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Výletní hospůdka Křižárna", "adresa": "Křížovy Lázně 1068, Černošice", "telefon": "795 423 548", "email": "hospudkakrizarna@gmail.com", "web": "hospudkakrizarna.cz", "hodiny": "St–Čt 16:30–22, Pá 16–23, So 11–23, Ne 11–22", "styl": "Výletní hospoda", "popis": "U Berounky, hotovky a minutky", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Restaurace Jedličkovy Lázně", "adresa": "Ukrajinská 513, Černošice", "telefon": "604 958 716", "email": "", "web": "", "hodiny": "Po–Pá 16–22, So 11–22, Ne 11–21", "styl": "Česká kuchyně", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Steakhouse U Berana Mokropsy", "adresa": "Dr. Janského 606, Černošice", "telefon": "778 018 870", "email": "", "web": "", "hodiny": "So–Ne 12–22", "styl": "Steakhouse", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Kavárna Bárka", "adresa": "Vrážská 326, Černošice", "telefon": "723 729 445", "email": "", "web": "", "hodiny": "Pá 14–18, So–Ne 9–18", "styl": "Veganská kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Oliva Café & Bistro", "adresa": "Mokropeská 2027, Černošice", "telefon": "733 394 323", "email": "", "web": "", "hodiny": "Po–Pá 8–19, So 8:30–18:30, Ne 8:30–17:30", "styl": "Kavárna / bistro", "popis": "", "overeno": "ano"}, {"oblast": "Černošice a okolí", "obor": "Gastronomie", "nazev": "Zrnko a drobek", "adresa": "Masopustní náměstí, Černošice", "telefon": "702 050 291", "email": "", "web": "", "hodiny": "Po–Čt, Ne 9–20, Pá–So 9–21", "styl": "Kavárna, gril", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Kolkovna Stodůlky", "adresa": "Siemensova 2717/4, Praha 13-Stodůlky", "telefon": "277 271 505", "email": "stodulky@kolkovna.cz", "web": "kolkovna.cz", "hodiny": "Po–Čt, Ne 11–23, Pá–So 11–24", "styl": "Česká a mezinárodní", "popis": "Velká restaurace řetězce Kolkovna", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Srdcovka U Drsnejch", "adresa": "Mukařovského 1985/5, Praha 13-Stodůlky", "telefon": "607 022 222", "email": "udrsnejch@gmail.com", "web": "srdcovka-u-drsnejch.eatbu.com", "hodiny": "denně 10:30–24:00", "styl": "Pivnice / česká kuchyně", "popis": "Tankový Gambrinus", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "The PUB Praha 13", "adresa": "Bucharova 2817/9, Praha 13-Stodůlky", "telefon": "235 313 792", "email": "praha13@thepub.cz", "web": "thepub.cz/praha-13", "hodiny": "Po–Čt 11–24, Pá–So 11–01, Ne 12–23", "styl": "Česká hospoda", "popis": "Samoobslužné pípy", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Pivnice Stodůlky", "adresa": "Hábova 2345/7, Praha 13-Stodůlky", "telefon": "725 952 659", "email": "info@pivnicestodulky.cz", "web": "pivnicestodulky.cz", "hodiny": "Po–Čt 15–24, Pá–So 15–01, Ne 15–23", "styl": "Pivnice", "popis": "Tankové pivo, šipky", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Šenkýrna Lužiny (dříve Sladovna Lužiny)", "adresa": "Archeologická 2256/1, Praha 13-Stodůlky", "telefon": "770 320 076", "email": "", "web": "pivovar-luziny.cz", "hodiny": "denně 10:30–22:30", "styl": "Minipivovar / česká kuchyně", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Restaurace Globus Zličín", "adresa": "Sárská 133/5, Praha-Zličín (Třebonice)", "telefon": "251 037 325", "email": "", "web": "globus.cz", "hodiny": "denně 7:30–20:00", "styl": "Česká kuchyně / Hotovky", "popis": "Oblíbená samoobslužná restaurace s poctivou domácí kuchyní a snídaněmi.", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Bernard Pub U jezera", "adresa": "U Jezera 2037, Praha 13-Stodůlky", "telefon": "772 002 000", "email": "", "web": "", "hodiny": "Po–Čt, Ne 11–22, Pá–So 11–23", "styl": "Pivnice / restaurace", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "CAPPUVINO", "adresa": "Seydlerova 2835/4, Praha 13", "telefon": "607 007 616", "email": "", "web": "", "hodiny": "denně 11–23", "styl": "Italská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Tian Tian Asian Cuisine", "adresa": "Seydlerova 2148/9, Praha 13-Stodůlky", "telefon": "777 307 868", "email": "", "web": "", "hodiny": "denně 10–22", "styl": "Asijská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Stodůlky", "obor": "Gastronomie", "nazev": "Bowlers Nové Butovice", "adresa": "Na Zlatě, Praha 13", "telefon": "606 905 372", "email": "", "web": "", "hodiny": "denně 9–20:30", "styl": "Poke / kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Plzeňský restaurant Kamera", "adresa": "Tilleho náměstí 792/2, Praha 5-Barrandov", "telefon": "777 850 202", "email": "info@restauracekamera.cz", "web": "restauracekamera.cz", "hodiny": "Po–So 11–23, Ne 11–22", "styl": "Česká kuchyně, gril", "popis": "250 míst, bowling, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Restaurace Semmering", "adresa": "Slivenecká 77/1, Praha 5-Hlubočepy", "telefon": "602 350 333", "email": "restaurace@semm.cz", "web": "semm.cz", "hodiny": "Út–So 12–23, Ne 12–21", "styl": "Moderní evropská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Čínská restaurace Třešeň", "adresa": "V Remízku 1030/19, Praha 5-Barrandov", "telefon": "251 556 559", "email": "", "web": "", "hodiny": "", "styl": "Čínská, sushi", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Bistro Barrandov", "adresa": "Krškova 807/21, Praha 5-Barrandov", "telefon": "", "email": "", "web": "bistrobarrandov.cz", "hodiny": "Po–Čt 8:30–14, Pá 8:30–13:30", "styl": "Bistro", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Jídelna Barrandov Studio", "adresa": "Kříženeckého nám. 322/5, Praha 5-Barrandov", "telefon": "775 018 751", "email": "barrandov@zatisigroup.cz", "web": "freshandtasty.cz/barrandovjidelna", "hodiny": "Po–Pá 8–15", "styl": "Jídelna", "popis": "Denní menu v areálu filmových ateliérů", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Park Café 67", "adresa": "Tilleho náměstí 792/2, Praha 5-Barrandov", "telefon": "777 747 400", "email": "barrandov@mlsame.cz", "web": "facebook.com/ParkCafe67", "hodiny": "Po–Pá 8–19, So 9–19, Ne 10–19", "styl": "Cukrárna / kavárna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Besední restaurace U Ritschelů", "adresa": "Slivenecká 92, Praha 5-Hlubočepy", "telefon": "251 810 946", "email": "", "web": "besednirestaurace.cz", "hodiny": "Po–Čt, Ne 10–22, Pá–So 10–23", "styl": "Česká kuchyně", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Pizzeria Kaskada", "adresa": "Voskovcova 1075, Praha 5-Barrandov", "telefon": "251 813 511", "email": "", "web": "", "hodiny": "denně 11–22", "styl": "Pizzerie", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Barrandov / Hlubočepy", "obor": "Gastronomie", "nazev": "Pizza Merlo", "adresa": "Tilleho nám., Praha 5-Barrandov", "telefon": "777 525 501", "email": "", "web": "", "hodiny": "Po–Pá 9–21, So–Ne 10–21", "styl": "Pizza s sebou", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace U Radnice", "adresa": "Generála Šišky 2375/6, Praha 12-Modřany", "telefon": "603 200 180", "email": "info@restaurace-uradnice.cz", "web": "restaurace-uradnice.cz", "hodiny": "denně 11:00–23:00", "styl": "Česká kuchyně", "popis": "Tanková Plzeň, denní menu", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurant Café Modřany", "adresa": "Herrmannova 2223/26, Praha 12-Modřany", "telefon": "777 632 762", "email": "cafe@alzheimerhome.cz", "web": "restaurantcafe.cz", "hodiny": "Po–Pá 8:00–17:00", "styl": "Kavárna / restaurace", "popis": "U Modřanské rokle, polední menu", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Rosmarina (loď, dříve Port 62)", "adresa": "Vltavanů 105/5, Freestyle Park Modřany, Praha 4", "telefon": "733 762 237", "email": "", "web": "rosmarina.eu", "hodiny": "restaurace denně 11:00–22:00", "styl": "Restaurace na lodi", "popis": "Cca 160 míst, sportovní areál", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Vratislav", "adresa": "Sofijské nám. 3401/5, Praha 12-Modřany", "telefon": "607 614 529 / 244 466 597", "email": "", "web": "restauracevratislav.eu", "hodiny": "Po–Čt 10–22, Pá 10–24, So 11–24, Ne 11–23", "styl": "Česká kuchyně", "popis": "U Polikliniky Modřany, zahrádka", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Pivnice Modřany", "adresa": "Kutilova 3060, Praha 12-Modřany", "telefon": "604 343 424", "email": "", "web": "pivnicemodrany.cz", "hodiny": "Po–So 14–02, Ne 14–24", "styl": "Pivnice", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurant Parkgolf (Golf Hodkovičky)", "adresa": "Vltavanů 546, Praha 4-Modřany", "telefon": "727 955 393", "email": "restaurace@hodkovicky.cz", "web": "hodkovicky.cz/restaurace", "hodiny": "", "styl": "Česká a mezinárodní", "popis": "Terasa", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace U Fišmistrů", "adresa": "Dolnocholupická 259/23, Praha 12-Modřany", "telefon": "241 761 132", "email": "restaurace-ufismistru@seznam.cz", "web": "restauraceufismistru.cz", "hodiny": "Po–Pá 10:30–22, So 14–23, Ne 14–22", "styl": "Česká kuchyně", "popis": "Svatby, oslavy, rozvoz", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Otava", "adresa": "Pertoldova 3344/6, Praha 12-Modřany", "telefon": "774 666 364", "email": "mars.praha@email.cz", "web": "restauraceotava.eu", "hodiny": "denně 10:00–23:00", "styl": "Italská a česká, pizza", "popis": "Rozvoz pizzy", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Jaro Restaurace", "adresa": "Sofijské nám. 3405/2, Praha 12-Modřany", "telefon": "777 426 789", "email": "jarorestaurace@info.cz", "web": "", "hodiny": "denně 11:00–22:00", "styl": "Asijská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Fei He", "adresa": "Sofijské nám. 3406/1, Praha 12-Modřany", "telefon": "241 768 414", "email": "", "web": "", "hodiny": "denně 10:00–22:00", "styl": "Čínská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "BejkBuu", "adresa": "Sofijské nám. 3404/3, Praha 12-Modřany (OC Modřany)", "telefon": "775 750 390", "email": "info@bejkbuu.cz", "web": "bejkbuu.cz", "hodiny": "Po–St 10–22, Čt–Pá 10–23, So 11–24, Ne 11–22", "styl": "Řeznictví a restaurace, burgery", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Jemný Bistro", "adresa": "U Kina 3, Praha 12-Modřany (Modřanský biograf)", "telefon": "774 101 466", "email": "rezervacejb@gmail.com", "web": "", "hodiny": "", "styl": "Bistro, ryby", "popis": "Denně měněné menu, koncerty", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Pizzerie Gattino", "adresa": "Rilská 3173/1, Praha 12-Modřany", "telefon": "774 631 042 / 241 770 439", "email": "", "web": "", "hodiny": "Po–Čt, Ne 11–23, Pá–So 11–24", "styl": "Pizzerie", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Želivka", "adresa": "Vazovova 3229/1, Praha 12-Modřany", "telefon": "244 403 105", "email": "", "web": "", "hodiny": "Po–Čt, Ne 13–24, Pá–So 13–01", "styl": "Restaurace / hospoda", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Mungo Restaurant", "adresa": "U Klubu 63/2, Praha 12-Modřany", "telefon": "775 625 944", "email": "info@mungorestaurant.cz", "web": "mungorestaurant.cz", "hodiny": "denně 10:00–21:00", "styl": "Vietnamská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Pizzeria il Pinocchio", "adresa": "Komořanská 157/11, Praha 12-Modřany", "telefon": "735 544 551", "email": "", "web": "ilpinocchio.cz", "hodiny": "Po–Čt, Ne 11–22, Pá–So 11–23", "styl": "Pizzerie", "popis": "Rozvoz", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Bistro Dobrý jídlo", "adresa": "Kutilova 3061/2, Praha 12-Modřany", "telefon": "774 403 990", "email": "dobryjidlopraha4@seznam.cz", "web": "", "hodiny": "Po–Pá 10:30–15:00", "styl": "Bistro, polední menu", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "U Krkovice", "adresa": "Mezi Vodami 255/21, Praha 12-Modřany", "telefon": "703 035 179", "email": "", "web": "", "hodiny": "Po–Pá 10:30–15", "styl": "Restaurace", "popis": "Na místě dříve U Tří Bernardýnů (zavřeno)", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Point Bistro", "adresa": "Komořanská 2229/49, Praha 12-Modřany", "telefon": "725 555 350", "email": "", "web": "pointbistro.cz", "hodiny": "denně 8–20", "styl": "Bistro", "popis": "Snídaně, obědy, večeře", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Pod Vinicí", "adresa": "Chuchelská 1721/6, Praha 12-Modřany", "telefon": "241 773 867 / 776 365 308", "email": "", "web": "podvinici.cz", "hodiny": "Po–Pá 15:00–22:30, So 12:00–22:30", "styl": "Rodinná restaurace", "popis": "zahrádka, oslavy", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Chorvatská rybí restaurace Deco", "adresa": "Obchodní nám. 25/3, Praha 12-Modřany", "telefon": "244 464 217 / 777 913 566", "email": "", "web": "", "hodiny": "denně 11:30–23:00", "styl": "Rybí restaurace / chorvatská", "popis": "u nádraží Modřany, decorestaurace.webnode.cz", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Restaurace Labe (Modřanské Labe)", "adresa": "Mráčkova 3059/5, Praha 12-Modřany", "telefon": "777 660 918 / 241 761 667", "email": "", "web": "", "hodiny": "", "styl": "", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Jídelna Modřanka", "adresa": "Soukalova 3355/3 (Poliklinika Modřany), Praha-Modřany", "telefon": "241 047 325", "email": "", "web": "", "hodiny": "Po–Pá 07:00–15:00", "styl": "Jídelna", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Modřany", "obor": "Gastronomie", "nazev": "Stodola Modřany", "adresa": "Chuchelská 6/1, Praha 12-Modřany", "telefon": "775 886 639", "email": "", "web": "", "hodiny": "Po–Út 12–19, St–Pá 11–22, So 12–23, Ne 12–22", "styl": "Bistro", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Restaurace Na Pekařce", "adresa": "Pod Pekařkou 224/46, Praha 4-Podolí", "telefon": "724 770 772", "email": "info@napekarce.cz", "web": "napekarce.cz", "hodiny": "Po–So 11–24, Ne 11–23", "styl": "Česká kuchyně", "popis": "Tanková Plzeň, velká terasa", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Restaurace Podolská kotva", "adresa": "Podolské nábřeží 46/20, Praha 4-Podolí", "telefon": "608 506 898", "email": "info@podolskakotva.cz", "web": "podolskakotva.cz", "hodiny": "11:00–23:00, Ne do 22:00", "styl": "Česká kuchyně, gril", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Restaurace Podolka", "adresa": "Podolské nábřeží (přístav 1), Praha 4-Podolí", "telefon": "774 115 166", "email": "podoli@restauracepodolka.cz", "web": "restauracepodolka.cz", "hodiny": "11:30–22/23", "styl": "Česká a moderní", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Qin Yuan Chun", "adresa": "Podolské nábřeží 9/28, Praha 4-Podolí", "telefon": "608 837 738", "email": "", "web": "", "hodiny": "denně 10:00–22:00", "styl": "Čínská", "popis": "", "overeno": "ano"}, {"oblast": "Praha - Podolí", "obor": "Gastronomie", "nazev": "Žluté lázně", "adresa": "Podolské nábřeží 1184/3, Praha 4-Podolí", "telefon": "777 404 084", "email": "info@taiko.cz", "web": "zlutelazne.cz", "hodiny": "denně 9:00–22:00", "styl": "Areál s barem a pizzerií", "popis": "Sezónní provoz", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Hostinec U Kaštanu", "adresa": "Nádražní 116, Vrané nad Vltavou", "telefon": "257 760 350", "email": "", "web": "", "hodiny": "", "styl": "Česká kuchyně", "popis": "50 míst, letní zahrada, svatby a oslavy", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Občerstvovna ve dvoře", "adresa": "Nádražní 102, Vrané nad Vltavou", "telefon": "602 208 723", "email": "", "web": "facebook.com/obcerstvovnavedvore", "hodiny": "Čt–Pá 17–22, So 12–22, Ne 12–21", "styl": "Gril, burgery", "popis": "", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Paluba Vrané nad Vltavou", "adresa": "Březovská 192, Vrané nad Vltavou", "telefon": "773 881 712", "email": "", "web": "", "hodiny": "St–Po 17–24", "styl": "Hospoda", "popis": "Nově zrekonstruovaná hospoda", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "All'infinito (Pizza Vrané)", "adresa": "Nádražní 190, Vrané nad Vltavou", "telefon": "728 123 123", "email": "", "web": "pizzavrane.cz", "hodiny": "St–Ne 11–21", "styl": "Italská, pizza", "popis": "Jen rozvoz", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Penzion Kaskáda", "adresa": "U Elektrárny 624, Vrané nad Vltavou", "telefon": "739 004 111 / 605 203 570", "email": "penzion@penzionkaskada.cz", "web": "penzionkaskada.cz", "hodiny": "", "styl": "Penzion s akcemi", "popis": "Svatby, rauty, firemní večírky", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Restaurace Olivův pivovar", "adresa": "Za Radnicí 739, Dolní Břežany", "telefon": "241 403 697", "email": "restaurace@olivuvpivovar.cz", "web": "olivuvpivovar.cz", "hodiny": "Po–So 10:30–23, Ne 10:30–21:30", "styl": "Česká kuchyně, vlastní pivo", "popis": "86 míst", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Restovna", "adresa": "Pražská 260, Jíloviště", "telefon": "725 518 811", "email": "restovna@restovna.cz", "web": "restovna.cz", "hodiny": "Po–Čt 11–22, Pá–So 11–23, Ne 11:30–21", "styl": "Restaurace s penzionem, pizza", "popis": "", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Palace Inn", "adresa": "Všenorská 45, Jíloviště", "telefon": "724 598 005", "email": "info@palace-inn.eu", "web": "palace-inn.eu", "hodiny": "denně 11:00–23:00", "styl": "Česká a mezinárodní, gril", "popis": "Hotel a grill restaurace", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Restaurace Tornádo", "adresa": "U Kazína 410, Praha-Lipence", "telefon": "725 800 014", "email": "", "web": "restauracetornado.cz", "hodiny": "Po–Pá 15–22, So 12–23, Ne 12–20", "styl": "Česká kuchyně", "popis": "Country restaurace", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Trnovská krčma", "adresa": "Trnová 20, Trnová", "telefon": "775 449 254", "email": "", "web": "trnovska-krcma.cz", "hodiny": "St–Pá 15:30–21/22, So–Ne 12–22/20", "styl": "Česká kuchyně", "popis": "Zahrada, akce", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Restaurace V Pivovaře", "adresa": "K Pivovaru 1, Davle", "telefon": "602 148 880", "email": "", "web": "hotelvpivovaredavle.webnode.cz", "hodiny": "Čt 11–20, Pá–So 11–21, Ne 11–18", "styl": "Česká a mezinárodní, pizza", "popis": "Bowling, zahrada", "overeno": "ano"}, {"oblast": "Vrané nad Vltavou a okolí", "obor": "Gastronomie", "nazev": "Taverna Thessaloniki", "adresa": "Vltavská 168, Davle", "telefon": "257 770 225", "email": "taverna.thessaloniki@email.cz", "web": "tavernathessaloniki.cz", "hodiny": "Út–Ne 12–22", "styl": "Řecká", "popis": "", "overeno": "ano"}];
+const OBORY = ["Gastronomie","Obchod","Služby","Doprava","Průmysl","Zdravotnictví"];
+
+let firmy = EMBEDDED.slice();
+let dataSource = "embedded";
+const st = {obor:"Gastronomie", area:"", q:"", sec:"email", mode:"prace", druh:""};
+const $ = s => document.querySelector(s);
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const store = {get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- měření (GoatCounter) ---------- */
+const zdroj = (()=>{
+  let z=null; try{const p=new URLSearchParams(location.search);z=p.get("zdroj")||p.get("utm_source")}catch(e){}
+  try{ if(z) sessionStorage.setItem("zdroj",z); else z=sessionStorage.getItem("zdroj") }catch(e){}
+  return z||"přímo";
+})();
+if(GOATCOUNTER){
+  const s=document.createElement("script");s.async=true;s.src="https://gc.zgo.at/count.js";
+  s.dataset.goatcounter=`https://${GOATCOUNTER}.goatcounter.com/count`;document.head.appendChild(s);
+}
+const once=new Set();
+function track(name,unique){
+  if(unique){ if(once.has(name))return; once.add(name) }
+  try{ window.goatcounter && window.goatcounter.count && window.goatcounter.count({path:name,title:`${name} · zdroj: ${zdroj}`,event:true}) }catch(e){}
+}
+
+const ICON = {
+  tel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>'
+};
+
+function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
+async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg||"Zkopírováno");return true}catch(e){return false}}
+function firstPhone(t){const m=String(t||"").match(/\+?[\d ]{9,}/);return m?m[0].replace(/\s/g,""):""}
+function webUrl(w){if(!w)return"";return /^https?:/.test(w)?w:"https://"+w}
+
+/* ====== NÁVODY: texty ke zkopírování ====== */
+const SECS=[
+ {id:"email",name:"E-mail",intro:"Vyber text, zkopíruj ho a přepiš části v hranatých závorkách. U varianty, kterou si nastavíš pro tlačítko Napsat, aplikace sama doplní název podniku. Životopis přilož v Mailu přes sponku.",items:[
+  {id:"e-kratky",t:"Krátký dotaz",w:"Funguje skoro všude. Krátký e-mail přečtou i v plném provozu.",x:`Předmět: Hledáte posilu?
+
+Dobrý den,
+
+nehledáte do [podnik] posilu? Jmenuji se [Jméno Příjmení], hledám práci jako [pozice] a bydlím kousek od vás.
+
+Mám [počet] let praxe v gastru, naposledy jako [poslední pozice] v [poslední podnik].
+
+Životopis posílám v příloze. Rád se zastavím osobně, stačí napsat nebo zavolat na [telefon].
+
+Děkuji a přeji hezký den
+[Jméno Příjmení]`},
+  {id:"e-provozni",t:"Provozní / vedoucí směny",w:"Na vedoucí pozice. Ukaž, že rozumíš provozu, ne jen obsluze.",x:`Předmět: Provozní / vedoucí směny – zájem o spolupráci
+
+Dobrý den,
+
+ozývám se přímo vám, protože hledám práci provozního a [podnik] se mi líbí tím, jak funguje.
+
+Mám za sebou [počet] let v gastru, z toho [počet] let jako [vedoucí směny / provozní]. Umím:
+– vést tým a sestavit rozpis směn,
+– objednávat zboží a hlídat sklad a inventury,
+– řešit stížnosti hostů a držet standard obsluhy.
+
+Pokud teď nebo v blízké době někoho hledáte, rád se zastavím osobně. Životopis je v příloze.
+
+S pozdravem
+[Jméno Příjmení]
+[telefon]`},
+  {id:"e-obsluha",t:"Číšník / servírka / barman",w:"Na plac a bar. Zdůrazni spolehlivost a víkendy.",x:`Předmět: Číšník / barman – volné místo?
+
+Dobrý den,
+
+jsem [Jméno Příjmení] a hledám místo [číšníka / servírky / barmana]. Rád bych pracoval u vás v [podnik].
+
+Praxe: [kde a jak dlouho]. Zvládám nápor, víkendové i večerní směny a s hosty umím jednat. [Umím točit pivo / míchat drinky / pracovat s pokladnou X.]
+
+Můžu přijít na zkušební směnu, kdykoli se vám to hodí. Telefon: [telefon].
+
+S pozdravem
+[Jméno Příjmení]`},
+  {id:"e-kuchyne",t:"Kuchař / pomocná síla v kuchyni",w:"Do kuchyně. Napiš, jakou kuchyni umíš a jestli zvládneš minutky.",x:`Předmět: Kuchař – zájem o práci
+
+Dobrý den,
+
+hledám práci [kuchaře / pomocné síly v kuchyni] a zajímá mě, jestli v [podnik] někoho nepotřebujete.
+
+Vařím [českou kuchyni / minutky / polední menu / pizzu], praxi mám [kde a jak dlouho]. Mám zdravotní průkaz a můžu nastoupit [kdy].
+
+Ozvěte se mi prosím na [telefon]. Rád přijdu na zkušební směnu.
+
+Děkuji
+[Jméno Příjmení]`},
+  {id:"e-brigada",t:"Brigáda / víkendy / sezóna",w:"Studenti, přivýdělek, letní zahrádky a výletní podniky.",x:`Předmět: Brigáda – víkendy / sezóna
+
+Dobrý den,
+
+nehledáte na [víkendy / letní sezónu / akce] brigádníka? Jsem [Jméno Příjmení], můžu [kdy – např. pátek až neděle] a bydlím kousek od [podnik].
+
+Zkušenosti: [stručně]. Učím se rychle a nebojím se práce.
+
+Telefon: [telefon]. Děkuji za odpověď.
+
+[Jméno Příjmení]`},
+  {id:"e-pripominka",t:"Připomenutí po týdnu",w:"Když týden nikdo neodpoví. Krátce a mile.",x:`Předmět: Re: [původní předmět]
+
+Dobrý den,
+
+před týdnem jsem vám psal kvůli práci [pozice]. Chtěl jsem se jen zeptat, jestli jste měli čas se na to podívat.
+
+Pořád mám zájem a můžu přijít kdykoli se vám to hodí.
+
+Děkuji
+[Jméno Příjmení]
+[telefon]`},
+  {id:"e-potelefonu",t:"Po telefonátu – posílám životopis",w:"Když ti do telefonu řeknou „pošlete životopis“. Pošli ještě ten den.",x:`Předmět: Životopis – jak jsme spolu mluvili po telefonu
+
+Dobrý den, [jméno, s kým jste mluvili],
+
+děkuji za dnešní telefonát. Jak jsme se domluvili, posílám v příloze životopis na pozici [pozice].
+
+Můžu přijít [kdy] nebo podle vašich možností.
+
+S pozdravem
+[Jméno Příjmení]
+[telefon]`}
+ ]},
+ {id:"telefon",name:"Telefon",intro:"Volej mimo špičku. V gastru nejlépe mezi 14. a 16. hodinou nebo dopoledne před otevřením. V poledne a večer nikdo nemá čas. Měj u sebe papír a zapiš si jméno, s kým mluvíš.",items:[
+  {id:"t-prvni",t:"První hovor",w:"Neznáš nikoho, voláš na číslo podniku.",x:`„Dobrý den, tady [Jméno]. Volám, jestli nehledáte posilu na [pozici]. Můžu prosím mluvit s provozním nebo s majitelem?“
+
+(Když tě přepojí:)
+„Dobrý den, [Jméno]. Mám [počet] let praxe v gastru, naposledy jako [pozice]. Bydlím kousek a můžu nastoupit [kdy]. Hledáte teď někoho, nebo v blízké době?“
+
+(Když ano:)
+„Můžu se u vás zastavit osobně? Kdy se vám to hodí?“`},
+  {id:"t-jmenem",t:"Voláš majiteli jménem",w:"Když znáš jméno provozního nebo majitele (třeba z tabulky jednatelů).",x:`„Dobrý den, mohl bych prosím mluvit s panem / paní [příjmení]?“
+
+(Když to vezme:)
+„Dobrý den, pane / paní [příjmení], tady [Jméno]. Ozývám se přímo vám, protože hledám práci jako [pozice] a váš podnik se mi líbí. Máte minutku?“
+
+„Mám [počet] let praxe, naposledy [kde]. Nepotřebujete teď nebo brzy někoho do týmu?“`},
+  {id:"t-pripominka",t:"Připomenutí po týdnu",w:"Když ti minule řekli „zavolejte příští týden“ nebo neodpověděli na e-mail.",x:`„Dobrý den, tady [Jméno]. Minulý týden jsem mluvil s [jméno / s vámi] kvůli práci [pozice]. Říkal jste, ať se ozvu znovu, tak volám, jestli už víte víc.“`},
+  {id:"t-poemailu",t:"Po odeslaném e-mailu",w:"Dva až tři dny po e-mailu, na který nikdo nereagoval.",x:`„Dobrý den, tady [Jméno]. Před pár dny jsem vám poslal e-mail se životopisem na pozici [pozice]. Chtěl jsem se zeptat, jestli přišel a jestli vás zaujal.“`}
+ ],qa:[
+  ["„Teď nikoho nehledáme.“","Poděkuj a nech po sobě stopu: „Rozumím. Můžu vám poslat životopis, kdyby se něco uvolnilo? A můžu se ozvat zase za měsíc?“ V gastru lidé odcházejí často, za dva týdny může být všechno jinak."],
+  ["„Pošlete životopis na e-mail.“","Zeptej se: „Komu ho mám dát k rukám?“ Pošli ho ještě ten den a do předmětu napiš, že jste spolu mluvili po telefonu. Text najdeš v bloku E-mail."],
+  ["„Majitel tu teď není.“","„Kdy ho zastihnu nejlépe? A jak se jmenuje?“ Pak zavolej v ten čas a oslov ho jménem."],
+  ["„Kolik byste chtěl?“","Měj připravené rozpětí, ne jedno číslo: „Představuju si [od–do] čistého měsíčně, záleží na úvazku a směnách. Co nabízíte vy?“"],
+  ["„Můžete přijít na zkušební směnu?“","Řekni ano a zeptej se: „Kdy a v kolik? Co si mám vzít s sebou? Je zkušební směna placená?“"]
+ ]},
+ {id:"osobne",name:"Osobně",intro:"Osobní návštěva funguje v gastru často nejlíp. Uvidí tě, a když se jim hodíš, můžeš začít hned.",items:[
+  {id:"o-postup",t:"Jak na to",w:"Než vyrazíš.",x:`1. Přijď mimo špičku (14–16 h), čistě oblečený, jako bys šel na směnu.
+2. Měj s sebou vytištěný životopis s telefonem nahoře.
+3. Zeptej se obsluhy: „Je tu prosím provozní nebo majitel?“
+4. Představ se stejně jako do telefonu (blok Telefon → První hovor).
+5. Když tam vedoucí není, nech životopis a zeptej se, kdy ho zastihneš.
+6. Doma si zapiš: kdy, komu jsi to dal, co řekli.`},
+  {id:"o-veta",t:"Úvodní věta u baru",w:"Na první dojem.",x:`„Dobrý den, nezlobte se, že ruším. Hledám práci jako [pozice] a chtěl jsem se zeptat přímo u vás. Je tu provozní nebo majitel? Nechal bych mu životopis.“`}
+ ]},
+ {id:"otazky",name:"Otázky",intro:"Na co se zeptat, když tě zvou na pohovor nebo zkušební směnu. Ukážeš zájem a vyhneš se nepříjemným překvapením.",items:[
+  {id:"q-podminky",t:"Podmínky práce",w:"Zeptej se před nástupem.",x:`– Jaké jsou směny? Krátký / dlouhý týden, kolik hodin, víkendy?
+– Jak je to s výplatou: hodinová, nebo měsíční mzda? Kolik čistého?
+– Jak se dělí spropitné?
+– Bude to smlouva HPP, DPP, nebo DPČ? Od kdy?
+– Je zkušební směna placená? Jak dlouhá je zkušební doba?
+– Je strava během směny?
+– Kdo bude můj vedoucí?`},
+  {id:"q-provoz",t:"Otázky na provoz",w:"Na vedoucí pozice. Ukážeš, že přemýšlíš jako provozní.",x:`– Kolik lidí je ve směně na place a v kuchyni?
+– Jaký pokladní systém používáte?
+– Kdo dělá objednávky a inventury?
+– Co je teď v provozu největší problém, se kterým byste potřebovali pomoct?
+– Jaké máte plány na příští sezónu?`}
+ ]},
+ {id:"ai",name:"Životopis s AI",intro:"Životopis si napiš sám, ale s AI to zvládneš za pár minut. Nejdřív si připrav podklady, pak zkopíruj zadání, doplň svoje údaje a vlož je do chatu s AI. Všechny níže uvedené AI mají bezplatnou verzi.",items:[
+  {id:"a-ai",t:"Které AI použít zdarma",w:"Stačí jedna. Všechny mají bezplatnou verzi a fungují v telefonu i na počítači.",x:`– Claude (claude.ai, aplikace Claude)
+– ChatGPT (chatgpt.com, aplikace ChatGPT)
+– Google Gemini (gemini.google.com, aplikace Gemini)
+– Microsoft Copilot (copilot.microsoft.com, aplikace Copilot)
+
+Většina z nich umí přečíst i fotku – starý životopis, certifikát nebo poznámky na papíře. Stačí ji v chatu přiložit přes sponku nebo ikonu fotoaparátu.
+Bezplatné verze mají denní limit zpráv, na jeden životopis to bohatě stačí.`},
+  {id:"a-pripravit",t:"Co si připravit předem",w:"Než otevřeš AI. S podklady to zvládneš za 10 minut.",x:`Napiš si na papír nebo do poznámek (nebo vyfoť):
+☐ Kontakt: telefon, e-mail, kde bydlíš (stačí část obce)
+☐ Všechna místa, kde jsi pracoval: podnik, pozice, od–do (stačí měsíc a rok)
+☐ U každého místa 2–3 věci, které jsi tam dělal nebo měl na starosti
+☐ Školy a kurzy: obor, rok ukončení (výuční list, maturita, barista kurz…)
+☐ Certifikáty a průkazy: zdravotní průkaz, řidičák, HACCP, svářečák…
+☐ Jazyky a jak dobře je umíš
+☐ Co umíš: pokladní systémy, sklad, vedení lidí, počítač
+☐ Od kdy můžeš nastoupit, jaký úvazek chceš (plný, brigáda, víkendy)
+
+Vyfoť si klidně: starý životopis, certifikáty, výuční list, potvrzení o kurzech. AI z fotek údaje přepíše.
+Nefoť a nepiš do AI: rodné číslo, číslo občanky, číslo účtu.`},
+  {id:"a-fotky",t:"Zadání: životopis z fotek a poznámek",w:"Když máš starý životopis nebo podklady jen na papíře.",x:`Přikládám fotky svých podkladů (starý životopis, certifikáty, poznámky). Přečti z nich údaje a napiš mi z nich nový stručný životopis na jednu stranu A4 v češtině.
+
+Hledám práci jako [pozice] v okolí [lokalita].
+
+Nic si nevymýšlej. Pokud něco na fotce nejde přečíst nebo chybí (třeba data od–do), zeptej se mě. Na konci mi vypiš, co jsi z fotek nepoužil a proč.`},
+  {id:"a-co",t:"Co má životopis obsahovat",w:"Jedna strana stačí. Provozní ho čtou 20 vteřin.",x:`– Jméno, telefon, e-mail a lokalita (stačí „Praha-Zbraslav“, celou adresu ne)
+– Hledaná pozice jednou větou
+– Praxe od nejnovější: podnik, pozice, od–do, 2–3 věci, které jsi tam dělal
+– Dovednosti: pokladní systémy, sklad, vedení směny, jazyky
+– Zdravotní průkaz, řidičák, kdy můžeš nastoupit
+
+Nepiš: rodné číslo, číslo občanky, rodinný stav, fotku nemusíš.`},
+  {id:"a-vytvor",t:"Zadání: vytvoř životopis",w:"Vlož do AI chatu a nahraď části v hranatých závorkách.",x:`Napiš mi stručný životopis na jednu stranu A4 v češtině. Hledám práci v gastronomii jako [pozice] v okolí [lokalita].
+
+Moje údaje:
+Jméno: [Jméno Příjmení]
+Telefon a e-mail: [telefon], [e-mail]
+Praxe (od nejnovější): [podnik, pozice, od–do, co jsem tam dělal]
+Dovednosti: [např. vedení směny, objednávky, pokladna Dotykačka, angličtina]
+Další: [zdravotní průkaz, řidičák B, nástup ihned]
+
+Piš jednoduše a věcně, bez přehánění a bez vymyšlených údajů. Kde ti něco chybí, zeptej se mě.`},
+  {id:"a-uprav",t:"Zadání: uprav pro konkrétní podnik",w:"Když chceš životopis nebo e-mail šitý na míru jednomu podniku.",x:`Tady je můj životopis: [vlož text životopisu]
+
+Chci se ucházet o práci v podniku [název podniku], což je [typ: pivnice / italská restaurace / hotelová restaurace…]. Uprav životopis tak, aby vynikla praxe, která se tam hodí nejvíc. Nic nevymýšlej. Pak mi napiš krátký e-mail (do 8 vět), který jim pošlu.`},
+  {id:"a-zkontroluj",t:"Zadání: zkontroluj a zkrať",w:"Když už životopis máš.",x:`Zkontroluj můj životopis: oprav pravopis, zkrať ho na jednu stranu a navrhni, co bych měl vynechat nebo doplnit, aby zaujal provozního restaurace. Nic si nevymýšlej.
+
+[vlož text životopisu]`},
+  {id:"a-pohovor",t:"Zadání: připrav mě na pohovor",w:"Den před pohovorem nebo zkušební směnou.",x:`Mám pohovor na pozici [pozice] v [typ podniku]. Polož mi postupně 8 otázek, které se v gastru na pohovoru běžně ptají. Po každé mé odpovědi mi řekni, co bylo dobře a co říct jinak.`},
+  {id:"a-pdf",t:"Jak z toho udělat PDF",w:"PDF pak přiložíš v Mailu přes sponku.",x:`1. Text od AI zkopíruj do Google Dokumentů nebo Wordu.
+2. Zkontroluj údaje. AI se umí splést, za životopis ručíš ty.
+3. Google Dokumenty: Soubor → Stáhnout → PDF. Word: Uložit jako → PDF.
+4. V telefonu si PDF ulož do Souborů. V Mailu pak klikni na sponku a vyber ho.`}
+ ]}
+];
+const DEFAULT_TPL="e-kratky";
+let defTpl=store.get("tpl")||DEFAULT_TPL;
+function tplById(id){for(const s of SECS)for(const it of s.items)if(it.id===id)return it;return null}
+function splitMail(x){const m=x.match(/^Předmět: (.*)\n\n([\s\S]*)$/);return m?{subj:m[1],body:m[2]}:{subj:"Zájem o práci",body:x}}
+
+function renderGuide(){
+  $("#gchips").innerHTML=SECS.map(s=>`<button class="chip" aria-pressed="${s.id===st.sec}" data-sec="${s.id}">${s.name} <small>${s.items.length+(s.qa?s.qa.length:0)}</small></button>`).join("");
+  const s=SECS.find(x=>x.id===st.sec)||SECS[0];
+  let h=`<div class="sec-intro"><h2>${esc(s.name)}</h2><p class="lead">${esc(s.intro)}</p></div>`;
+  h+=s.items.map(it=>`<article class="item"><h3>${esc(it.t)}${s.id==="email"&&it.id===defTpl?'<span class="default-badge">Pro tlačítko Napsat</span>':""}</h3>
+    <p class="when">${esc(it.w)}</p><pre>${esc(it.x)}</pre>
+    <div class="row"><button class="btn primary" data-copy-item="${it.id}">${ICON.copy} Zkopírovat</button>
+    ${s.id==="email"&&it.id!==defTpl?`<button class="btn" data-def="${it.id}">Použít pro Napsat</button>`:""}</div></article>`).join("");
+  if(s.qa) h+=`<div class="sec-intro"><h2>Když řeknou…</h2></div>`+s.qa.map(([q,a])=>`<details class="qa"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
+  $("#guide").innerHTML=h;
+}
+$("#gchips").addEventListener("click",e=>{const b=e.target.closest("[data-sec]");if(!b)return;st.sec=b.dataset.sec;renderGuide();window.scrollTo(0,0);track("navod-"+st.sec,true)});
+$("#guide").addEventListener("click",async e=>{
+  const c=e.target.closest("[data-copy-item]");
+  if(c){const it=tplById(c.dataset.copyItem);if(!await copy(it.x,"Zkopírováno – přepiš části v [závorkách]")){const pre=c.closest(".item").querySelector("pre");const r=document.createRange();r.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast("Text je označený – zkopíruj ho")}track("kopirovat-"+it.id);return}
+  const d=e.target.closest("[data-def]");
+  if(d){defTpl=d.dataset.def;store.set("tpl",defTpl);renderGuide();toast("Tlačítko Napsat teď použije tento text")}
+});
+
+/* ---------- seznam firem ---------- */
+/* ---------- rejstřík druhů (Vše A–Z) a návrhy v hledání ---------- */
+const AZ="__AZ";
+const cap=s=>{s=String(s||"");return s.charAt(0).toUpperCase()+s.slice(1)};
+function hasDruhy(){return firmy.some(f=>f.druh)}
+function druhCounts(pool){const c=new Map();pool.forEach(f=>{if(f.druh)c.set(f.druh,(c.get(f.druh)||0)+1)});return c}
+function idxHtml(counts,withLetters){
+  const items=[...counts.entries()].sort((a,b)=>ABC.compare(a[0],b[0]));
+  let h="",last="";
+  for(const [d,n] of items){
+    const L=norm(d).charAt(0).toUpperCase();
+    if(withLetters&&L!==last){h+=`<h3>${esc(L)}</h3>`;last=L}
+    h+=`<button data-druh="${esc(d)}"><span>${esc(cap(d))}</span><small>${n}</small></button>`;
+  }
+  return `<div class="idx">${h}</div>`;
+}
+function renderSugg(){
+  const box=$("#sugg");const q=norm(st.q).trim();
+  if(q.length<2||!hasDruhy()){box.hidden=true;box.innerHTML="";return}
+  const pool=firmy.filter(f=>!st.area||f.oblast===st.area);
+  const m=[...druhCounts(pool).entries()].filter(([d])=>norm(d).split(/[\s\/–-]+/).some(w=>w.startsWith(q))||norm(d).includes(q))
+    .sort((a,b)=>b[1]-a[1]||ABC.compare(a[0],b[0])).slice(0,6);
+  if(!m.length){box.hidden=true;box.innerHTML="";return}
+  box.innerHTML=`<div class="lbl">Druhy podniků${st.area?" · "+esc(shortArea(st.area)):""}</div>`+m.map(([d,n])=>`<button data-druh="${esc(d)}"><span>${esc(cap(d))}</span><small>${n}</small></button>`).join("");
+  box.hidden=false;
+}
+function pickDruh(d,from){st.druh=d;st.obor=AZ;st.q="";$("#q").value="";track("druh-"+d);if(from)track("druh-z-"+from);render();window.scrollTo(0,0)}
+function renderChips(){
+  // jen obory, které mají aspoň jeden podnik; ostatní se objeví samy, až se naplní
+  const active=OBORY.filter(o=>firmy.some(f=>f.obor===o));
+  if(active.length&&!active.includes(st.obor)&&st.obor!==AZ) st.obor=active[0];
+  const tot=firmy.filter(f=>!st.area||f.oblast===st.area).length;
+  const az=hasDruhy()?`<button class="chip az" aria-pressed="${st.obor===AZ}" data-o="${AZ}">Vše A–Z <small>${tot}</small></button>`:"";
+  $("#chips").innerHTML = az+active.map(o=>{
+    const all=firmy.filter(f=>f.obor===o);
+    const n=st.area?all.filter(f=>f.oblast===st.area).length:all.length;
+    return `<button class="chip" aria-pressed="${o===st.obor}" data-o="${o}">${o} <small>${n}</small></button>`}).join("");
+}
+const MOBIL=matchMedia("(max-width:600px)");
+MOBIL.addEventListener("change",()=>{if(typeof firmy!=="undefined")renderAreas()});
+const ABC=new Intl.Collator("cs",{sensitivity:"base",numeric:true});
+/* Pořadí lokalit: nejdřív NAHORU (v tomto pořadí), pak podle počtu podniků (nejplnější první).
+   Až budou lokality zaplněné, přepni RAZENI_LOKALIT na "abeceda". */
+const NAHORU=["Praha - Zbraslav"];
+const RAZENI_LOKALIT="relevance"; // "relevance" nebo "abeceda"
+function areaOrder(list){
+  const cnt={};list.forEach(a=>cnt[a]=(cnt[a]||0)+1);
+  const u=Object.keys(cnt);
+  const rank=a=>{const i=NAHORU.indexOf(a);return i<0?NAHORU.length:i};
+  return u.sort((a,b)=>rank(a)-rank(b)||(RAZENI_LOKALIT==="relevance"?cnt[b]-cnt[a]:0)||ABC.compare(a,b));
+}
+function shortArea(a){return String(a||"").replace(/^Praha\s*-\s*/,"")}
+function renderAreas(){
+  const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
+  if(!areas.includes(st.area)) st.area="";
+  $("#area").innerHTML=`<option value="">Všude</option>`+areas.map(a=>`<option value="${esc(a)}" ${a===st.area?"selected":""}>${esc(shortArea(a))}</option>`).join("");
+}
+function mapUrl(f){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([f.nazev,f.adresa,f.mesto&&!String(f.adresa).includes(f.mesto)?f.mesto:""].filter(Boolean).join(", "))}
+/* ---------- otevírací doba: "Po–Pá 10–20, So zavřeno", "denně 11–22 (Pá–So do 23)", "sezóna 1. 4.–15. 10.; …" ---------- */
+const DNY=["Po","Út","St","Čt","Pá","So","Ne"];
+const hoursCache=new Map();
+function parseHours(h){
+  if(!h) return null;
+  if(hoursCache.has(h)) return hoursCache.get(h);
+  let s=String(h),season=null,out=null;
+  const sm=s.match(/sezóna\s*(\d{1,2})\.\s*(\d{1,2})\.\s*[–-]\s*(\d{1,2})\.\s*(\d{1,2})\.\s*;?/i);
+  if(sm){season=[+sm[2]*100+ +sm[1],+sm[4]*100+ +sm[3]];s=s.replace(sm[0],"")}
+  if(/non-?stop|24\s*\/\s*7|24\s*hodin/i.test(s)) out={sched:Array(7).fill([0,1440]),season};
+  else if(!/sezónně|dle počasí|za příznivého/i.test(s)){
+    s=s.replace(/\(([^)]*)\)/g,", $1").replace(/^(?!denně)[a-zěščřžýáíéůúň]+\s+/,"");
+    const tm=x=>{const [a,b]=x.split(":");return +a*60+(+b||0)};
+    const sched=Array(7).fill(null);let pending=[],any=false;
+    for(const seg of s.split(/[,;]/)){
+      const t=seg.trim();if(!t)continue;
+      let days=/denně/.test(t)?[0,1,2,3,4,5,6]:[];
+      const re=/(Po|Út|St|Čt|Pá|So|Ne)(?:\s*[–-]\s*(Po|Út|St|Čt|Pá|So|Ne))?/g;let m;
+      while((m=re.exec(t))){const a=DNY.indexOf(m[1]),b=m[2]?DNY.indexOf(m[2]):a;for(let i=a;;i=(i+1)%7){days.push(i);if(i===b)break}}
+      if(/zavřeno/i.test(t)){days.forEach(d=>sched[d]=false);any=true;continue}
+      const r=t.match(/(\d{1,2}(?::\d{2})?)\s*[–-]\s*(\d{1,2}(?::\d{2})?)/);
+      const until=t.match(/do\s+(\d{1,2}(?::\d{2})?)/);
+      if(r){let o=tm(r[1]),c=tm(r[2]);if(c<=o)c+=1440;const ds=[...pending,...days];(ds.length?ds:[0,1,2,3,4,5,6]).forEach(d=>sched[d]=[o,c]);pending=[];any=true}
+      else if(until){const c0=tm(until[1]);days.forEach(d=>{if(sched[d]){let c=c0;if(c<=sched[d][0])c+=1440;sched[d]=[sched[d][0],c]}})}
+      else pending.push(...days);
+    }
+    if(any) out={sched,season};
+  }
+  hoursCache.set(h,out);return out;
+}
+function isOpen(h,now=new Date()){
+  const p=parseHours(h);if(!p)return null;
+  if(p.season){const md=(now.getMonth()+1)*100+now.getDate();if(md<p.season[0]||md>p.season[1])return false}
+  const d=(now.getDay()+6)%7,t=now.getHours()*60+now.getMinutes();
+  const a=p.sched[d];if(a&&t>=a[0]&&t<a[1])return true;
+  const y=p.sched[(d+6)%7];if(y&&y[1]>1440&&t<y[1]-1440)return true;
+  return false;
+}
+function openRank(h){const o=isOpen(h);return o===true?0:o===null?1:2} // otevřeno, neznámo, zavřeno
+function card(f,i){
+  const ph=firstPhone(f.telefon);
+  const addr=[f.adresa,f.mesto&&f.mesto!==f.oblast&&!String(f.adresa||"").includes(f.mesto)?f.mesto:""].filter(Boolean).join(", ");
+  const sluzba=st.mode==="sluzba";
+  const facts=[["Telefon",f.telefon],["E-mail",f.email],["Otevřeno",sluzba?"":f.hodiny]].filter(x=>x[1]);
+  const open=sluzba?isOpen(f.hodiny):null;
+  const hours=sluzba&&f.hodiny?`<div class="hours">${open===null?"":`<span class="state ${open?"open":"closed"}">${open?"Teď otevřeno":"Zavřeno"}</span>`}<span class="txt">${esc(f.hodiny)}</span></div>`:"";
+  const links=[!sluzba&&f.web?`<a class="link" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(f.web.replace(/^https?:\/\//,""))} ↗</a>`:"",
+    !sluzba&&f.adresa?`<a class="link" href="${mapUrl(f)}" target="_blank" rel="noopener">Ukázat na mapě ↗</a>`:""].filter(Boolean);
+  const more=f.popis||facts.length||links.length;
+  return `<article class="card">
+    <div class="top"><div><h3>${esc(f.nazev)}</h3>${f.styl?`<div class="meta">${esc(f.styl)}</div>`:""}${addr?`<div class="addr">${esc(addr)}</div>`:""}${hours}</div>
+    ${/částečně|neověřeno/i.test(f.overeno||"")?`<span class="tag" title="Některé údaje chybí">Neúplné</span>`:""}</div>
+    ${more?`<details class="more"><summary>Podrobnosti</summary><div class="inner">
+      ${f.popis?`<p class="desc">${esc(f.popis)}</p>`:""}
+      ${facts.length?`<dl class="facts">${facts.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`:""}
+      ${links.join("")}</div></details>`:""}
+    <div class="actions">
+      <a class="btn primary" ${ph?`href="tel:${ph}"`:'aria-disabled="true"'} data-call="${i}">${ICON.tel} Zavolat</a>
+      ${sluzba
+        ?(f.adresa?`<a class="btn" href="${mapUrl(f)}" target="_blank" rel="noopener">Mapa</a>`:`<a class="btn" aria-disabled="true">Mapa</a>`)+(f.web?`<a class="btn soft wide" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">Menu / web ↗</a>`:"")
+        :`<button class="btn" data-mail="${i}">${ICON.mail} Napsat</button>`}
+    </div></article>`;
+}
+function render(){
+  renderAreas(); renderChips(); renderSugg();
+  if(st.obor===AZ&&!hasDruhy()) st.obor="Gastronomie";
+  const q=norm(st.q);
+  const inArea=firmy.filter(f=>!st.area||f.oblast===st.area);
+  if(st.obor===AZ&&!st.druh&&!q){
+    const c=druhCounts(inArea);
+    $("#count").textContent=`${inArea.length} ${inArea.length===1?"podnik":inArea.length<5&&inArea.length>0?"podniky":"podniků"} celkem`;
+    $("#firmy").innerHTML=`<p class="idx-lead">${c.size} druhů podniků${st.area?" v lokalitě "+esc(shortArea(st.area)):""}. Klepni na druh a zobrazí se podniky.</p>`+(c.size?idxHtml(c,true):`<div class="empty"><strong>Nic nenalezeno</strong>Zkus jinou lokalitu.</div>`);
+    return;
+  }
+  const list=firmy.map((f,i)=>[f,i]).filter(([f])=>(st.obor===AZ||f.obor===st.obor) && (!st.druh||f.druh===st.druh) && (!st.area||f.oblast===st.area) &&
+    (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,f.druh].join(" ")).includes(q)))
+    .sort((a,b)=>(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):0)||ABC.compare(a[0].nazev||"",b[0].nazev||""));
+  const tot=firmy.filter(f=>!st.area||f.oblast===st.area).length;
+  $("#count").textContent=`${tot} ${tot===1?"podnik":tot<5&&tot>0?"podniky":"podniků"} celkem`;
+  const status=`<p class="status">${dataSource==="live"?"Data načtena živě z tabulky":"Data k "+DATA_DATE}</p>`;
+  if(!list.length){
+    if(st.druh||st.obor===AZ){$("#firmy").innerHTML=(st.druh?`<div class="druhbar"><button data-back="1">← Zpět</button><strong>${esc(cap(st.druh))}</strong></div>`:"")+`<div class="empty"><strong>Nic nenalezeno</strong>${st.area?"V této lokalitě zatím nic nemáme. Zkus „Všude“.":"Zkus jiné slovo."}</div>`;return}
+    const none=!firmy.some(f=>f.obor===st.obor);
+    $("#firmy").innerHTML=`<div class="empty"><strong>${none?`Obor ${esc(st.obor)} připravujeme`:st.area&&!st.q?`${esc(st.obor)} v lokalitě ${esc(shortArea(st.area))} zatím nemáme`:"Nic nenalezeno"}</strong>${none?"Další obory přibudou.":st.area&&!st.q?"Databázi postupně doplňujeme. Zkus jiný obor nebo jinou lokalitu.":"Zkus jiné slovo nebo jinou lokalitu."}</div>`;return;
+  }
+  const groups={};list.forEach(x=>(groups[x[0].oblast]??=[]).push(x));
+  const ord=areaOrder(firmy.filter(f=>st.obor===AZ||f.obor===st.obor).map(f=>f.oblast));
+  let top="";
+  if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.obor===AZ?"Všechny druhy":esc(st.obor)}</button><strong>${esc(cap(st.druh))}</strong></div>`;
+  else if(st.obor!==AZ&&!q){const c=druhCounts(inArea.filter(f=>f.obor===st.obor));if(c.size>1)top=`<details class="subidx"><summary>Upřesnit druh (${c.size})</summary>${idxHtml(c,false)}</details>`}
+  $("#firmy").innerHTML=Object.entries(groups).sort((x,y)=>ord.indexOf(x[0])-ord.indexOf(y[0])).map(([a,items])=>
+    `<section class="area"><h2>${esc(shortArea(a))} · ${items.length}</h2><div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div></section>`).join("")+status;
+  if(top) $("#firmy").insertAdjacentHTML("afterbegin",top);
+}
+
+/* ---------- kontakt ---------- */
+function message(f){const t=tplById(defTpl)||tplById(DEFAULT_TPL);const m=splitMail(t.x);return {subj:m.subj,body:m.body.replace(/\[podnik\]/g,f.nazev)}}
+function mailHref(f,subj,body){return `mailto:${encodeURIComponent(f.email||"")}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`}
+function compose(f){
+  const m=message(f);
+  if(f.email){track("napsat-email");location.href=mailHref(f,m.subj,m.body)} else track("napsat-bez-emailu");
+  showSheet(f,m);
+}
+function showSheet(f,m){
+  document.querySelector(".sheet-bg")?.remove();
+  const has=!!f.email;
+  const bg=document.createElement("div");bg.className="sheet-bg";
+  bg.innerHTML=`<div class="sheet" role="dialog" aria-label="Zpráva pro ${esc(f.nazev)}">
+    <h3>${has?"Otevírám Mail…":"Zpráva pro "+esc(f.nazev)}</h3>
+    ${has?`<p class="hint">Adresa: <strong>${esc(f.email)}</strong>. V Mailu přepiš části v [závorkách] a přilož životopis přes sponku. Pokud se Mail neotevřel, zkopíruj text a adresu ručně.</p>`
+      :`<p class="hint">Tahle firma nemá v databázi e-mail. Nejlepší je zavolat, nebo text zkopírovat a poslat přes jejich web či Facebook.</p>`}
+    <div class="field"><label for="msgtxt">Text (můžeš upravit)</label><textarea id="msgtxt">${esc(m.body)}</textarea></div>
+    <div class="actions">
+      ${has?`<a class="btn primary" id="sendmail" href="${mailHref(f,m.subj,m.body)}">${ICON.mail} Otevřít v Mailu</a>`:""}
+      <button class="btn${has?"":" primary"}" id="copymsg">Zkopírovat text</button>
+      ${has?`<button class="btn wide" id="copyaddr">Zkopírovat adresu</button>`:""}
+      <button class="btn wide" id="othertpl">Vybrat jiný text</button>
+    </div>
+    <button class="btn" id="closesheet">Zavřít</button></div>`;
+  document.body.appendChild(bg);
+  const ta=bg.querySelector("#msgtxt");
+  ta.addEventListener("input",()=>{const a=bg.querySelector("#sendmail");if(a)a.href=mailHref(f,m.subj,ta.value)});
+  bg.querySelector("#copymsg").onclick=async()=>{if(!await copy(ta.value)){ta.select();toast("Text je označený – zkopíruj ho")}};
+  bg.querySelector("#copyaddr")?.addEventListener("click",()=>copy(f.email,"Adresa zkopírována"));
+  bg.querySelector("#othertpl").onclick=()=>{bg.remove();st.sec="email";show("navody")};
+  bg.querySelector("#closesheet").onclick=()=>bg.remove();
+  bg.addEventListener("click",e=>{if(e.target===bg)bg.remove()});
+}
+
+/* ---------- události ---------- */
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.druh="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();window.scrollTo(0,0)});
+$("#sugg").addEventListener("click",e=>{const b=e.target.closest("[data-druh]");if(b)pickDruh(b.dataset.druh,"hledani")});
+$("#area").addEventListener("change",e=>{st.area=e.target.value;render()});
+$("#q").addEventListener("input",e=>{st.q=e.target.value;if(st.druh&&st.q)st.druh="";render()});
+$("#firmy").addEventListener("click",e=>{
+  const dz=e.target.closest("[data-druh]");if(dz){if(st.obor===AZ)pickDruh(dz.dataset.druh,"rejstrik");else{st.druh=dz.dataset.druh;track("druh-"+st.druh);render();window.scrollTo(0,0)}return}
+  if(e.target.closest("[data-back]")){st.druh="";render();window.scrollTo(0,0);return}
+  const m=e.target.closest("[data-mail]");if(m){compose(firmy[+m.dataset.mail]);return}
+  const t=e.target.closest("[data-call]");if(t){track("zavolat");const ph=firstPhone(firmy[+t.dataset.call].telefon);if(ph)copy(ph,"Číslo zkopírováno")}
+});
+function show(tab){
+  ["firmy","navody","onas"].forEach(n=>{$("#view-"+n).hidden=n!==tab;$("#tab-"+n).setAttribute("aria-selected",n===tab)});
+  if(tab==="navody"){renderGuide();track("zalozka-navody",true)}
+  if(tab==="onas") track("zalozka-o-aplikaci",true);
+  window.scrollTo(0,0);
+}
+$("#tab-firmy").onclick=()=>show("firmy");$("#tab-navody").onclick=()=>show("navody");$("#tab-onas").onclick=()=>show("onas");
+
+/* ---------- živá data z veřejné tabulky ---------- */
+function parseCSV(t){const r=[];let row=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==","){row.push(c);c=""}else if(ch=="\n"){row.push(c);r.push(row);row=[];c=""}else if(ch!="\r")c+=ch}row.push(c);r.push(row);return r}
+async function loadLive(){
+  if(!LIVE_CSV_URL && !SHEET_ID) return;
+  try{
+    const ctl=new AbortController();setTimeout(()=>ctl.abort(),10000);
+    let res=null;
+    for(const u of [LIVE_CSV_URL, SHEET_ID&&`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`].filter(Boolean)){
+      try{const r=await fetch(u,{signal:ctl.signal,cache:"no-store"});if(r.ok&&!/^\s*</.test(await r.clone().text())){res=r;break}}catch(e){}
+    }
+    if(!res) return;
+    const rows=parseCSV(await res.text());
+    const h=rows[0].map(x=>norm(x).trim());
+    const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"]};
+    const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
+    if(ix("nazev")<0) return;
+    const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh"];
+    const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return o});
+    if(data.length){firmy=data;dataSource="live";render()}
+  }catch(e){/* zůstanou vložená data */}
+}
+
+/* hlavička: při posouvání dolů se schová hledání, obory zůstanou */
+(()=>{let last=0,lock=0;const hdr=document.querySelector("#view-firmy header");
+  const set=c=>{if(hdr.classList.contains("compact")===c)return;hdr.classList.toggle("compact",c);lock=Date.now()+400};
+  addEventListener("scroll",()=>{const y=scrollY;
+    if(Date.now()<lock){last=y;return}
+    if(y<60||document.activeElement===$("#q")||document.activeElement===$("#area"))set(false);
+    else if(y>last+20)set(true);else if(y<last-40)set(false);
+    if(Math.abs(y-last)>20)last=y;},{passive:true});})();
+st.obor=OBORY.includes(store.get("obor"))?store.get("obor"):"Gastronomie";
+st.mode=store.get("mode")==="sluzba"?"sluzba":"prace";
+function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode)));
+  const sl=st.mode==="sluzba";$("#tab-navody").hidden=sl;document.querySelector("nav.tabs").classList.toggle("two",sl);$("#q").placeholder="Hledat…"}
+document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
+applyMode();
+render(); loadLive();
+const h0=(location.hash||"").slice(1); if(h0==="navody"||h0==="onas") show(h0);
+</script>
+</body></html>
