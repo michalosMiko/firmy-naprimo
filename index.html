@@ -18,6 +18,9 @@
 :root[data-theme="dark"]{
   --bg:#0F1514; --surface:#18201F; --ink:#E8EEEC; --muted:#9AA8A5; --line:#2A3533;
   --accent:#4FC2AC; --accent-ink:#06201B; --accent-soft:#163A34; --warn:#F2B866; --warn-soft:#3A2A12; color-scheme:dark}
+/* Režim Hledám službu = modrá, Hledám práci = zelená */
+:root[data-mode="sluzba"]{--accent:#1F5FA8;--accent-ink:#FFFFFF;--accent-soft:#DCE8F7}
+@media (prefers-color-scheme: dark){:root[data-mode="sluzba"]:not([data-theme="light"]){--accent:#7FB2F0;--accent-ink:#071A33;--accent-soft:#16263C}}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
 *{box-sizing:border-box}
@@ -57,6 +60,34 @@ details.more .inner{display:grid;gap:8px;margin-top:8px}
 .state.open{background:var(--accent-soft);color:var(--accent)}
 .state.closed{background:var(--line);color:var(--muted)}
 nav.tabs.two{grid-template-columns:repeat(2,1fr)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}70%{box-shadow:0 0 0 9px color-mix(in srgb,var(--accent) 0%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
+.nudge{border-color:var(--accent)!important;animation:pulse 1.8s ease-out infinite}
+@media (prefers-reduced-motion:reduce){.nudge{animation:none;box-shadow:0 0 0 3px var(--accent-soft)}}
+.hint{display:flex;align-items:center;gap:8px;background:var(--accent-soft);border-radius:12px;padding:8px 10px;font-size:13.5px;margin-top:-2px}
+.hint b{color:var(--accent)}
+header.compact .hint,header.compact .sugg{display:none}
+.hint button{margin-left:auto;background:none;border:0;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;padding:2px 4px}
+.wiz{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(18px + env(safe-area-inset-bottom,0px));overflow:auto}
+.wiz-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.wiz-dots{display:flex;gap:6px}
+.wiz-dots i{width:26px;height:5px;border-radius:9px;background:var(--line)}
+.wiz-dots i.on{background:var(--accent)}
+.wiz-skip{background:none;border:0;color:var(--muted);font-weight:600;cursor:pointer;padding:6px}
+.wiz h2{font-family:var(--display);font-size:28px;letter-spacing:-.02em;margin:18px 0 4px;text-wrap:balance}
+.wiz .lead{margin:0 0 16px}
+.wiz-grid{display:grid;gap:10px;max-width:560px;width:100%}
+.wiz-grid.two{grid-template-columns:1fr 1fr}
+.wiz-card{display:grid;gap:4px;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px;cursor:pointer}
+.wiz-card b{font-size:18px}
+.wiz-card span{color:var(--muted);font-size:14px}
+.wiz-card:hover,.wiz-card:focus-visible{border-color:var(--accent)}
+.wiz-card.prace{border-color:#0F6B5C33}.wiz-card.sluzba{border-color:#1F5FA833}
+.wiz-card .ico{font-size:26px}
+.wiz-opt{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:13px 14px;font-size:16px;font-weight:600;cursor:pointer;text-align:left}
+.wiz-opt small{color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+.wiz-opt:hover,.wiz-opt:focus-visible{border-color:var(--accent)}
+.wiz-opt.all{grid-column:1/-1;background:var(--accent-soft);border-color:var(--accent-soft)}
+.wiz-back{margin-top:16px;align-self:flex-start;background:none;border:0;color:var(--accent);font-weight:600;cursor:pointer;padding:6px 0}
 .sugg{display:grid;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;margin-top:-4px}
 .sugg button{display:flex;justify-content:space-between;gap:10px;background:none;border:0;border-radius:8px;padding:9px 10px;text-align:left;cursor:pointer;font-size:14.5px}
 .sugg button:hover,.sugg button:focus-visible{background:var(--accent-soft)}
@@ -157,6 +188,7 @@ details.qa p{margin:8px 0 0}
   </div>
   </div>
   <div class="sugg" id="sugg" hidden></div>
+  <div class="hint" id="hint" hidden></div>
   <div class="chips" id="chips" role="toolbar" aria-label="Obory"></div>
 </header>
 <main id="firmy"></main>
@@ -173,6 +205,7 @@ details.qa p{margin:8px 0 0}
 <div id="view-onas" hidden>
 <div class="ghead"><div class="brand"><h2 class="page-h">O aplikaci</h2></div></div>
 <main class="about">
+  <button class="btn soft" id="rerun">Spustit průvodce znovu</button>
   <section class="item">
     <h3>Práce napřímo</h3>
     <p>Firmy ve vašem okolí s přímým kontaktem. Hledáte práci? Zavolejte nebo napište firmě rovnou, bez inzerátů a agentur. Hledáte službu? Najdete tu obchody, autoservisy, kadeřnictví, dopravu a další služby kolem sebe.</p>
@@ -606,7 +639,7 @@ function card(f,i){
     </div></article>`;
 }
 function render(){
-  renderAreas(); renderChips(); renderSugg();
+  renderAreas(); renderChips(); renderSugg(); renderHint();
   if(st.obor===AZ&&!hasDruhy()) st.obor="Gastronomie";
   const q=norm(st.q);
   const inArea=firmy.filter(f=>!st.area||f.oblast===st.area);
@@ -674,7 +707,7 @@ function showSheet(f,m){
 /* ---------- události ---------- */
 $("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.druh="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();window.scrollTo(0,0)});
 $("#sugg").addEventListener("click",e=>{const b=e.target.closest("[data-druh]");if(b)pickDruh(b.dataset.druh,"hledani")});
-$("#area").addEventListener("change",e=>{st.area=e.target.value;render()});
+$("#area").addEventListener("change",e=>{st.area=e.target.value;store.set("area",st.area);store.set("areaPicked",true);render()});
 $("#q").addEventListener("input",e=>{st.q=e.target.value;if(st.druh&&st.q)st.druh="";render()});
 $("#firmy").addEventListener("click",e=>{
   const dz=e.target.closest("[data-druh]");if(dz){if(st.obor===AZ)pickDruh(dz.dataset.druh,"rejstrik");else{st.druh=dz.dataset.druh;track("druh-"+st.druh);render();window.scrollTo(0,0)}return}
@@ -688,6 +721,7 @@ function show(tab){
   if(tab==="onas") track("zalozka-o-aplikaci",true);
   window.scrollTo(0,0);
 }
+$("#rerun").onclick=()=>{show("firmy");startWizard()};
 $("#tab-firmy").onclick=()=>show("firmy");$("#tab-navody").onclick=()=>show("navody");$("#tab-onas").onclick=()=>show("onas");
 
 /* ---------- živá data z veřejné tabulky ---------- */
@@ -720,13 +754,61 @@ async function loadLive(){
     if(y<60||document.activeElement===$("#q")||document.activeElement===$("#area"))set(false);
     else if(y>last+20)set(true);else if(y<last-40)set(false);
     if(Math.abs(y-last)>20)last=y;},{passive:true});})();
+/* ---------- průvodce při první návštěvě + navádění na další krok ---------- */
+function renderHint(){
+  const h=$("#hint"),a=$("#area");
+  const need=!st.area&&!store.get("areaPicked")&&!store.get("hintOff");
+  a.classList.toggle("nudge",need);
+  if(need){h.innerHTML=`📍 <span><b>Vyber svou lokalitu</b> – ukážeme podniky blízko tebe.</span><button aria-label="Zavřít nápovědu">×</button>`;h.hidden=false}
+  else{h.hidden=true;h.innerHTML=""}
+}
+$("#hint").addEventListener("click",e=>{if(e.target.closest("button")){store.set("hintOff",true);renderHint()}});
+const wiz={step:1};
+function wizShow(step){
+  wiz.step=step;let el=$("#wiz");
+  if(!el){el=document.createElement("div");el.id="wiz";el.className="wiz";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");document.body.appendChild(el);document.body.style.overflow="hidden"}
+  const dots=`<div class="wiz-dots">${[1,2,3].map(i=>`<i class="${i<=step?"on":""}"></i>`).join("")}</div>`;
+  let h=`<div class="wiz-top">${dots}<button class="wiz-skip" data-w="skip">Přeskočit</button></div>`;
+  if(step===1){
+    h+=`<h2>Co hledáš?</h2><p class="lead">Podle toho ti ukážeme ty správné podniky.</p><div class="wiz-grid">
+      <button class="wiz-card prace" data-w="mode" data-v="prace"><span class="ico">💼</span><b>Hledám práci</b><span>Firmy v okolí, kterým můžeš rovnou zavolat nebo napsat. S hotovými texty.</span></button>
+      <button class="wiz-card sluzba" data-w="mode" data-v="sluzba"><span class="ico">🔧</span><b>Hledám službu nebo podnik</b><span>Kde mají otevřeno, kam na jídlo, autoservis, lékař, řemeslník…</span></button></div>`;
+  } else if(step===2){
+    const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
+    const cnt=a=>firmy.filter(f=>f.oblast===a).length;
+    h+=`<h2>Kde?</h2><p class="lead">Vyber lokalitu, kde hledáš. Kdykoli ji pak změníš nahoře.</p><div class="wiz-grid two">
+      ${areas.map(a=>`<button class="wiz-opt" data-w="area" data-v="${esc(a)}">${esc(shortArea(a))}<small>${cnt(a)}</small></button>`).join("")}
+      <button class="wiz-opt all" data-w="area" data-v="">Všude<small>${firmy.length}</small></button></div>
+      <button class="wiz-back" data-w="back">← Zpět</button>`;
+  } else {
+    const pool=firmy.filter(f=>!st.area||f.oblast===st.area);
+    const ob=OBORY.filter(o=>pool.some(f=>f.obor===o));
+    h+=`<h2>Co tě zajímá?</h2><p class="lead">${st.area?esc(shortArea(st.area))+": ":""}${pool.length} podniků. Vyber obor, nebo projdi všechno podle abecedy.</p><div class="wiz-grid two">
+      ${ob.map(o=>`<button class="wiz-opt" data-w="obor" data-v="${o}">${o}<small>${pool.filter(f=>f.obor===o).length}</small></button>`).join("")}
+      ${hasDruhy()?`<button class="wiz-opt all" data-w="obor" data-v="${AZ}">Vše A–Z (podle druhu)<small>${pool.length}</small></button>`:""}</div>
+      <button class="wiz-back" data-w="back">← Zpět</button>`;
+  }
+  el.innerHTML=h;el.scrollTop=0;
+}
+function wizClose(done){const el=$("#wiz");if(el)el.remove();document.body.style.overflow="";store.set("onb",true);track(done?"pruvodce-dokoncen":"pruvodce-preskocen",true);applyMode();render();window.scrollTo(0,0)}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("#wiz [data-w]");if(!b)return;const w=b.dataset.w,v=b.dataset.v;
+  if(w==="skip")return wizClose(false);
+  if(w==="back")return wizShow(Math.max(1,wiz.step-1));
+  if(w==="mode"){st.mode=v;store.set("mode",v);applyMode();track("rezim-"+v);return wizShow(2)}
+  if(w==="area"){st.area=v;store.set("area",v);store.set("areaPicked",true);return wizShow(3)}
+  if(w==="obor"){st.obor=v;st.druh="";if(v!==AZ)store.set("obor",v);return wizClose(true)}
+});
+function startWizard(){wizShow(1)}
+st.area=typeof store.get("area")==="string"?store.get("area"):"";
 st.obor=OBORY.includes(store.get("obor"))?store.get("obor"):"Gastronomie";
 st.mode=store.get("mode")==="sluzba"?"sluzba":"prace";
 function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode)));
-  const sl=st.mode==="sluzba";$("#tab-navody").hidden=sl;document.querySelector("nav.tabs").classList.toggle("two",sl);$("#q").placeholder="Hledat…"}
+  const sl=st.mode==="sluzba";document.documentElement.dataset.mode=st.mode;$("#tab-navody").hidden=sl;document.querySelector("nav.tabs").classList.toggle("two",sl);$("#q").placeholder="Hledat…"}
 document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
 applyMode();
 render(); loadLive();
 const h0=(location.hash||"").slice(1); if(h0==="navody"||h0==="onas") show(h0);
+else if(!store.get("onb")) startWizard();
 </script>
 </body></html>
