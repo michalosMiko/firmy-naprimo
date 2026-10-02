@@ -68,7 +68,7 @@ main{padding:12px 16px calc(96px + env(safe-area-inset-bottom,0px));display:grid
 .empty strong{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
 .status{font-size:12.5px;color:var(--muted);text-align:center;margin:0}
 
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(2,1fr);padding:6px 16px calc(6px + env(safe-area-inset-bottom,0px))}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:6px 16px calc(6px + env(safe-area-inset-bottom,0px))}
 .tab{background:none;border:0;padding:8px;display:grid;justify-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
 .tab svg{width:22px;height:22px}
 .tab[aria-selected="true"]{color:var(--accent)}
@@ -91,6 +91,10 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surfa
 details.qa{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 details.qa summary{cursor:pointer;font-weight:600}
 details.qa p{margin:8px 0 0}
+.about p{margin:0}
+.about .sign{color:var(--muted);font-size:13.5px}
+.about ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.about .soon{font-size:11.5px;font-weight:600;padding:2px 7px;border-radius:999px;background:var(--warn-soft);color:var(--warn);margin-left:4px;vertical-align:1px}
 
 /* sheet */
 .sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9;display:flex;align-items:flex-end;justify-content:center}
@@ -128,11 +132,54 @@ details.qa p{margin:8px 0 0}
 <main id="guide"></main>
 </div>
 
+<div id="view-onas" hidden>
+<div class="ghead"><div class="brand"><h2 class="page-h">O aplikaci</h2></div></div>
+<main class="about">
+  <section class="item">
+    <h3>Práce napřímo</h3>
+    <p>Firmy ve vašem okolí s přímým kontaktem. Hledáte práci? Zavolejte nebo napište firmě rovnou, bez inzerátů a agentur. Hledáte službu? Najdete tu obchody, autoservisy, kadeřnictví, dopravu a další služby kolem sebe.</p>
+  </section>
+  <section class="item">
+    <h3>Proč vznikla</h3>
+    <p>Aplikace vznikla, protože jsem sám hledal práci a chtěl jsem firmy oslovovat napřímo.</p>
+    <p class="sign">Michal Mamula, zakladatel projektu Práce napřímo</p>
+  </section>
+  <section class="item">
+    <h3>Kontakt</h3>
+    <p>Dotazy, nápady i chyby pište na <a class="link" href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a>.</p>
+    <div class="row">
+      <a class="btn primary" href="mailto:domecekcafe@gmail.com?subject=Chyb%C3%AD%20firma%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo&body=Dobr%C3%BD%20den%2C%0A%0Apros%C3%ADm%20o%20dopln%C4%9Bn%C3%AD%20firmy%20do%20aplikace%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo%3A%0A%0AN%C3%A1zev%3A%0AObor%20%28gastronomie%2C%20obchod%2C%20slu%C5%BEby%2C%20doprava%2C%20pr%C5%AFmysl%2C%20zdravotnictv%C3%AD%29%3A%0AAdresa%3A%0ATelefon%3A%0AFiremn%C3%AD%20e-mail%3A%0AWeb%3A%0AOtev%C3%ADrac%C3%AD%20doba%3A%0AKr%C3%A1tk%C3%BD%20popis%3A%0A">Chybí tu vaše firma?</a>
+      <a class="btn" href="mailto:domecekcafe@gmail.com?subject=Oprava%20%C3%BAdaj%C5%AF%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo&body=Dobr%C3%BD%20den%2C%0A%0Au%20firmy%20%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%20v%20aplikaci%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo%20pros%C3%ADm%20o%20opravu%20/%20odstran%C4%9Bn%C3%AD%20t%C4%9Bchto%20%C3%BAdaj%C5%AF%3A%0A%0A">Oprava údajů</a>
+    </div>
+  </section>
+  <section class="item">
+    <h3>Pro firmy</h3>
+    <ul>
+      <li><strong>Základní zápis</strong> – zdarma. Stačí napsat přes tlačítko „Chybí tu vaše firma?“.</li>
+      <li><strong>Zvýraznění</strong><span class="soon">připravujeme</span> – firma se ukáže nahoře ve svém oboru a lokalitě, viditelně označená jako „Doporučeno“.</li>
+      <li><strong>Banner</strong><span class="soon">připravujeme</span> – reklamní pruh v aplikaci.</li>
+    </ul>
+    <div class="row"><a class="btn" href="mailto:domecekcafe@gmail.com?subject=Zv%C3%BDrazn%C4%9Bn%C3%AD%20firmy%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo">Mám zájem o zvýraznění</a></div>
+  </section>
+  <section class="item">
+    <h3>Ochrana údajů</h3>
+    <ul>
+      <li>Údaje o firmách pochází z veřejných zdrojů: webů firem, obchodního a živnostenského rejstříku a veřejných katalogů. Zobrazujeme jen firemní kontakty.</li>
+      <li>Chcete své údaje opravit nebo odstranit? Napište nám přes „Oprava údajů“, vyřídíme to.</li>
+      <li>Životopis, který si v aplikaci vyplníte, zůstává jen ve vašem telefonu a nikam se neodesílá.</li>
+      <li>Návštěvnost měříme anonymně přes GoatCounter, bez cookies.</li>
+    </ul>
+  </section>
+</main>
+</div>
+
 <nav class="tabs" role="tablist">
   <button class="tab" role="tab" id="tab-firmy" aria-selected="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>Firmy</button>
   <button class="tab" role="tab" id="tab-navody" aria-selected="false">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 7h6M9 11h6"/></svg>Návody</button>
+  <button class="tab" role="tab" id="tab-onas" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>O aplikaci</button>
 </nav>
 
 <script>
@@ -464,11 +511,12 @@ $("#firmy").addEventListener("click",e=>{
   const t=e.target.closest("[data-call]");if(t){track("zavolat");const ph=firstPhone(firmy[+t.dataset.call].telefon);if(ph)copy(ph,"Číslo zkopírováno")}
 });
 function show(tab){
-  ["firmy","navody"].forEach(n=>{$("#view-"+n).hidden=n!==tab;$("#tab-"+n).setAttribute("aria-selected",n===tab)});
+  ["firmy","navody","onas"].forEach(n=>{$("#view-"+n).hidden=n!==tab;$("#tab-"+n).setAttribute("aria-selected",n===tab)});
   if(tab==="navody"){renderGuide();track("zalozka-navody",true)}
+  if(tab==="onas") track("zalozka-o-aplikaci",true);
   window.scrollTo(0,0);
 }
-$("#tab-firmy").onclick=()=>show("firmy");$("#tab-navody").onclick=()=>show("navody");
+$("#tab-firmy").onclick=()=>show("firmy");$("#tab-navody").onclick=()=>show("navody");$("#tab-onas").onclick=()=>show("onas");
 
 /* ---------- živá data z veřejné tabulky ---------- */
 function parseCSV(t){const r=[];let row=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==","){row.push(c);c=""}else if(ch=="\n"){row.push(c);r.push(row);row=[];c=""}else if(ch!="\r")c+=ch}row.push(c);r.push(row);return r}
@@ -498,6 +546,6 @@ function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setA
 document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
 applyMode();
 render(); loadLive();
-const h0=(location.hash||"").slice(1); if(h0==="navody") show("navody");
+const h0=(location.hash||"").slice(1); if(h0==="navody"||h0==="onas") show(h0);
 </script>
 </body></html>
