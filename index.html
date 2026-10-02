@@ -429,8 +429,9 @@ function renderChips(){
 }
 const MOBIL=matchMedia("(max-width:600px)");
 MOBIL.addEventListener("change",()=>{if(typeof firmy!=="undefined")renderAreas()});
+const ABC=new Intl.Collator("cs",{sensitivity:"base",numeric:true});
 function renderAreas(){
-  const areas=[...new Set(firmy.filter(f=>f.obor===st.obor).map(f=>f.oblast))];
+  const areas=[...new Set(firmy.filter(f=>f.obor===st.obor).map(f=>f.oblast))].sort(ABC.compare);
   if(!areas.includes(st.area)) st.area="";
   $("#area").innerHTML=`<option value="">${MOBIL.matches?"Lokality":"Všechny lokality"}</option>`+areas.map(a=>`<option ${a===st.area?"selected":""}>${esc(a)}</option>`).join("");
 }
@@ -456,7 +457,8 @@ function render(){
   renderChips(); renderAreas();
   const q=norm(st.q);
   const list=firmy.map((f,i)=>[f,i]).filter(([f])=>f.obor===st.obor && (!st.area||f.oblast===st.area) &&
-    (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis].join(" ")).includes(q)));
+    (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis].join(" ")).includes(q)))
+    .sort((a,b)=>ABC.compare(a[0].oblast||"",b[0].oblast||"")||ABC.compare(a[0].nazev||"",b[0].nazev||""));
   $("#count").textContent=`${list.length} ${list.length===1?"firma":list.length<5&&list.length>0?"firmy":"firem"}`;
   const status=`<p class="status">${dataSource==="live"?"Data načtena živě z tabulky":"Data k "+DATA_DATE}</p>`;
   if(!list.length){
