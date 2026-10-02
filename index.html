@@ -31,7 +31,7 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .search{display:flex;gap:8px}
 .search input,.search select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
 .search input{flex:1}
-.search select{flex:0 1 42%}
+.search select{flex:0 1 40%;font-weight:600}
 .mode{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
 .mode button{border:0;background:none;border-radius:9px;padding:8px 6px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer}
 .mode button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
@@ -41,6 +41,16 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .chip small{color:var(--muted);font-variant-numeric:tabular-nums}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chip[aria-pressed="true"] small{color:inherit;opacity:.7}
+.hcollapse{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;max-height:240px;overflow:hidden;transition:max-height .2s ease,opacity .2s ease,margin .2s ease}
+header.compact .hcollapse{max-height:0;opacity:0;margin-bottom:-10px;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.hcollapse{transition:none}}
+.addr{color:var(--muted);font-size:13.5px;margin-top:2px}
+details.more{font-size:13.5px}
+details.more summary{cursor:pointer;color:var(--accent);font-weight:600;list-style:none;display:inline-flex;align-items:center;gap:4px;padding:2px 0}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:"▾";font-size:12px}
+details.more[open] summary::after{content:"▴"}
+details.more .inner{display:grid;gap:8px;margin-top:8px}
 
 main{padding:12px 16px calc(96px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:720px;margin:0 auto}
 .area h2{font-family:var(--display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:4px 2px 8px}
@@ -110,14 +120,16 @@ details.qa p{margin:8px 0 0}
 
 <div id="view-firmy">
 <header>
+  <div class="hcollapse">
   <div class="brand"><h1>Práce napřímo</h1><span class="count" id="count"></span></div>
   <div class="mode" role="group" aria-label="Co hledáte">
     <button type="button" data-mode="prace" aria-pressed="true">Hledám práci</button>
     <button type="button" data-mode="sluzba" aria-pressed="false">Hledám službu / info</button>
   </div>
   <div class="search">
-    <input id="q" type="search" placeholder="Hledat název, ulici, styl…" aria-label="Hledat">
+    <input id="q" type="search" placeholder="Hledat…" aria-label="Hledat">
     <select id="area" aria-label="Lokalita"></select>
+  </div>
   </div>
   <div class="chips" id="chips" role="toolbar" aria-label="Obory"></div>
 </header>
@@ -423,10 +435,13 @@ $("#guide").addEventListener("click",async e=>{
 
 /* ---------- seznam firem ---------- */
 function renderChips(){
-  $("#chips").innerHTML = OBORY.map(o=>{
+  // jen obory, které mají aspoň jeden podnik; ostatní se objeví samy, až se naplní
+  const active=OBORY.filter(o=>firmy.some(f=>f.obor===o));
+  if(active.length&&!active.includes(st.obor)) st.obor=active[0];
+  $("#chips").innerHTML = active.map(o=>{
     const all=firmy.filter(f=>f.obor===o);
     const n=st.area?all.filter(f=>f.oblast===st.area).length:all.length;
-    return `<button class="chip" aria-pressed="${o===st.obor}" data-o="${o}">${o} <small>${all.length?n:"brzy"}</small></button>`}).join("");
+    return `<button class="chip" aria-pressed="${o===st.obor}" data-o="${o}">${o} <small>${n}</small></button>`}).join("");
 }
 const MOBIL=matchMedia("(max-width:600px)");
 MOBIL.addEventListener("change",()=>{if(typeof firmy!=="undefined")renderAreas()});
@@ -441,25 +456,31 @@ function areaOrder(list){
   const rank=a=>{const i=NAHORU.indexOf(a);return i<0?NAHORU.length:i};
   return u.sort((a,b)=>rank(a)-rank(b)||(RAZENI_LOKALIT==="relevance"?cnt[b]-cnt[a]:0)||ABC.compare(a,b));
 }
+function shortArea(a){return String(a||"").replace(/^Praha\s*-\s*/,"")}
 function renderAreas(){
   const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
   if(!areas.includes(st.area)) st.area="";
-  $("#area").innerHTML=`<option value="">${MOBIL.matches?"Lokality":"Všechny lokality"}</option>`+areas.map(a=>`<option ${a===st.area?"selected":""}>${esc(a)}</option>`).join("");
+  $("#area").innerHTML=`<option value="">Všude</option>`+areas.map(a=>`<option value="${esc(a)}" ${a===st.area?"selected":""}>${esc(shortArea(a))}</option>`).join("");
 }
 function mapUrl(f){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([f.nazev,f.adresa,f.mesto&&!String(f.adresa).includes(f.mesto)?f.mesto:""].filter(Boolean).join(", "))}
 function card(f,i){
   const ph=firstPhone(f.telefon);
-  const facts=[["Adresa",[f.adresa,f.mesto&&f.mesto!==f.oblast&&!String(f.adresa||"").includes(f.mesto)?f.mesto:""].filter(Boolean).join(", ")],["Telefon",f.telefon],["E-mail",f.email],["Otevřeno",f.hodiny]].filter(x=>x[1]);
+  const addr=[f.adresa,f.mesto&&f.mesto!==f.oblast&&!String(f.adresa||"").includes(f.mesto)?f.mesto:""].filter(Boolean).join(", ");
+  const sluzba=st.mode==="sluzba";
+  const facts=[["Telefon",f.telefon],["E-mail",f.email],["Otevřeno",f.hodiny]].filter(x=>x[1]);
+  const links=[f.web?`<a class="link" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(f.web.replace(/^https?:\/\//,""))} ↗</a>`:"",
+    !sluzba&&f.adresa?`<a class="link" href="${mapUrl(f)}" target="_blank" rel="noopener">Ukázat na mapě ↗</a>`:""].filter(Boolean);
+  const more=f.popis||facts.length||links.length;
   return `<article class="card">
-    <div class="top"><div><h3>${esc(f.nazev)}</h3>${f.styl?`<div class="meta">${esc(f.styl)}</div>`:""}</div>
+    <div class="top"><div><h3>${esc(f.nazev)}</h3>${f.styl?`<div class="meta">${esc(f.styl)}</div>`:""}${addr?`<div class="addr">${esc(addr)}</div>`:""}</div>
     ${/částečně|neověřeno/i.test(f.overeno||"")?`<span class="tag" title="Některé údaje chybí">Neúplné</span>`:""}</div>
-    ${f.popis?`<p class="desc">${esc(f.popis)}</p>`:""}
-    <dl class="facts">${facts.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
-    ${f.web?`<a class="link" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(f.web.replace(/^https?:\/\//,""))} ↗</a>`:""}
-    ${f.adresa?`<a class="link" href="${mapUrl(f)}" target="_blank" rel="noopener">Ukázat na mapě ↗</a>`:""}
+    ${more?`<details class="more"><summary>Podrobnosti</summary><div class="inner">
+      ${f.popis?`<p class="desc">${esc(f.popis)}</p>`:""}
+      ${facts.length?`<dl class="facts">${facts.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`:""}
+      ${links.join("")}</div></details>`:""}
     <div class="actions">
       <a class="btn primary" ${ph?`href="tel:${ph}"`:'aria-disabled="true"'} data-call="${i}">${ICON.tel} Zavolat</a>
-      ${st.mode==="sluzba"
+      ${sluzba
         ?(f.adresa?`<a class="btn" href="${mapUrl(f)}" target="_blank" rel="noopener">Mapa</a>`:(f.web?`<a class="btn" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">Web</a>`:`<a class="btn" aria-disabled="true">Mapa</a>`))
         :`<button class="btn" data-mail="${i}">${ICON.mail} Napsat</button>`}
     </div></article>`;
@@ -474,12 +495,12 @@ function render(){
   const status=`<p class="status">${dataSource==="live"?"Data načtena živě z tabulky":"Data k "+DATA_DATE}</p>`;
   if(!list.length){
     const none=!firmy.some(f=>f.obor===st.obor);
-    $("#firmy").innerHTML=`<div class="empty"><strong>${none?`Obor ${esc(st.obor)} připravujeme`:st.area&&!st.q?`${esc(st.obor)} v lokalitě ${esc(st.area)} zatím nemáme`:"Nic nenalezeno"}</strong>${none?"Další obory přibudou.":st.area&&!st.q?"Databázi postupně doplňujeme. Zkus jiný obor nebo jinou lokalitu.":"Zkus jiné slovo nebo jinou lokalitu."}</div>`;return;
+    $("#firmy").innerHTML=`<div class="empty"><strong>${none?`Obor ${esc(st.obor)} připravujeme`:st.area&&!st.q?`${esc(st.obor)} v lokalitě ${esc(shortArea(st.area))} zatím nemáme`:"Nic nenalezeno"}</strong>${none?"Další obory přibudou.":st.area&&!st.q?"Databázi postupně doplňujeme. Zkus jiný obor nebo jinou lokalitu.":"Zkus jiné slovo nebo jinou lokalitu."}</div>`;return;
   }
   const groups={};list.forEach(x=>(groups[x[0].oblast]??=[]).push(x));
   const ord=areaOrder(firmy.filter(f=>f.obor===st.obor).map(f=>f.oblast));
   $("#firmy").innerHTML=Object.entries(groups).sort((x,y)=>ord.indexOf(x[0])-ord.indexOf(y[0])).map(([a,items])=>
-    `<section class="area"><h2>${esc(a)} · ${items.length}</h2><div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div></section>`).join("")+status;
+    `<section class="area"><h2>${esc(shortArea(a))} · ${items.length}</h2><div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div></section>`).join("")+status;
 }
 
 /* ---------- kontakt ---------- */
@@ -554,9 +575,17 @@ async function loadLive(){
   }catch(e){/* zůstanou vložená data */}
 }
 
+/* hlavička: při posouvání dolů se schová hledání, obory zůstanou */
+(()=>{let last=0,lock=0;const hdr=document.querySelector("#view-firmy header");
+  const set=c=>{if(hdr.classList.contains("compact")===c)return;hdr.classList.toggle("compact",c);lock=Date.now()+400};
+  addEventListener("scroll",()=>{const y=scrollY;
+    if(Date.now()<lock){last=y;return}
+    if(y<60||document.activeElement===$("#q")||document.activeElement===$("#area"))set(false);
+    else if(y>last+20)set(true);else if(y<last-40)set(false);
+    if(Math.abs(y-last)>20)last=y;},{passive:true});})();
 st.obor=OBORY.includes(store.get("obor"))?store.get("obor"):"Gastronomie";
 st.mode=store.get("mode")==="sluzba"?"sluzba":"prace";
-function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode)));$("#q").placeholder=st.mode==="sluzba"?"Hledat službu, název, ulici…":"Hledat název, ulici, styl…"}
+function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode)));$("#q").placeholder="Hledat…"}
 document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
 applyMode();
 render(); loadLive();
