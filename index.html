@@ -483,6 +483,9 @@ function pl(n){const f=T("nForms");if(st.lang==="en")return n===1?f[0]:f[1];
 function nT(k,n,v){return T(k,Object.assign({n,podniky:pl(n)},v||{}))}
 const oborName=o=>st.lang==="cs"?o:((OBOR_T[st.lang]||{})[o]||o);
 const druhName=d=>st.lang==="cs"?d:((DRUH_T[st.lang]||{})[d]||d);
+/* styl a popis podniku: čeština z původních sloupců, EN/UK jen z vlastních sloupců (nikdy se nemíchá, chybějící překlad se neukáže) */
+const LSUF={en:"En",uk:"Uk"};
+const locText=(f,k)=>st.lang==="cs"?(f[k]||""):(f[k+(LSUF[st.lang]||"")]||"");
 const LOC={cs:"cs-CZ",uk:"uk-UA",en:"en-GB"};
 function fmtDate(iso){if(!iso)return"";const d=new Date(iso+"T12:00:00");if(isNaN(d))return iso;return d.toLocaleDateString(LOC[st.lang],{day:"numeric",month:"numeric",year:"numeric"})}
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
@@ -903,7 +906,7 @@ function card(f,i,extra){
   const hi=!sluzba?hiring(f):null;
   const k=km(f);
   const saved=MO[fkey(f)];
-  const druhLine=st.lang!=="cs"&&f.druh?cap(druhName(f.druh)):f.styl;
+  const druhLine=st.lang!=="cs"?(f.druh?cap(druhName(f.druh)):locText(f,"styl")):f.styl;
   const links=[!sluzba&&f.web?`<a class="link" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(f.web.replace(/^https?:\/\//,""))} ↗</a>`:"",
     !sluzba&&f.adresa?`<a class="link" href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("showMap"))} ↗</a>`:"",
     !sluzba?`<a class="link" href="https://www.google.com/search?q=${encodeURIComponent("atmoskop "+f.nazev)}" target="_blank" rel="noopener" data-ev="atmoskop">${esc(T("atmo"))} ↗</a>`:"",
@@ -915,10 +918,10 @@ function card(f,i,extra){
   return `<article class="card">
     <div class="top"><div><h3>${esc(f.nazev)}</h3>${druhLine?`<div class="meta">${esc(druhLine)}</div>`:""}${addr?`<div class="addr">${esc(addr)}${k!=null?` · <span class="dist">${fmtKm(k)}</span>`:""}</div>`:""}${hours}${stLine}</div>
     <div class="side"><button class="star" data-star="${i}" aria-pressed="${!!saved}" aria-label="${esc(T("save"))}">${saved?"★":"☆"}</button>${tags?`<div class="tags">${tags}</div>`:""}</div></div>
-    ${hi&&hi.txt?`<div class="hire-line">${esc(T("hiringDet",{txt:hi.txt}))}${hi.d?` <span>(${esc(T("checked",{d:fmtDate(hi.d)}))})</span>`:""}</div>`:""}
+    ${hi&&hi.txt&&st.lang==="cs"?`<div class="hire-line">${esc(T("hiringDet",{txt:hi.txt}))}${hi.d?` <span>(${esc(T("checked",{d:fmtDate(hi.d)}))})</span>`:""}</div>`:""}
     <details class="more"><summary>${esc(T("details"))}</summary><div class="inner">
-      ${st.lang!=="cs"&&f.styl?`<p class="desc">${esc(f.styl)}</p>`:""}
-      ${f.popis?`<p class="desc">${esc(f.popis)}</p>`:""}
+      ${st.lang!=="cs"&&locText(f,"styl")&&norm(locText(f,"styl"))!==norm(druhLine)?`<p class="desc">${esc(locText(f,"styl"))}</p>`:""}
+      ${locText(f,"popis")?`<p class="desc">${esc(locText(f,"popis"))}</p>`:""}
       ${facts.length?`<dl class="facts">${facts.map(([kk,v])=>`<div><dt>${esc(kk)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`:""}
       ${links.join("")}</div></details>
     <div class="actions">
@@ -978,7 +981,7 @@ function render(){
   }
   const allObory=st.obor===AZ||st.nove;
   let list=firmy.map((f,i)=>[f,i]).filter(([f])=>(allObory||f.obor===st.obor) && (!st.druh||f.druh===st.druh) && (!st.area||f.oblast===st.area) && (!st.nove||isNew(f)) &&
-    (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,f.druh,druhName(f.druh)].join(" ")).includes(q)));
+    (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" ")).includes(q)));
   list.forEach(x=>x[2]=km(x[0]));
   list.sort((a,b)=>(st.near?(a[2]==null)-(b[2]==null)||(a[2]??0)-(b[2]??0):0)||(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):(!hiring(a[0]))-(!hiring(b[0])))||ABC.compare(a[0].nazev||"",b[0].nazev||""));
   const status=`<p class="status">${esc(dataSource==="live"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`;
@@ -1107,10 +1110,10 @@ async function loadLive(){
     const rows=parseCSV(await res.text());
     const h=rows[0].map(x=>norm(x).trim());
     const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"],
-      pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"]};
+      pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"]};
     const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
     if(ix("nazev")<0) return;
-    const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps"];
+    const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk"];
     const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return prep(o)});
     if(data.length){firmy=data;dataSource="live";render();if(!$("#view-moje").hidden)renderMoje();renderHint()}
   }catch(e){/* zůstanou vložená data */}
