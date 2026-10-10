@@ -203,6 +203,14 @@ details.qa p{margin:8px 0 0}
 .seg{display:inline-flex;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:2px}
 .seg button{border:0;background:none;border-radius:999px;padding:5px 11px;font-size:13.5px;font-weight:600;cursor:pointer;color:inherit}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.ptag{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 9px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink);margin-top:4px}
+.parknear{font-size:13.5px;color:var(--muted);margin:6px 0 0}
+.parknear a{color:var(--accent);font-weight:600;text-decoration:none}
+.areabar .park a{border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:5px 10px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap}
+.pinfo p{margin:0;font-size:15px;line-height:1.5}
+.prow{display:grid;gap:3px;border-top:1px solid var(--line);padding-top:10px}
+.prow b{font-size:15.5px}
+.prow p{font-size:14px;color:var(--muted)}
 .miss{display:grid;gap:8px;justify-items:start;background:var(--accent-soft);border-radius:14px;padding:12px 14px;margin:4px 0 10px;font-size:14.5px}
 .miss button{border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:7px 13px;font-weight:700;font-size:14px;cursor:pointer}
 #map{height:62vh;min-height:320px;border-radius:16px;border:1px solid var(--line);position:relative;z-index:0;isolation:isolate;overflow:hidden;background:var(--surface)}
@@ -312,6 +320,7 @@ cs:{
  near:"Nejblíž mně",nearOn:"Řazeno podle vzdálenosti",nearErr:"Polohu se nepodařilo zjistit. Povol ji v nastavení prohlížeče.",nearNoGps:"U části podniků zatím polohu nemáme, jsou na konci.",
  myLoc:"📍 Moje poloha",locWait:"Zjišťuji polohu…",locBy:"Podle polohy: {a}",locFar:"Tady zatím data nemáme. Nejbližší pokrytá lokalita: {a} ({d})",locSwitch:"Přepnout",nbrs:"Sousední:",wLoc:"📍 Podle mé polohy",
  sortAz:"A–Z",sortNear:"📍 Nejblíž",missDruh:"{d} v lokalitě {a} zatím nemáme.",missQ:"V lokalitě {a} jsme nic nenašli.",nearestIs:"Nejbližší: {a}",goThere:"Přepnout na {a}",areasLbl:"Lokality",
+ parkHow:"🅿️ Jak tu zaparkovat:",parkList:"Seznam parkovišť",payPark:"Zaplatit parkování",pay:"Zaplatit",parkNear:"Parkování v okolí",parkGeneric:"Parkoviště",pt_zdarma:"Zdarma",pt_placene:"Placené",pt_zona:"Zóna",pt_pr:"P+R",pt_kotouc:"Kotouč",pt_zakaznici:"Pro zákazníky",pi_zdarma:"Parkuješ bez placení. Dívej se ale na dopravní značky – i tady může být omezená doba stání.",pi_placene:"Platí se u automatu, v aplikaci nebo u obsluhy. Cenu a způsob platby najdeš na ceduli u vjezdu.",pi_zona:"Ulice s placeným stáním v Praze. Barva čáry a dopravní značka ukazují pravidla: ve fialové zóně můžou stát i návštěvníci, modrá je hlavně pro místní a návštěvník tu smí stát jen krátce. Zaplatíš u automatu nebo přes virtuální parkovací hodiny (aplikace nebo web). Platba se váže na SPZ, lístek za sklo se nedává.",pi_pr:"Záchytné parkoviště u stanice vlaku nebo metra: necháš auto a pokračuješ hromadnou dopravou. Cenu a podmínky najdeš na ceduli u vjezdu.",pi_kotouc:"Stání je zdarma, ale jen na dobu uvedenou na značce (např. max. 2 hodiny). Za přední sklo dej parkovací kotouč a nastav na něm čas příjezdu. Kotouč koupíš na benzince nebo v papírnictví.",pi_zakaznici:"Parkoviště obchodu nebo restaurace. Je pro zákazníky po dobu nákupu, často s časovým limitem – nepočítej s ním na celý den.",
  mapBtn:"Mapa",listBtn:"Seznam",mapHint:"Klepněte na tečku: ukáže se název podniku a tlačítka Zavolat a Navigovat. Po přiblížení se u teček ukážou názvy.",youHere:"Tady jste",mapNone:"Pro tento výběr zatím nemáme polohy podniků. Postupně doplňujeme.",mapPart:"Na mapě {n} z {m} podniků (u ostatních zatím chybí poloha).",navigate:"Navigovat",
  newHint:"Od tvé minulé návštěvy přibylo: <b>{n}</b>.",newShow:"Ukázat",newH:"Nové od minulé návštěvy",back:"Zpět",backAll:"Všechny druhy",allFirms:"Všechny podniky",
  areaHint:"<b>Vyber svou lokalitu</b> – ukážeme podniky blízko tebe.",closeHint:"Zavřít nápovědu",
@@ -342,6 +351,7 @@ uk:{
  near:"Найближче до мене",nearOn:"Відсортовано за відстанню",nearErr:"Не вдалося визначити місцезнаходження. Дозвольте його в налаштуваннях браузера.",nearNoGps:"Для частини фірм ми ще не маємо розташування, вони в кінці.",
  myLoc:"📍 Моє місцезнаходження",locWait:"Визначаю місцезнаходження…",locBy:"За місцезнаходженням: {a}",locFar:"Тут у нас поки немає даних. Найближча охоплена локалість: {a} ({d})",locSwitch:"Перейти",nbrs:"Поруч:",wLoc:"📍 За моїм місцезнаходженням",
  sortAz:"А–Я",sortNear:"📍 Найближче",missDruh:"«{d}» у районі {a} поки немає.",missQ:"У районі {a} нічого не знайдено.",nearestIs:"Найближче: {a}",goThere:"Перейти: {a}",areasLbl:"Локальності",
+ parkHow:"🅿️ Як тут припаркуватися:",parkList:"Список парковок",payPark:"Оплатити паркування",pay:"Оплатити",parkNear:"Паркування поруч",parkGeneric:"Парковка",pt_zdarma:"Безкоштовно",pt_placene:"Платна",pt_zona:"Зона",pt_pr:"P+R",pt_kotouc:"Диск",pt_zakaznici:"Для клієнтів",pi_zdarma:"Паркування без оплати. Але дивіться на дорожні знаки – і тут може бути обмежений час стоянки.",pi_placene:"Оплата в автоматі, у застосунку або в обслуги. Ціну та спосіб оплати вказано на табличці біля в’їзду.",pi_zona:"Вулиці з платною стоянкою в Празі. Колір лінії та дорожній знак показують правила: у фіолетовій зоні можуть стояти й відвідувачі, синя переважно для місцевих, і відвідувач може стояти лише недовго. Оплата в автоматі або через віртуальний паркомат (застосунок чи сайт). Оплата прив’язана до номера авто, квиток за склом не потрібен.",pi_pr:"Перехоплювальна парковка біля станції поїзда чи метро: залишаєте авто й їдете далі громадським транспортом. Ціну та умови вказано на табличці біля в’їзду.",pi_kotouc:"Стоянка безкоштовна, але лише на час, указаний на знаку (напр. до 2 годин). За лобове скло покладіть паркувальний диск і встановіть на ньому час приїзду. Диск можна купити на заправці або в канцтоварах.",pi_zakaznici:"Парковка магазину чи ресторану. Призначена для клієнтів на час покупок, часто з обмеженням часу – не розраховуйте на неї на цілий день.",
  mapBtn:"Мапа",listBtn:"Список",mapHint:"Натисніть на точку: з’явиться назва фірми та кнопки «Подзвонити» і «Маршрут». Після наближення біля точок з’являться назви.",youHere:"Ви тут",mapNone:"Для цього вибору ще немає розташування фірм. Поступово доповнюємо.",mapPart:"На мапі {n} з {m} фірм (для інших поки немає розташування).",navigate:"Маршрут",
  newHint:"З вашого минулого візиту додано: <b>{n}</b>.",newShow:"Показати",newH:"Нове з минулого візиту",back:"Назад",backAll:"Усі види",allFirms:"Усі фірми",
  areaHint:"<b>Оберіть свій район</b> – покажемо фірми поруч із вами.",closeHint:"Закрити підказку",
@@ -373,6 +383,7 @@ en:{
  near:"Nearest to me",nearOn:"Sorted by distance",nearErr:"Couldn't get your location. Allow it in your browser settings.",nearNoGps:"Some businesses don't have a location yet; they are at the end.",
  myLoc:"📍 My location",locWait:"Finding your location…",locBy:"Based on your location: {a}",locFar:"We don't have data here yet. Nearest covered area: {a} ({d})",locSwitch:"Switch",nbrs:"Nearby:",wLoc:"📍 Use my location",
  sortAz:"A–Z",sortNear:"📍 Nearest",missDruh:"No {d} in {a} yet.",missQ:"Nothing found in {a}.",nearestIs:"Nearest: {a}",goThere:"Switch to {a}",areasLbl:"Areas",
+ parkHow:"🅿️ How to park here:",parkList:"List of car parks",payPark:"Pay for parking",pay:"Pay",parkNear:"Parking nearby",parkGeneric:"Car park",pt_zdarma:"Free",pt_placene:"Paid",pt_zona:"Zone",pt_pr:"P+R",pt_kotouc:"Disc",pt_zakaznici:"Customers only",pi_zdarma:"You park without paying. Still check the road signs – there may be a time limit.",pi_placene:"You pay at a machine, in an app or to an attendant. The price and payment options are on the sign at the entrance.",pi_zona:"Streets with paid parking in Prague. The line colour and the road sign show the rules: visitors may park in the purple zone, the blue zone is mainly for residents and visitors may stay only briefly. Pay at a machine or through the virtual parking meter (app or website). Payment is linked to your licence plate; no ticket behind the windscreen.",pi_pr:"Park and ride at a train or metro station: leave the car and continue by public transport. The price and conditions are on the sign at the entrance.",pi_kotouc:"Parking is free, but only for the time shown on the sign (e.g. max 2 hours). Put a parking disc behind the windscreen and set it to your arrival time. You can buy a disc at a petrol station or a stationery shop.",pi_zakaznici:"A shop or restaurant car park. It is for customers while they shop, often with a time limit – don't count on it for the whole day.",
  mapBtn:"Map",listBtn:"List",mapHint:"Tap a dot to see the business name with Call and Directions buttons. Zoom in to see names next to the dots.",youHere:"You are here",mapNone:"No business locations for this selection yet. We're adding them.",mapPart:"{n} of {m} businesses on the map (others have no location yet).",navigate:"Directions",
  newHint:"Added since your last visit: <b>{n}</b>.",newShow:"Show",newH:"New since your last visit",back:"Back",backAll:"All types",allFirms:"All businesses",
  areaHint:"<b>Choose your area</b> – we'll show businesses near you.",closeHint:"Close hint",
@@ -875,10 +886,10 @@ const LOK_ZALOHA=[
  ["Praha - Braník","Praha 4","Praha",4,"50.029732, 14.417416","Praha - Podolí; Praha - Modřany; Praha - Barrandov / Hlubočepy"],
  ["Praha - Smíchov","Praha 5","Praha",5,"50.071291, 14.404795","Praha - Podolí; Praha - Barrandov / Hlubočepy; Praha - Stodůlky"]];
 let LOK={};
-function lokFrom(rows){const o={};rows.forEach(([a,obvod,skupina,poradi,stred,sous])=>{a=String(a||"").trim();if(!a)return;
+function lokFrom(rows){const o={};rows.forEach(([a,obvod,skupina,poradi,stred,sous,park,platba,ppozn])=>{a=String(a||"").trim();if(!a)return;
   const m=String(stred||"").match(/(-?\d+(?:\.\d+)?)\s*[,;]\s*(-?\d+(?:\.\d+)?)/);
   o[a]={obvod:String(obvod||"").trim(),skupina:String(skupina||"").trim(),poradi:parseInt(poradi,10),lat:m?+m[1]:null,lng:m?+m[2]:null,
-    sousede:String(sous||"").split(";").map(x=>x.trim()).filter(Boolean)}});return o}
+    sousede:String(sous||"").split(";").map(x=>x.trim()).filter(Boolean),park:String(park||"").trim(),platba:String(platba||"").trim(),ppozn:String(ppozn||"").trim()}});return o}
 LOK=lokFrom(LOK_ZALOHA);
 async function loadLok(){
   const urls=[LOKALITY_CSV_URL,SHEET_ID&&`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Lokality`].filter(Boolean);
@@ -887,7 +898,7 @@ async function loadLok(){
     const r=await fetch(u,{signal:ctl.signal,cache:"no-store"});if(!r.ok)continue;const t=await r.text();if(/^\s*</.test(t))continue;
     const rows=parseCSV(t);if(!rows.length)continue;
     const h=rows[0].map(x=>norm(x).trim());const ix=k=>h.findIndex(x=>x.startsWith(k));
-    const c=[ix("lokalita"),ix("obvod"),ix("skupina"),ix("poradi"),ix("stred"),ix("sousedni")];if(c[0]<0)continue;
+    const c=[ix("lokalita"),ix("obvod"),ix("skupina"),ix("poradi"),ix("stred"),ix("sousedni"),ix("parkovani – shrnuti"),ix("parkovani – odkaz"),ix("parkovani – poznamka")];if(c[0]<0)continue;
     const o=lokFrom(rows.slice(1).map(r=>c.map(i=>i<0?"":r[i])));
     if(Object.keys(o).length){LOK=o;render();return}
   }catch(e){}}
@@ -924,6 +935,44 @@ function myLocation(){locate(pos=>{st.pos=pos;const r=areaForPos(pos);track("moj
   if(!r){toast(T("nearErr"));return}
   if(r.far){st.areaMsg={far:true,area:r.area,d:r.d};render();return}
   st.areaMsg={far:false,area:r.area};setArea(r.area)})}
+/* ---------- Parkování (dokument 09, část B) ---------- */
+const PARK_DRUH="parkoviště";
+const PTYPES=[["zdarma","🟢",/zdarma/i],["placene","🟠",/placen/i],["zona","🔵",/z[oó]n/i],["pr","🅿️",/p\s*\+\s*r/i],["kotouc","🕑",/kotou/i],["zakaznici","🛒",/z[aá]kazn/i]];
+function isPark(f){return norm(f.druh||"")===norm(PARK_DRUH)}
+function ptype(txt){const t=PTYPES.find(x=>x[2].test(String(txt||"")));return t||null}
+function ptagHtml(txt,extra){const t=ptype(txt);if(!t)return "";return `<button class="ptag" data-pinfo="${t[0]}">${t[1]} ${esc(extra||T("pt_"+t[0]))} ⓘ</button>`}
+function navUrl(f){return f.lat!=null?`https://www.google.com/maps/dir/?api=1&destination=${f.lat},${f.lng}`:mapUrl(f)}
+function nearParks(f,n){if(f.lat==null||isPark(f))return [];
+  return firmy.filter(p=>isPark(p)&&p.lat!=null).map(p=>[p,distKm(f,p)]).filter(x=>x[1]<=1).sort((a,b)=>a[1]-b[1]).slice(0,n||2)}
+function parkInfo(k){
+  const t=PTYPES.find(x=>x[0]===k);if(!t)return;
+  document.querySelector(".sheet-bg")?.remove();
+  const bg=document.createElement("div");bg.className="sheet-bg";
+  bg.innerHTML=`<div class="sheet pinfo" role="dialog" aria-label="${esc(T("pt_"+k))}"><h3>${t[1]} ${esc(T("pt_"+k))}</h3><p>${esc(T("pi_"+k))}</p><button class="btn" id="closesheet">${esc(T("close"))}</button></div>`;
+  document.body.appendChild(bg);track("parkovani-info-"+k);
+  bg.addEventListener("click",e=>{if(e.target===bg||e.target.id==="closesheet")bg.remove()});
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-pinfo]");if(!b)return;e.preventDefault();e.stopPropagation();parkInfo(b.dataset.pinfo)},true);
+/* Shrnutí parkování v lokalitě: ze sloupce N listu Lokality, jinak z typů parkovišť v databázi */
+function parkSummary(a){
+  const l=LOK[a];let items=[];
+  if(l&&l.park) items=l.park.split(";").map(x=>x.trim()).filter(Boolean).map(x=>[ptype(x),x]).filter(x=>x[0]);
+  if(!items.length){const seen=new Set();firmy.forEach(f=>{if(f.oblast===a&&isPark(f)){const t=ptype(f.typp);if(t&&!seen.has(t[0])){seen.add(t[0]);items.push([t,""])}}})}
+  return items;
+}
+function parkHow(a){
+  const l=LOK[a]||{},pk=parkSummary(a),np=firmy.filter(f=>f.oblast===a&&isPark(f)).length;
+  document.querySelector(".sheet-bg")?.remove();
+  const bg=document.createElement("div");bg.className="sheet-bg";track("parkovani-lokalita");
+  const rows=pk.map(([t,x])=>`<div class="prow"><b>${t[1]} ${esc(x&&st.lang==="cs"?x:T("pt_"+t[0]))}</b><p>${esc(T("pi_"+t[0]))}</p></div>`).join("");
+  bg.innerHTML=`<div class="sheet pinfo" role="dialog" aria-label="${esc(T("parkHow"))}"><h3>${esc(T("parkHow").replace(/:$/,""))} – ${esc(shortArea(a))}</h3>
+    ${rows}${l.ppozn&&st.lang==="cs"?`<p class="mmeta">${esc(l.ppozn)}</p>`:""}
+    ${l.platba?`<a class="btn primary" href="${esc(l.platba)}" target="_blank" rel="noopener" data-ev="parkovani-platba">${esc(T("payPark"))} ↗</a>`:""}
+    ${np?`<button class="btn${l.platba?"":" primary"}" data-parklist>${esc(T("parkList"))} (${np})</button>`:""}
+    <button class="btn" id="closesheet">${esc(T("close"))}</button></div>`;
+  document.body.appendChild(bg);
+  bg.addEventListener("click",e=>{if(e.target.closest("[data-parklist]")){bg.remove();pickDruh(PARK_DRUH,"lokalita");return}if(e.target===bg||e.target.id==="closesheet")bg.remove()});
+}
 /* Kde nejblíž je to, co ve vybrané lokalitě chybí. Vzdálenost od polohy uživatele, jinak od středu vybrané lokality. */
 function nearestAreaWith(test){
   const o=st.near||st.pos||(st.area&&LOK[st.area]&&LOK[st.area].lat!=null?LOK[st.area]:null);
@@ -955,7 +1004,10 @@ function renderAreabar(){
     if(a1) h+=`<div class="ab">${a1}</div>`;
     if(l){
       const have=new Set(firmy.map(f=>f.oblast));const nb=l.sousede.filter(a=>have.has(a));
-      if(nb.length) h+=`<div class="ab"><span>${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join("")+`</div>`;
+      const pk=parkSummary(st.area),np=firmy.some(f=>f.oblast===st.area&&isPark(f));
+      const pbtn=(pk.length||l.platba||np)?`<button class="loc" data-parkhow>🅿️ ${esc(T("parkHow").replace(/^🅿️\s*/,"").replace(/:$/,""))}</button>`:"";
+      if(pbtn&&!nb.length) h+=`<div class="ab">${pbtn}</div>`;
+      if(nb.length) h+=`<div class="ab">${pbtn}<span>${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join("")+`</div>`;
     }
   }
   el.innerHTML=h;
@@ -1045,6 +1097,9 @@ function card(f,i,extra){
   const k=km(f);
   const saved=MO[fkey(f)];
   const druhLine=st.lang!=="cs"?(f.druh?cap(druhName(f.druh)):locText(f,"styl")):f.styl;
+  const park=isPark(f);
+  const np=nearParks(f,2);
+  const nearLine=np.length?`<p class="parknear">🅿️ ${esc(T("parkNear"))}: ${np.map(([p,d])=>`<a href="${navUrl(p)}" target="_blank" rel="noopener" data-ev="parkovani-navigace">${esc(ptype(p.typp)?T("pt_"+ptype(p.typp)[0]):T("parkGeneric"))} ${fmtKm(d)}</a>`).join(" · ")}</p>`:"";
   const links=[!sluzba&&f.web?`<a class="link" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(f.web.replace(/^https?:\/\//,""))} ↗</a>`:"",
     !sluzba&&f.adresa?`<a class="link" href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("showMap"))} ↗</a>`:"",
     !sluzba?`<a class="link" href="https://www.google.com/search?q=${encodeURIComponent("atmoskop "+f.nazev)}" target="_blank" rel="noopener" data-ev="atmoskop">${esc(T("atmo"))} ↗</a>`:"",
@@ -1054,20 +1109,20 @@ function card(f,i,extra){
     /částečně|neověřeno/i.test(f.overeno||"")?`<span class="tag" title="${esc(T("incompleteT"))}">${esc(T("incomplete"))}</span>`:""].filter(Boolean).join("");
   const stLine=saved&&!sluzba&&!extra&&saved.s!=="ulozeno"?`<div class="mstate">✓ ${esc(T("st_"+saved.s))} · ${esc(fmtDate(saved.d))}</div>`:"";
   return `<article class="card">
-    <div class="top"><div><h3>${esc(f.nazev)}</h3>${druhLine?`<div class="meta">${esc(druhLine)}</div>`:""}${addr?`<div class="addr">${esc(addr)}${k!=null?` · <span class="dist">${fmtKm(k)}</span>`:""}</div>`:""}${hours}${stLine}</div>
+    <div class="top"><div><h3>${esc(f.nazev)}</h3>${druhLine?`<div class="meta">${esc(druhLine)}</div>`:""}${park?ptagHtml(f.typp):""}${addr?`<div class="addr">${esc(addr)}${k!=null?` · <span class="dist">${fmtKm(k)}</span>`:""}</div>`:""}${hours}${stLine}</div>
     <div class="side"><button class="star" data-star="${i}" aria-pressed="${!!saved}" aria-label="${esc(T("save"))}">${saved?"★":"☆"}</button>${tags?`<div class="tags">${tags}</div>`:""}</div></div>
     ${hi&&hi.txt&&st.lang==="cs"?`<div class="hire-line">${esc(T("hiringDet",{txt:hi.txt}))}${hi.d?` <span>(${esc(T("checked",{d:fmtDate(hi.d)}))})</span>`:""}</div>`:""}
     <details class="more"><summary>${esc(T("details"))}</summary><div class="inner">
       ${st.lang!=="cs"&&locText(f,"styl")&&norm(locText(f,"styl"))!==norm(druhLine)?`<p class="desc">${esc(locText(f,"styl"))}</p>`:""}
       ${locText(f,"popis")?`<p class="desc">${esc(locText(f,"popis"))}</p>`:""}
       ${facts.length?`<dl class="facts">${facts.map(([kk,v])=>`<div><dt>${esc(kk)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`:""}
-      ${links.join("")}</div></details>
-    <div class="actions">
+      ${nearLine}${park?"":links.join("")}</div></details>
+    <div class="actions">${park?`<a class="btn primary" href="${navUrl(f)}" target="_blank" rel="noopener" data-ev="parkovani-navigace">${esc(T("navigate"))}</a>`+(f.platba?`<a class="btn" href="${esc(f.platba)}" target="_blank" rel="noopener" data-ev="parkovani-platba">${esc(T("pay"))} ↗</a>`:"")+`</div>${extra||""}</article>`:`
       <a class="btn primary" ${ph?`href="tel:${ph}"`:'aria-disabled="true"'} data-call="${i}">${ICON.tel} ${esc(T("call"))}</a>
       ${sluzba
         ?(f.adresa?`<a class="btn" href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("map"))}</a>`:`<a class="btn" aria-disabled="true">${esc(T("map"))}</a>`)+(f.web?`<a class="btn soft wide" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(T("menuWeb"))} ↗</a>`:"")
         :`<button class="btn" data-mail="${i}">${ICON.mail} ${esc(T("write"))}</button>`}
-    </div>${extra||""}</article>`;
+    </div>${extra||""}</article>`}`;
 }
 
 /* ---------- mapa (Leaflet + OpenStreetMap, načte se až při prvním otevření) ---------- */
@@ -1118,7 +1173,7 @@ function render(){
     return;
   }
   const allObory=st.obor===AZ||st.nove;
-  let list=firmy.map((f,i)=>[f,i]).filter(([f])=>(allObory||f.obor===st.obor) && (!st.druh||f.druh===st.druh) && (!st.area||f.oblast===st.area) && (!st.nove||isNew(f)) &&
+  let list=firmy.map((f,i)=>[f,i]).filter(([f])=>(allObory||f.obor===st.obor) && (!st.druh||f.druh===st.druh) && (st.mode==="sluzba"||!isPark(f)||st.druh===f.druh) && (!st.area||f.oblast===st.area) && (!st.nove||isNew(f)) &&
     (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" ")).includes(q)));
   list.forEach(x=>x[2]=km(x[0]));
   list.sort((a,b)=>(st.near?(a[2]==null)-(b[2]==null)||(a[2]??0)-(b[2]??0):0)||(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):(!hiring(a[0]))-(!hiring(b[0])))||ABC.compare(a[0].nazev||"",b[0].nazev||""));
@@ -1198,6 +1253,7 @@ $("#sugg").addEventListener("click",e=>{const a=e.target.closest("[data-sarea]")
 $("#area").addEventListener("change",e=>{st.areaMsg=null;st.area=e.target.value;store.set("area",st.area);store.set("areaPicked",true);render()});
 $("#areabar").addEventListener("click",e=>{
   if(e.target.closest("[data-myloc]")){myLocation();return}
+  if(e.target.closest("[data-parkhow]")){parkHow(st.area);return}
   if(e.target.closest("[data-amsg]")){st.areaMsg=null;render();return}
   const b=e.target.closest("[data-area]");if(b){const was=st.area;st.areaMsg=null;track("sousedni");setArea(b.dataset.area)}
 });
@@ -1259,10 +1315,10 @@ async function loadLive(){
     const rows=parseCSV(await res.text());
     const h=rows[0].map(x=>norm(x).trim());
     const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"],
-      pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"]};
+      pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"],typp:["typ parkovani"],platba:["odkaz na platbu"]};
     const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
     if(ix("nazev")<0) return;
-    const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk"];
+    const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk","typp","platba"];
     const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return prep(o)});
     if(data.length){firmy=data;dataSource="live";render();if(!$("#view-moje").hidden)renderMoje();renderHint()}
   }catch(e){/* zůstanou vložená data */}
