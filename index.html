@@ -200,6 +200,11 @@ details.qa p{margin:8px 0 0}
 .tools{display:flex;gap:8px;flex-wrap:wrap}
 .tool{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font-size:13.5px;font-weight:600;cursor:pointer}
 .tool[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:2px}
+.seg button{border:0;background:none;border-radius:999px;padding:5px 11px;font-size:13.5px;font-weight:600;cursor:pointer;color:inherit}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.miss{display:grid;gap:8px;justify-items:start;background:var(--accent-soft);border-radius:14px;padding:12px 14px;margin:4px 0 10px;font-size:14.5px}
+.miss button{border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:7px 13px;font-weight:700;font-size:14px;cursor:pointer}
 #map{height:62vh;min-height:320px;border-radius:16px;border:1px solid var(--line);position:relative;z-index:0;isolation:isolate;overflow:hidden;background:var(--surface)}
 .pop{display:grid;gap:3px;font-family:var(--body);font-size:13.5px}
 .pop b{font-size:14.5px}.pop span{color:#5E6B68}
@@ -306,6 +311,7 @@ cs:{
  last:"Naposledy {d}",history:"Historie",note:"Poznámka (s kým jsi mluvil, co řekli…)",gone:"Tento podnik už v seznamu není.",remind:"Uplynul týden – ozvi se znovu",remindBtn:"Text na připomenutí",remove:"Odebrat",
  near:"Nejblíž mně",nearOn:"Řazeno podle vzdálenosti",nearErr:"Polohu se nepodařilo zjistit. Povol ji v nastavení prohlížeče.",nearNoGps:"U části podniků zatím polohu nemáme, jsou na konci.",
  myLoc:"📍 Moje poloha",locWait:"Zjišťuji polohu…",locBy:"Podle polohy: {a}",locFar:"Tady zatím data nemáme. Nejbližší pokrytá lokalita: {a} ({d})",locSwitch:"Přepnout",nbrs:"Sousední:",wLoc:"📍 Podle mé polohy",
+ sortAz:"A–Z",sortNear:"📍 Nejblíž",missDruh:"{d} v lokalitě {a} zatím nemáme.",missQ:"V lokalitě {a} jsme nic nenašli.",nearestIs:"Nejbližší: {a}",goThere:"Přepnout na {a}",areasLbl:"Lokality",
  mapBtn:"Mapa",listBtn:"Seznam",mapHint:"Klepněte na tečku: ukáže se název podniku a tlačítka Zavolat a Navigovat. Po přiblížení se u teček ukážou názvy.",youHere:"Tady jste",mapNone:"Pro tento výběr zatím nemáme polohy podniků. Postupně doplňujeme.",mapPart:"Na mapě {n} z {m} podniků (u ostatních zatím chybí poloha).",navigate:"Navigovat",
  newHint:"Od tvé minulé návštěvy přibylo: <b>{n}</b>.",newShow:"Ukázat",newH:"Nové od minulé návštěvy",back:"Zpět",backAll:"Všechny druhy",allFirms:"Všechny podniky",
  areaHint:"<b>Vyber svou lokalitu</b> – ukážeme podniky blízko tebe.",closeHint:"Zavřít nápovědu",
@@ -335,6 +341,7 @@ uk:{
  last:"Останній раз {d}",history:"Історія",note:"Нотатка (з ким говорили, що сказали…)",gone:"Цієї фірми вже немає в списку.",remind:"Минув тиждень – нагадайте про себе",remindBtn:"Текст нагадування",remove:"Видалити",
  near:"Найближче до мене",nearOn:"Відсортовано за відстанню",nearErr:"Не вдалося визначити місцезнаходження. Дозвольте його в налаштуваннях браузера.",nearNoGps:"Для частини фірм ми ще не маємо розташування, вони в кінці.",
  myLoc:"📍 Моє місцезнаходження",locWait:"Визначаю місцезнаходження…",locBy:"За місцезнаходженням: {a}",locFar:"Тут у нас поки немає даних. Найближча охоплена локалість: {a} ({d})",locSwitch:"Перейти",nbrs:"Поруч:",wLoc:"📍 За моїм місцезнаходженням",
+ sortAz:"А–Я",sortNear:"📍 Найближче",missDruh:"«{d}» у районі {a} поки немає.",missQ:"У районі {a} нічого не знайдено.",nearestIs:"Найближче: {a}",goThere:"Перейти: {a}",areasLbl:"Локальності",
  mapBtn:"Мапа",listBtn:"Список",mapHint:"Натисніть на точку: з’явиться назва фірми та кнопки «Подзвонити» і «Маршрут». Після наближення біля точок з’являться назви.",youHere:"Ви тут",mapNone:"Для цього вибору ще немає розташування фірм. Поступово доповнюємо.",mapPart:"На мапі {n} з {m} фірм (для інших поки немає розташування).",navigate:"Маршрут",
  newHint:"З вашого минулого візиту додано: <b>{n}</b>.",newShow:"Показати",newH:"Нове з минулого візиту",back:"Назад",backAll:"Усі види",allFirms:"Усі фірми",
  areaHint:"<b>Оберіть свій район</b> – покажемо фірми поруч із вами.",closeHint:"Закрити підказку",
@@ -365,6 +372,7 @@ en:{
  last:"Last {d}",history:"History",note:"Note (who you spoke to, what they said…)",gone:"This business is no longer in the list.",remind:"A week has passed – follow up",remindBtn:"Follow-up text",remove:"Remove",
  near:"Nearest to me",nearOn:"Sorted by distance",nearErr:"Couldn't get your location. Allow it in your browser settings.",nearNoGps:"Some businesses don't have a location yet; they are at the end.",
  myLoc:"📍 My location",locWait:"Finding your location…",locBy:"Based on your location: {a}",locFar:"We don't have data here yet. Nearest covered area: {a} ({d})",locSwitch:"Switch",nbrs:"Nearby:",wLoc:"📍 Use my location",
+ sortAz:"A–Z",sortNear:"📍 Nearest",missDruh:"No {d} in {a} yet.",missQ:"Nothing found in {a}.",nearestIs:"Nearest: {a}",goThere:"Switch to {a}",areasLbl:"Areas",
  mapBtn:"Map",listBtn:"List",mapHint:"Tap a dot to see the business name with Call and Directions buttons. Zoom in to see names next to the dots.",youHere:"You are here",mapNone:"No business locations for this selection yet. We're adding them.",mapPart:"{n} of {m} businesses on the map (others have no location yet).",navigate:"Directions",
  newHint:"Added since your last visit: <b>{n}</b>.",newShow:"Show",newH:"New since your last visit",back:"Back",backAll:"All types",allFirms:"All businesses",
  areaHint:"<b>Choose your area</b> – we'll show businesses near you.",closeHint:"Close hint",
@@ -812,14 +820,24 @@ function idxHtml(counts,withLetters){
 }
 function renderSugg(){
   const box=$("#sugg");const q=norm(st.q).trim();
-  if(q.length<2||!hasDruhy()){box.hidden=true;box.innerHTML="";return}
-  const pool=firmy.filter(f=>!st.area||f.oblast===st.area);
-  const hit=d=>[d,druhName(d)].some(x=>{const n=norm(x);return n.split(/[\s\/–-]+/).some(w=>w.startsWith(q))||n.includes(q)});
-  const m=[...druhCounts(pool).entries()].filter(([d])=>hit(d))
-    .sort((a,b)=>b[1]-a[1]||COLL.compare(druhName(a[0]),druhName(b[0]))).slice(0,6);
-  if(!m.length){box.hidden=true;box.innerHTML="";return}
-  box.innerHTML=`<div class="lbl">${esc(T("druhyLbl"))}${st.area?" · "+esc(shortArea(st.area)):""}</div>`+m.map(([d,n])=>`<button data-druh="${esc(d)}"><span>${esc(cap(druhName(d)))}</span><small>${n}</small></button>`).join("");
-  box.hidden=false;
+  if(q.length<2){box.hidden=true;box.innerHTML="";return}
+  const qq=q.replace(/\s+/g," ").trim();
+  const allA=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
+  const ah=allA.filter(a=>a!==st.area&&(norm(shortArea(a)).split(/[\s\/–-]+/).some(w=>w.startsWith(qq))||norm(shortArea(a)).startsWith(qq)||(LOK[a]&&LOK[a].obvod&&qq.length>=5&&norm(LOK[a].obvod).replace(/\s+/g," ").startsWith(qq)))).slice(0,6);
+  let h="";
+  if(ah.length) h+=`<div class="lbl">${esc(T("areasLbl"))}</div>`+ah.map(a=>`<button data-sarea="${esc(a)}"><span>📍 ${esc(shortArea(a))}</span><small>${esc(LOK[a]&&LOK[a].obvod||"")}</small></button>`).join("");
+  if(hasDruhy()){
+    const pool=firmy.filter(f=>!st.area||f.oblast===st.area);
+    const hit=d=>[d,druhName(d)].some(x=>{const n=norm(x);return n.split(/[\s\/–-]+/).some(w=>w.startsWith(q))||n.includes(q)});
+    const here=druhCounts(pool);
+    const m=[...here.entries()].filter(([d])=>hit(d)).sort((a,b)=>b[1]-a[1]||COLL.compare(druhName(a[0]),druhName(b[0]))).slice(0,6);
+    /* druhy, které ve vybrané lokalitě nejsou, ale jinde ano */
+    const el=st.area?[...druhCounts(firmy).keys()].filter(d=>!here.has(d)&&hit(d)).slice(0,Math.max(0,6-m.length)):[];
+    if(m.length||el.length) h+=`<div class="lbl">${esc(T("druhyLbl"))}${st.area?" · "+esc(shortArea(st.area)):""}</div>`+m.map(([d,n])=>`<button data-druh="${esc(d)}"><span>${esc(cap(druhName(d)))}</span><small>${n}</small></button>`).join("")
+      +el.map(d=>`<button data-druh="${esc(d)}"><span>${esc(cap(druhName(d)))}</span><small>0</small></button>`).join("");
+  }
+  if(!h){box.hidden=true;box.innerHTML="";return}
+  box.innerHTML=h;box.hidden=false;
 }
 function pickDruh(d,from){st.druh=d;st.obor=AZ;st.nove=false;st.q="";$("#q").value="";track("druh-"+d);if(from)track("druh-z-"+from);render();window.scrollTo(0,0)}
 function renderChips(){
@@ -902,10 +920,24 @@ function locate(ok){
   navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude}),()=>toast(T("nearErr")),{enableHighAccuracy:false,timeout:10000,maximumAge:300000});
 }
 function setArea(a){st.area=a;store.set("area",a);store.set("areaPicked",true);st.druh="";render();window.scrollTo(0,0)}
-function myLocation(){locate(pos=>{const r=areaForPos(pos);track("moje-poloha");
+function myLocation(){locate(pos=>{st.pos=pos;const r=areaForPos(pos);track("moje-poloha");
   if(!r){toast(T("nearErr"));return}
   if(r.far){st.areaMsg={far:true,area:r.area,d:r.d};render();return}
   st.areaMsg={far:false,area:r.area};setArea(r.area)})}
+/* Kde nejblíž je to, co ve vybrané lokalitě chybí. Vzdálenost od polohy uživatele, jinak od středu vybrané lokality. */
+function nearestAreaWith(test){
+  const o=st.near||st.pos||(st.area&&LOK[st.area]&&LOK[st.area].lat!=null?LOK[st.area]:null);
+  const by={};firmy.forEach(f=>{if(!f.oblast||f.oblast===st.area||!test(f))return;
+    const d=o&&f.lat!=null?distKm(o,f):null;const b=by[f.oblast]||(by[f.oblast]={n:0,d:null});b.n++;if(d!=null&&(b.d==null||d<b.d))b.d=d});
+  Object.entries(by).forEach(([a,b])=>{if(b.d==null&&o&&LOK[a]&&LOK[a].lat!=null)b.d=distKm(o,LOK[a])});
+  const best=Object.entries(by).sort((x,y)=>(x[1].d??1e9)-(y[1].d??1e9)||y[1].n-x[1].n)[0];
+  return best?{area:best[0],d:best[1].d}:null;
+}
+function missHtml(msg,test){
+  if(!st.area)return "";const r=nearestAreaWith(test);if(!r)return "";
+  const a=shortArea(r.area)+(r.d!=null?" ("+fmtKm(r.d)+")":"");
+  return `<div class="miss"><span>${esc(msg)} ${esc(T("nearestIs",{a}))}</span><button data-goarea="${esc(r.area)}">${esc(T("goThere",{a:shortArea(r.area)}))}</button></div>`;
+}
 function renderAreabar(){
   const el=$("#areabar");if(!el)return;
   const hasLok=Object.values(LOK).some(l=>l.lat!=null);
@@ -1065,7 +1097,7 @@ async function drawMap(items){
   lbl();
 }
 
-function toolsHtml(n){return `<div class="tools"><button class="tool" data-near aria-pressed="${!!st.near}">📍 ${esc(T("near"))}</button><button class="tool" data-view="${st.view==="map"?"list":"map"}" aria-pressed="${st.view==="map"}">${st.view==="map"?"☰ "+esc(T("listBtn")):"🗺 "+esc(T("mapBtn"))}</button></div>`}
+function toolsHtml(n){return `<div class="tools"><div class="seg" role="group" aria-label="${esc(T("nearOn"))}"><button data-sort="az" aria-pressed="${!st.near}">${esc(T("sortAz"))}</button><button data-sort="near" aria-pressed="${!!st.near}">${esc(T("sortNear"))}</button></div><button class="tool" data-view="${st.view==="map"?"list":"map"}" aria-pressed="${st.view==="map"}">${st.view==="map"?"☰ "+esc(T("listBtn")):"🗺 "+esc(T("mapBtn"))}</button></div>`}
 
 function render(){
   renderAreas(); renderChips(); renderSugg(); renderHint();
@@ -1096,6 +1128,9 @@ function render(){
   else if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.obor===AZ?esc(T("backAll")):esc(oborName(st.obor))}</button><strong>${esc(cap(druhName(st.druh)))}</strong></div>`;
   else if(st.obor!==AZ&&!q){const c=druhCounts(inArea.filter(f=>f.obor===st.obor));if(c.size>1)top=`<details class="subidx"><summary>${esc(T("refine",{n:c.size}))}</summary>${idxHtml(c,false)}</details>`}
   if(!list.length){
+    const qt=f=>norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" ")).includes(q);
+    const miss=st.area&&!st.nove?(st.druh?missHtml(T("missDruh",{d:cap(druhName(st.druh)),a:shortArea(st.area)}),f=>f.druh===st.druh&&(!q||qt(f))):q?missHtml(T("missQ",{a:shortArea(st.area)}),f=>(allObory||f.obor===st.obor)&&qt(f)):""):"";
+    if(miss){$("#firmy").innerHTML=top+miss;return}
     if(st.druh||st.obor===AZ||st.nove){$("#firmy").innerHTML=top+`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(st.area?T("tryAll"):T("tryWord"))}</div>`;return}
     const none=!firmy.some(f=>f.obor===st.obor);
     $("#firmy").innerHTML=`<div class="empty"><strong>${esc(none?T("oborSoon",{o:oborName(st.obor)}):st.area&&!st.q?T("oborNone",{o:oborName(st.obor),a:shortArea(st.area)}):T("nothing"))}</strong>${esc(none?T("oborSoonT"):st.area&&!st.q?T("oborNoneT"):T("tryOther"))}</div>`;return;
@@ -1158,7 +1193,8 @@ async function shareFirm(f){const url=shareUrl(f),title=f.nazev,text=T("shareTxt
 
 /* ---------- události ---------- */
 $("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.druh="";st.nove=false;st.pin="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();window.scrollTo(0,0)});
-$("#sugg").addEventListener("click",e=>{const b=e.target.closest("[data-druh]");if(b)pickDruh(b.dataset.druh,"hledani")});
+$("#sugg").addEventListener("click",e=>{const a=e.target.closest("[data-sarea]");if(a){st.q="";$("#q").value="";st.areaMsg=null;track("hledani-lokalita");setArea(a.dataset.sarea);return}
+  const b=e.target.closest("[data-druh]");if(b)pickDruh(b.dataset.druh,"hledani")});
 $("#area").addEventListener("change",e=>{st.areaMsg=null;st.area=e.target.value;store.set("area",st.area);store.set("areaPicked",true);render()});
 $("#areabar").addEventListener("click",e=>{
   if(e.target.closest("[data-myloc]")){myLocation();return}
@@ -1178,10 +1214,12 @@ $("#firmy").addEventListener("click",e=>{
   const dz=e.target.closest("[data-druh]");if(dz){if(st.obor===AZ)pickDruh(dz.dataset.druh,"rejstrik");else{st.druh=dz.dataset.druh;track("druh-"+st.druh);render();window.scrollTo(0,0)}return}
   if(e.target.closest("[data-back]")){if(st.nove)st.nove=false;else st.druh="";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-unpin]")){st.pin="";history.replaceState(null,"",location.pathname);render();return}
-  if(e.target.closest("[data-near]")){
-    if(st.near){st.near=null;render();return}
+  const so=e.target.closest("[data-sort]");if(so){
+    if(so.dataset.sort==="az"){if(st.near){st.near=null;render()}return}
+    if(st.near)return;
     if(!navigator.geolocation){toast(T("nearErr"));return}
-    navigator.geolocation.getCurrentPosition(p=>{st.near={lat:p.coords.latitude,lng:p.coords.longitude};track("v-okoli");render()},()=>toast(T("nearErr")),{enableHighAccuracy:false,timeout:10000,maximumAge:300000});return}
+    navigator.geolocation.getCurrentPosition(p=>{st.near={lat:p.coords.latitude,lng:p.coords.longitude};st.pos=st.near;track("v-okoli");render()},()=>toast(T("nearErr")),{enableHighAccuracy:false,timeout:10000,maximumAge:300000});return}
+  const mv=e.target.closest("[data-goarea]");if(mv){track("chybi-prepnout");const d=st.druh,q=st.q;setArea(mv.dataset.goarea);if(d){st.druh=d;render()}return}
   const v=e.target.closest("[data-view]");if(v){st.view=v.dataset.view;if(st.view==="map")track("mapa");render();return}
   cardClick(e,false);
 });
