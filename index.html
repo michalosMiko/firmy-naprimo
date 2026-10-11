@@ -1154,6 +1154,11 @@ async function drawMap(items){
 
 function toolsHtml(n){return `<div class="tools"><div class="seg" role="group" aria-label="${esc(T("nearOn"))}"><button data-sort="az" aria-pressed="${!st.near}">${esc(T("sortAz"))}</button><button data-sort="near" aria-pressed="${!!st.near}">${esc(T("sortNear"))}</button></div><button class="tool" data-view="${st.view==="map"?"list":"map"}" aria-pressed="${st.view==="map"}">${st.view==="map"?"☰ "+esc(T("listBtn")):"🗺 "+esc(T("mapBtn"))}</button></div>`}
 
+/* hledání: každé zadané slovo musí být někde v názvu, adrese, lokalitě, stylu, popisu nebo druhu (pořadí slov je jedno, diakritika se nehlídá) */
+function matchQ(f,q){
+  const h=norm([f.nazev,f.adresa,f.mesto,f.oblast,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" "));
+  return q.split(/\s+/).filter(Boolean).every(w=>h.includes(w));
+}
 const PAGE_SIZE=50;let pageShown=PAGE_SIZE,pageSig="";
 function render(){
   renderAreas(); renderChips(); renderSugg(); renderHint();
@@ -1175,7 +1180,7 @@ function render(){
   }
   const allObory=st.obor===AZ||st.nove;
   let list=firmy.map((f,i)=>[f,i]).filter(([f])=>(allObory||f.obor===st.obor) && (!st.druh||f.druh===st.druh) && (st.mode==="sluzba"||!isPark(f)||st.druh===f.druh) && (!st.area||f.oblast===st.area) && (!st.nove||isNew(f)) &&
-    (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" ")).includes(q)));
+    (!q||matchQ(f,q)));
   list.forEach(x=>x[2]=km(x[0]));
   list.sort((a,b)=>(st.near?(a[2]==null)-(b[2]==null)||(a[2]??0)-(b[2]??0):0)||(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):(!hiring(a[0]))-(!hiring(b[0])))||ABC.compare(a[0].nazev||"",b[0].nazev||""));
   const status=`<p class="status">${esc(dataSource!=="embedded"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`;
@@ -1184,7 +1189,7 @@ function render(){
   else if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.obor===AZ?esc(T("backAll")):esc(oborName(st.obor))}</button><strong>${esc(cap(druhName(st.druh)))}</strong></div>`;
   else if(st.obor!==AZ&&!q){const c=druhCounts(inArea.filter(f=>f.obor===st.obor));if(c.size>1)top=`<details class="subidx"><summary>${esc(T("refine",{n:c.size}))}</summary>${idxHtml(c,false)}</details>`}
   if(!list.length){
-    const qt=f=>norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" ")).includes(q);
+    const qt=f=>matchQ(f,q);
     const miss=st.area&&!st.nove?(st.druh?missHtml(T("missDruh",{d:cap(druhName(st.druh)),a:shortArea(st.area)}),f=>f.druh===st.druh&&(!q||qt(f))):q?missHtml(T("missQ",{a:shortArea(st.area)}),f=>(allObory||f.obor===st.obor)&&qt(f)):""):"";
     if(miss){$("#firmy").innerHTML=top+miss;return}
     if(st.druh||st.obor===AZ||st.nove){$("#firmy").innerHTML=top+`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(st.area?T("tryAll"):T("tryWord"))}</div>`;return}
