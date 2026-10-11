@@ -1177,7 +1177,7 @@ function render(){
     (!q||norm([f.nazev,f.adresa,f.mesto,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" ")).includes(q)));
   list.forEach(x=>x[2]=km(x[0]));
   list.sort((a,b)=>(st.near?(a[2]==null)-(b[2]==null)||(a[2]??0)-(b[2]??0):0)||(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):(!hiring(a[0]))-(!hiring(b[0])))||ABC.compare(a[0].nazev||"",b[0].nazev||""));
-  const status=`<p class="status">${esc(dataSource==="live"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`;
+  const status=`<p class="status">${esc(dataSource!=="embedded"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`;
   let top="";
   if(st.nove) top=`<div class="druhbar"><button data-back="1">← ${esc(T("back"))}</button><strong>${esc(T("newH"))}</strong></div>`;
   else if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.obor===AZ?esc(T("backAll")):esc(oborName(st.obor))}</button><strong>${esc(cap(druhName(st.druh)))}</strong></div>`;
@@ -1303,25 +1303,41 @@ function renderAbout(){
 /* ---------- živá data z veřejné tabulky ---------- */
 function parseCSV(t){const r=[];let row=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==","){row.push(c);c=""}else if(ch=="\n"){row.push(c);r.push(row);row=[];c=""}else if(ch!="\r")c+=ch}row.push(c);r.push(row);return r}
 function prep(f){const m=String(f.gps||"").match(/(-?\d+(?:\.\d+)?)\s*[,;]\s*(-?\d+(?:\.\d+)?)/);if(m){f.lat=+m[1];f.lng=+m[2]}else{f.lat=null;f.lng=null}f.pridano=isoOf(f.pridano);return f}
+/* Převod textu CSV na seznam podniků (společné pro živá data i uloženou kopii) */
+function csvToFirmy(text){
+  const rows=parseCSV(text);
+  if(!rows.length||!rows[0]) return null;
+  const h=rows[0].map(x=>norm(x).trim());
+  const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"],
+    pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"],typp:["typ parkovani"],platba:["odkaz na platbu"]};
+  const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
+  if(ix("nazev")<0) return null;
+  const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk","typp","platba"];
+  const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return prep(o)});
+  return data.length?data:null;
+}
+/* Uložená kopie dat v telefonu: další otevření aplikace se zobrazí hned, čerstvá data se stáhnou na pozadí */
+const CACHE_KEY="dataCsvV1";
+function cacheGet(){try{return localStorage.getItem(CACHE_KEY)}catch(e){return null}}
+function cacheSet(t){try{localStorage.setItem(CACHE_KEY,t)}catch(e){try{localStorage.removeItem(CACHE_KEY)}catch(e2){}}}
+function loadCached(){
+  const t=cacheGet();if(!t) return;
+  try{const d=csvToFirmy(t);if(d){firmy=d;dataSource="cache"}}catch(e){}
+}
 async function loadLive(){
   if(!LIVE_CSV_URL && !SHEET_ID) return;
   try{
     const ctl=new AbortController();setTimeout(()=>ctl.abort(),10000);
-    let res=null;
+    let text=null;
     for(const u of [LIVE_CSV_URL, SHEET_ID&&`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`].filter(Boolean)){
-      try{const r=await fetch(u,{signal:ctl.signal,cache:"no-store"});if(r.ok&&!/^\s*</.test(await r.clone().text())){res=r;break}}catch(e){}
+      try{const r=await fetch(u,{signal:ctl.signal,cache:"no-store"});if(!r.ok)continue;const t=await r.text();if(!/^\s*</.test(t)){text=t;break}}catch(e){}
     }
-    if(!res) return;
-    const rows=parseCSV(await res.text());
-    const h=rows[0].map(x=>norm(x).trim());
-    const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"],
-      pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"],typp:["typ parkovani"],platba:["odkaz na platbu"]};
-    const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
-    if(ix("nazev")<0) return;
-    const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk","typp","platba"];
-    const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return prep(o)});
-    if(data.length){firmy=data;dataSource="live";render();if(!$("#view-moje").hidden)renderMoje();renderHint()}
-  }catch(e){/* zůstanou vložená data */}
+    if(!text) return;
+    /* stejná data jako uložená kopie: nic se nepřekresluje */
+    if(dataSource==="cache"&&text===cacheGet()){dataSource="live";return}
+    const data=csvToFirmy(text);
+    if(data){firmy=data;dataSource="live";cacheSet(text);render();if(!$("#view-moje").hidden)renderMoje();renderHint()}
+  }catch(e){/* zůstanou vložená nebo uložená data */}
 }
 firmy.forEach(prep);
 
@@ -1420,7 +1436,7 @@ function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setA
   const sl=st.mode==="sluzba";document.documentElement.dataset.mode=st.mode;$("#tab-navody").hidden=sl}
 document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
 applyLang();applyMode();renderTabBadge();
-render(); loadLive(); loadLok();
+loadCached(); render(); loadLive(); loadLok();
 const h0=(location.hash||"").slice(1); if(["navody","onas","moje"].includes(h0)) show(h0);
 else if(!store.get("onb")&&!st.pin) startWizard();
 </script>
