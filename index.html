@@ -878,7 +878,7 @@ function renderSugg(){
   if(!h){box.hidden=true;box.innerHTML="";return}
   box.innerHTML=h;box.hidden=false;
 }
-function pickDruh(d,from){st.druh=d;st.obor=AZ;st.nove=false;st.q="";$("#q").value="";track("druh-"+d);if(from)track("druh-z-"+from);render();window.scrollTo(0,0)}
+function pickDruh(d,from){st.gasSub=st.druh===GAS&&d!==GAS;st.druh=d;st.obor=AZ;st.nove=false;st.q="";$("#q").value="";track("druh-"+d);if(from)track("druh-z-"+from);render();window.scrollTo(0,0)}
 function renderChips(){
   // jen obory, které mají aspoň jeden podnik; ostatní se objeví samy, až se naplní
   const active=OBORY.filter(o=>firmy.some(f=>f.obor===o));
@@ -1220,6 +1220,12 @@ function render(){
     $("#firmy").innerHTML=`<p class="idx-lead">${esc(T("idxLead",{n:c.size,a:st.area?T("inArea",{a:shortArea(st.area)}):""}))}</p>`+(c.size?idxHtml(c,true):`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(T("tryArea"))}</div>`);
     return;
   }
+  if(st.obor===AZ&&st.druh===GAS&&!q&&!st.nove){
+    /* Gastronomie: seznam jejích druhů (bar, restaurace, kavárna…) s počtem provozů u každého */
+    const c=druhCounts(inArea.filter(f=>f.obor==="Gastronomie"));
+    $("#firmy").innerHTML=`<div class="druhbar"><button data-back="1">← ${esc(T("backAll"))}</button><strong>${esc(oborName("Gastronomie"))}</strong></div>`+idxHtml(c,false);
+    return;
+  }
   const allObory=st.obor===AZ||st.nove;
   let list=firmy.map((f,i)=>[f,i]).filter(([f])=>(allObory||f.obor===st.obor) && (!st.druh||druhOk(f,st.druh)) && (st.mode==="sluzba"||!isPark(f)||druhOk(f,st.druh)) && (!st.area||f.oblast===st.area) && (!st.nove||isNew(f)) &&
     (!q||matchQ(f,q)));
@@ -1228,7 +1234,7 @@ function render(){
   const status=`<p class="status">${esc(dataSource!=="embedded"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`;
   let top="";
   if(st.nove) top=`<div class="druhbar"><button data-back="1">← ${esc(T("back"))}</button><strong>${esc(T("newH"))}</strong></div>`;
-  else if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.obor===AZ?esc(T("backAll")):esc(oborName(st.obor))}</button><strong>${esc(cap(druhName(st.druh)))}</strong></div>`;
+  else if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.gasSub?esc(oborName("Gastronomie")):(st.obor===AZ?esc(T("backAll")):esc(oborName(st.obor)))}</button><strong>${esc(cap(druhName(st.druh)))}</strong></div>`;
   else if(st.obor!==AZ&&!q){const c=druhCounts(inArea.filter(f=>f.obor===st.obor));if(c.size>1)top=`<details class="subidx"><summary>${esc(T("refine",{n:c.size}))}</summary>${idxHtml(c,false)}</details>`}
   if(!list.length){
     const qt=f=>matchQ(f,q);
@@ -1324,7 +1330,7 @@ function cardClick(e,inMoje){
 }
 $("#firmy").addEventListener("click",e=>{
   const dz=e.target.closest("[data-druh]");if(dz){if(st.obor===AZ)pickDruh(dz.dataset.druh,"rejstrik");else{st.druh=dz.dataset.druh;track("druh-"+st.druh);render();window.scrollTo(0,0)}return}
-  if(e.target.closest("[data-back]")){if(st.nove)st.nove=false;else st.druh="";render();window.scrollTo(0,0);return}
+  if(e.target.closest("[data-back]")){if(st.nove)st.nove=false;else if(st.gasSub){st.druh=GAS;st.gasSub=false}else st.druh="";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-more]")){pageShown+=PAGE_SIZE;const y=scrollY;render();scrollTo(0,y);return}
   if(e.target.closest("[data-unpin]")){st.pin="";history.replaceState(null,"",location.pathname);render();return}
   const so=e.target.closest("[data-sort]");if(so){
