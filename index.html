@@ -1,4 +1,4 @@
-<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>[hidden]{display:none!important}img{max-width:100%}</style><title>Práce napřímo</title>
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style><title>Práce napřímo</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Práce napřímo">
 <meta name="description" content="Oslovte podniky v okolí přímo – telefon, e-mail a hotové texty bez personalistů a inzerátů.">
@@ -27,36 +27,17 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* hlavička je přilepená nahoře (fixed), výška stránky se kvůli ní nemění – o místo se stará #hspace */
-header{position:fixed;top:0;left:0;right:0;z-index:5;background:var(--bg);padding:calc(10px + env(safe-area-inset-top,0px)) 16px 8px;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;border-bottom:1px solid var(--line)}
-#hspace{display:block}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:14px 16px 10px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02em;margin:0;text-wrap:balance}
 .count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .search{display:flex;gap:8px}
-.search input,.search select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;min-width:0}
+.search input,.search select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
 .search input{flex:1}
 .search select{flex:0 1 40%;font-weight:600}
 .areabar{display:grid;gap:6px;font-size:13px;color:var(--muted);margin-top:-2px}
 .areabar:empty{display:none}
-/* poloha a sousední oblasti jsou v jednom řádku; když se nevejdou, řádek se dá posunout do strany */
-.areabar .ab{display:flex;align-items:center;flex-wrap:nowrap;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
-.areabar .ab::-webkit-scrollbar{display:none}
-.areabar .ab>*{flex:none}
-.areabar .ab span{white-space:nowrap}
-.mob-only{display:none!important}
-#shell{display:contents}   /* na počítači obal nic nemění (jeho děti se chovají jako dřív) */
-/* jen mobil: kratší řádek a spodní lišta, která se při tahu prstem dolů schová celá */
-@media (max-width:600px){
-  .mob-only{display:inline-flex!important}
-  .obv,.mob-hide{display:none!important}
-  .chip.az{display:none!important}                 /* Vše A–Z je v řádku nahoře, tady ho netřeba */
-  #chips{display:none!important}                   /* na mobilu se řádek oborů (Gastronomie, Služby…) neukazuje */
-  .areabar .cur{display:inline-block;max-width:6.5em;overflow:hidden;text-overflow:ellipsis;vertical-align:middle} /* dlouhý název lokality se zkrátí („Vraný nad…“) */
-  #shell{display:block;position:fixed;top:0;left:0;right:0;bottom:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch} /* na mobilu se posouvá jen tento obal */
-  nav.tabs{transition:transform .18s ease}
-  nav.tabs.navhide{transform:translateY(110%)}
-}
+.areabar .ab{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
 .areabar button{border:1px solid var(--line);background:var(--surface);color:inherit;border-radius:999px;padding:5px 10px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
 .areabar .ab button:not(.loc){color:var(--ink,#1a1a1a)}
 .areabar .loc{border-color:var(--accent);color:var(--accent)}
@@ -64,7 +45,7 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .areamsg button{margin-left:auto;flex:0 0 auto;border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:6px 11px;font-weight:700;font-size:13px;cursor:pointer}
 .areamsg button.x{background:none;color:var(--muted);font-size:18px;padding:2px 4px;margin-left:0}
 .mode{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
-.mode button{border:0;background:none;border-radius:9px;padding:6px 6px;font-weight:600;font-size:13.5px;color:var(--muted);cursor:pointer}
+.mode button{border:0;background:none;border-radius:9px;padding:8px 6px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer}
 .mode button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
 .chips::-webkit-scrollbar{display:none}
@@ -72,7 +53,7 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .chip small{color:var(--muted);font-variant-numeric:tabular-nums}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chip[aria-pressed="true"] small{color:inherit;opacity:.7}
-.hcollapse{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;max-height:240px;overflow:hidden;transition:opacity .15s ease}
+.hcollapse{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;max-height:240px;overflow:hidden;transition:max-height .2s ease,opacity .2s ease,margin .2s ease}
 header.compact .hcollapse{max-height:0;opacity:0;margin-bottom:-10px;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.hcollapse{transition:none}}
 .addr{color:var(--muted);font-size:13.5px;margin-top:2px}
@@ -135,7 +116,7 @@ details.subidx{background:var(--surface);border:1px solid var(--line);border-rad
 details.subidx summary{cursor:pointer;font-weight:600;font-size:14px}
 details.subidx .idx{margin-top:10px}
 
-main{padding:12px 16px calc(86px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:720px;margin:0 auto}
+main{padding:12px 16px calc(132px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:720px;margin:0 auto}
 .area h2{font-family:var(--display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:4px 2px 8px}
 .list{display:grid;gap:10px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;min-width:0}
@@ -254,7 +235,6 @@ details.qa p{margin:8px 0 0}
 #moje .lead{margin:0 2px}
 </style></head><body>
 
-<div id="shell"><!-- obal všech obrazovek: na mobilu jediný posouvaný prvek, takže se stránka neposouvá a lišty se nehýbou -->
 <div id="view-firmy">
 <header>
   <div class="hcollapse">
@@ -273,7 +253,6 @@ details.qa p{margin:8px 0 0}
   <div class="hint" id="hint" hidden></div>
   <div class="chips" id="chips" role="toolbar"></div>
 </header>
-<div id="hspace" aria-hidden="true"></div>
 <main id="firmy"></main>
 </div>
 
@@ -298,7 +277,6 @@ details.qa p{margin:8px 0 0}
 <main class="about" id="about"></main>
 </div>
 
-</div><!-- konec #shell -->
 <nav class="tabs" role="tablist">
   <button class="tab" role="tab" id="tab-firmy" aria-selected="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg><span data-i18n="tabFirmy">Firmy</span></button>
@@ -782,7 +760,7 @@ function renderGuide(){
     h+=`<div class="sec-intro"><h2>${esc(T("whenSay"))}</h2></div>`+qa.map(([q,a])=>`<details class="qa"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}
   $("#guide").innerHTML=h;
 }
-$("#gchips").addEventListener("click",e=>{const b=e.target.closest("[data-sec]");if(!b)return;st.sec=b.dataset.sec;renderGuide();pageTo(0);track("navod-"+st.sec,true)});
+$("#gchips").addEventListener("click",e=>{const b=e.target.closest("[data-sec]");if(!b)return;st.sec=b.dataset.sec;renderGuide();window.scrollTo(0,0);track("navod-"+st.sec,true)});
 $("#guide").addEventListener("click",async e=>{
   const c=e.target.closest("[data-copy-item]");
   if(c){const it=tplById(c.dataset.copyItem);if(!await copy(it.x,T("copiedTpl"))){const pre=c.closest(".item").querySelector("pre");const r=document.createRange();r.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast(T("selected"))}track("kopirovat-"+it.id);return}
@@ -872,7 +850,7 @@ function renderSugg(){
   if(!h){box.hidden=true;box.innerHTML="";return}
   box.innerHTML=h;box.hidden=false;
 }
-function pickDruh(d,from){st.druh=d;st.obor=AZ;st.nove=false;st.q="";$("#q").value="";track("druh-"+d);if(from)track("druh-z-"+from);render();pageTo(0)}
+function pickDruh(d,from){st.druh=d;st.obor=AZ;st.nove=false;st.q="";$("#q").value="";track("druh-"+d);if(from)track("druh-z-"+from);render();window.scrollTo(0,0)}
 function renderChips(){
   // jen obory, které mají aspoň jeden podnik; ostatní se objeví samy, až se naplní
   const active=OBORY.filter(o=>firmy.some(f=>f.obor===o));
@@ -952,7 +930,7 @@ function locate(ok){
   toast(T("locWait"));
   navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude}),()=>toast(T("nearErr")),{enableHighAccuracy:false,timeout:10000,maximumAge:300000});
 }
-function setArea(a){st.area=a;store.set("area",a);store.set("areaPicked",true);st.druh="";render();pageTo(0)}
+function setArea(a){st.area=a;store.set("area",a);store.set("areaPicked",true);st.druh="";render();window.scrollTo(0,0)}
 function myLocation(){locate(pos=>{st.pos=pos;const r=areaForPos(pos);track("moje-poloha");
   if(!r){toast(T("nearErr"));return}
   if(r.far){st.areaMsg={far:true,area:r.area,d:r.d};render();return}
@@ -1016,36 +994,24 @@ function renderAreabar(){
   const m=st.areaMsg;
   if(m&&m.far) h=`<div class="areamsg">📍 <span>${esc(T("locFar",{a:shortArea(m.area),d:fmtKm(m.d)}))}</span><button data-area="${esc(m.area)}">${esc(T("locSwitch"))}</button><button class="x" data-amsg aria-label="${esc(T("closeHint"))}">×</button></div>`;
   else{
-    /* vše do jednoho řádku: Moje poloha, aktuální lokalita, parkování, sousední oblasti */
-    let row="";
-    row+=`<button class="loc mob-only" data-az>${esc(T("azChip"))}</button>`;      /* Vše A–Z – jen na mobilu, na počítači je v řádku oborů */
-    if(hasLok) row+=`<button class="loc" data-myloc>${esc(T("myLoc"))}</button>`;   /* tlačítko Moje poloha */
-    const l=st.area&&LOK[st.area];                                                 /* údaje o vybrané lokalitě */
+    let a1="";
+    if(hasLok) a1+=`<button class="loc" data-myloc>${esc(T("myLoc"))}</button>`;
+    const l=st.area&&LOK[st.area];
     if(l){
-      if(m&&m.area===st.area) row+=`<span><span class="cur">${esc(T("locBy",{a:shortArea(st.area)}))}</span><span class="obv">${l.obvod?" · "+esc(l.obvod):""}</span></span>`; /* „Podle polohy: …“; na mobilu se zkrátí a obvod skryje */
-      else if(l.obvod) row+=`<span><span class="cur">${esc(shortArea(st.area))}</span><span class="obv"> · ${esc(l.obvod)}</span></span>`;                  /* název lokality (na mobilu zkrácený) a obvod (jen počítač) */
-      else row+=`<span><span class="cur">${esc(shortArea(st.area))}</span></span>`;                                                                       /* název lokality bez obvodu */
+      if(m&&m.area===st.area) a1+=`<span>${esc(T("locBy",{a:shortArea(st.area)}))}${l.obvod?" · "+esc(l.obvod):""}</span>`;
+      else if(l.obvod) a1+=`<span>${esc(shortArea(st.area))} · ${esc(l.obvod)}</span>`;
     }
+    if(a1) h+=`<div class="ab">${a1}</div>`;
     if(l){
-      const have=new Set(firmy.map(f=>f.oblast));const nb=l.sousede.filter(a=>have.has(a));   /* sousední lokality, kde máme firmy */
-      const pk=parkSummary(st.area),np=firmy.some(f=>f.oblast===st.area&&isPark(f));          /* údaje o parkování */
-      const pbtn=(pk.length||l.platba||np)?`<button class="loc" data-parkhow>🅿️ ${esc(T("parkHow").replace(/^🅿️\s*/,"").replace(/:$/,""))}</button>`:""; /* tlačítko parkování */
-      row+=pbtn;                                                                                /* parkování přidej do řádku, pokud existuje */
-      if(nb.length) row+=`<span class="mob-hide">${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join(""); /* sousední oblasti */
+      const have=new Set(firmy.map(f=>f.oblast));const nb=l.sousede.filter(a=>have.has(a));
+      const pk=parkSummary(st.area),np=firmy.some(f=>f.oblast===st.area&&isPark(f));
+      const pbtn=(pk.length||l.platba||np)?`<button class="loc" data-parkhow>🅿️ ${esc(T("parkHow").replace(/^🅿️\s*/,"").replace(/:$/,""))}</button>`:"";
+      if(pbtn&&!nb.length) h+=`<div class="ab">${pbtn}</div>`;
+      if(nb.length) h+=`<div class="ab">${pbtn}<span>${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join("")+`</div>`;
     }
-    if(hasLok||(st.area&&LOK[st.area])) h+=`<div class="ab">${row}</div>`;                    /* jeden řádek celé lišty (jen když je co ukázat) */
   }
   el.innerHTML=h;
 }
-const MOB=matchMedia("(max-width:600px)");                        /* úzká obrazovka = mobil */
-MOB.addEventListener("change",()=>renderAreabar());               /* při změně šířky přestav řádek */
-/* posouvání: na mobilu posouvá obal #shell, na počítači celá stránka */
-const SHELL=document.getElementById("shell");                     /* obal obrazovek */
-const onShell=()=>MOB.matches&&getComputedStyle(SHELL).position==="fixed"; /* je obal posouvaný? */
-function pageY(){return onShell()?SHELL.scrollTop:scrollY}        /* kde je stránka svisle */
-function pageTo(y){if(onShell())SHELL.scrollTop=y;else window.scrollTo(0,y)} /* posuň stránku na y */
-function pageH(){return onShell()?SHELL.scrollHeight:document.documentElement.scrollHeight} /* celková výška obsahu */
-function pageVH(){return onShell()?SHELL.clientHeight:innerHeight} /* viditelná výška */
 function shortArea(a){return String(a||"").replace(/^Praha\s*-\s*/,"")}
 function renderAreas(){
   const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
@@ -1294,7 +1260,7 @@ async function shareFirm(f){const url=shareUrl(f),title=f.nazev,text=T("shareTxt
   copy(url,T("linkCopied"))}
 
 /* ---------- události ---------- */
-$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.druh="";st.nove=false;st.pin="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();pageTo(0)});
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.druh="";st.nove=false;st.pin="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();window.scrollTo(0,0)});
 $("#sugg").addEventListener("click",e=>{const a=e.target.closest("[data-sarea]");if(a){st.q="";$("#q").value="";st.areaMsg=null;track("hledani-lokalita");setArea(a.dataset.sarea);return}
   const b=e.target.closest("[data-druh]");if(b)pickDruh(b.dataset.druh,"hledani")});
 $("#area").addEventListener("change",e=>{st.areaMsg=null;st.area=e.target.value;store.set("area",st.area);store.set("areaPicked",true);render()});
@@ -1302,7 +1268,6 @@ $("#areabar").addEventListener("click",e=>{
   if(e.target.closest("[data-myloc]")){myLocation();return}
   if(e.target.closest("[data-parkhow]")){parkHow(st.area);return}
   if(e.target.closest("[data-amsg]")){st.areaMsg=null;render();return}
-  if(e.target.closest("[data-az]")){st.obor=AZ;st.druh="";st.nove=false;st.pin="";track("vse-az",true);render();pageTo(0);return} /* Vše A–Z – stejné jako čip v řádku oborů */
   const b=e.target.closest("[data-area]");if(b){const was=st.area;st.areaMsg=null;track("sousedni");setArea(b.dataset.area)}
 });
 $("#q").addEventListener("input",e=>{st.q=e.target.value;if(st.druh&&st.q)st.druh="";st.pin="";render()});
@@ -1315,9 +1280,9 @@ function cardClick(e,inMoje){
   return false;
 }
 $("#firmy").addEventListener("click",e=>{
-  const dz=e.target.closest("[data-druh]");if(dz){if(st.obor===AZ)pickDruh(dz.dataset.druh,"rejstrik");else{st.druh=dz.dataset.druh;track("druh-"+st.druh);render();pageTo(0)}return}
-  if(e.target.closest("[data-back]")){if(st.nove)st.nove=false;else st.druh="";render();pageTo(0);return}
-  if(e.target.closest("[data-more]")){pageShown+=PAGE_SIZE;const y=pageY();render();pageTo(y);return}
+  const dz=e.target.closest("[data-druh]");if(dz){if(st.obor===AZ)pickDruh(dz.dataset.druh,"rejstrik");else{st.druh=dz.dataset.druh;track("druh-"+st.druh);render();window.scrollTo(0,0)}return}
+  if(e.target.closest("[data-back]")){if(st.nove)st.nove=false;else st.druh="";render();window.scrollTo(0,0);return}
+  if(e.target.closest("[data-more]")){pageShown+=PAGE_SIZE;const y=scrollY;render();scrollTo(0,y);return}
   if(e.target.closest("[data-unpin]")){st.pin="";history.replaceState(null,"",location.pathname);render();return}
   const so=e.target.closest("[data-sort]");if(so){
     if(so.dataset.sort==="az"){if(st.near){st.near=null;render()}return}
@@ -1335,7 +1300,7 @@ function show(tab){
   if(tab==="moje"){renderMoje();track("zalozka-moje",true)}
   if(tab==="onas"){renderAbout();track("zalozka-o-aplikaci",true)}
   if(tab==="firmy")render();
-  pageTo(0);
+  window.scrollTo(0,0);
 }
 $("#tab-firmy").onclick=()=>show("firmy");$("#tab-moje").onclick=()=>show("moje");$("#tab-navody").onclick=()=>show("navody");$("#tab-onas").onclick=()=>show("onas");
 
@@ -1391,33 +1356,15 @@ async function loadLive(){
 firmy.forEach(prep);
 
 /* hlavička: při posouvání dolů se schová hledání, obory zůstanou */
-(()=>{let last=0,ticking=false;
-  const hdr=document.querySelector("#view-firmy header");   /* hlavička (fixed) */
-  const hsp=document.getElementById("hspace");               /* distanční prvek, který drží místo pod hlavičkou */
-  /* výška sbaleného stavu se změří a nastaví na distanční prvek; při posouvání se už nemění, takže se obsah neposkakuje */
-  const syncSpace=()=>{const was=hdr.classList.contains("compact");   /* zapamatuj si aktuální stav */
-    hdr.classList.add("compact");                                      /* dočasně přepni do sbaleného stavu */
-    const h=hdr.offsetHeight+"px";                                     /* přečti výšku sbalené hlavičky */
-    hdr.classList.toggle("compact",was);                               /* vrať původní stav */
-    if(hsp.style.height!==h)hsp.style.height=h;};                      /* nastav výšku jen když se změnila */
-  const set=c=>{if(hdr.classList.contains("compact")!==c)hdr.classList.toggle("compact",c)};
-  const update=()=>{ticking=false;const y=pageY();
-    /* krátká stránka: schování hlavičky by ji zbytečně přepínalo – nech ji být */
-    if(y<60||pageH()-pageVH()<320){set(false);last=y;return}
-    if(document.activeElement===$("#q")||document.activeElement===$("#area")){set(false);last=y;return}
-    if(y>last+20){set(true);last=y}            /* sjíždím dolů o 20 px – sbal hlavičku */
-    else if(y<last-40){set(false);last=y}};    /* vyjíždím nahoru o 40 px – rozbal hlavičku */
-  document.addEventListener("scroll",()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true,capture:true}); /* posouvání zpracuj max. jednou na snímek */
-  addEventListener("resize",syncSpace);                                /* při změně velikosti přepočítej místo */
-  if("ResizeObserver" in window)new ResizeObserver(()=>syncSpace()).observe(hdr); /* při změně obsahu hlavičky (lokalita, obor) přepočítej místo */
-  syncSpace();})();
-/* spodní lišta na mobilu: při tahu prstem nahoru (stránka jede dolů) zůstane na místě, při tahu prstem dolů se schová celá */
-(()=>{const nav=document.querySelector("nav.tabs");let lastY=pageY();  /* lišta a poslední poloha stránky */
-  const mobile=matchMedia("(max-width:600px)");                       /* jen úzká obrazovka (mobil) */
-  document.addEventListener("scroll",()=>{const y=pageY();const d=y-lastY;lastY=y; /* o kolik se stránka posunula */
-    if(!mobile.matches||y<60){nav.classList.remove("navhide");return}   /* na počítači a nahoře lišta vždy zůstává */
-    if(Math.abs(d)<4)return;                                            /* drobný pohyb ignoruj, aby lišta neblikala */
-    nav.classList.toggle("navhide",d<0);},{passive:true,capture:true});})();   /* posun nahoru (tah prstem dolů) = schovat */
+(()=>{let last=0,lock=0;const hdr=document.querySelector("#view-firmy header");
+  const set=c=>{if(hdr.classList.contains("compact")===c)return;hdr.classList.toggle("compact",c);lock=Date.now()+400};
+  addEventListener("scroll",()=>{const y=scrollY;
+    /* krátká stránka: schování hlavičky by zkrátilo stránku a ta by „skákala“ zpět – nech hlavičku být */
+    if(y<60||document.documentElement.scrollHeight-innerHeight<320){set(false);last=y;return}
+    if(Date.now()<lock){last=y;return}
+    if(document.activeElement===$("#q")||document.activeElement===$("#area"))set(false);
+    else if(y>last+20)set(true);else if(y<last-40)set(false);
+    if(Math.abs(y-last)>20)last=y;},{passive:true});})();
 /* ---------- průvodce při první návštěvě + navádění na další krok ---------- */
 function renderHint(){
   const h=$("#hint"),a=$("#area");
@@ -1429,7 +1376,7 @@ function renderHint(){
   else{h.hidden=true;h.innerHTML=""}
 }
 $("#hint").addEventListener("click",e=>{
-  if(e.target.closest("[data-shownew]")){e.preventDefault();st.nove=true;st.druh="";st.pin="";track("nove-ukazat");render();pageTo(0);return}
+  if(e.target.closest("[data-shownew]")){e.preventDefault();st.nove=true;st.druh="";st.pin="";track("nove-ukazat");render();window.scrollTo(0,0);return}
   const x=e.target.closest("[data-x]");if(x){if(x.dataset.x==="area")store.set("hintOff",true);else store.set("newOff",NEWREF);renderHint()}});
 const wiz={step:1};
 function langRow(){return `<div class="langs" role="group" aria-label="${esc(T("langQ"))}">${LANGS.map(([c,fl,n])=>`<button data-w="lang" data-v="${c}" aria-pressed="${st.lang===c}" lang="${c}">${fl} ${n}</button>`).join("")}</div>`}
@@ -1461,7 +1408,7 @@ function wizShow(step){
   }
   el.innerHTML=h;el.scrollTop=0;
 }
-function wizClose(done){const el=$("#wiz");if(el)el.remove();document.body.style.overflow="";store.set("onb",true);track(done?"pruvodce-dokoncen":"pruvodce-preskocen",true);applyMode();render();pageTo(0)}
+function wizClose(done){const el=$("#wiz");if(el)el.remove();document.body.style.overflow="";store.set("onb",true);track(done?"pruvodce-dokoncen":"pruvodce-preskocen",true);applyMode();render();window.scrollTo(0,0)}
 document.addEventListener("click",e=>{
   const b=e.target.closest("#wiz [data-w]");if(!b)return;const w=b.dataset.w,v=b.dataset.v;
   if(w==="skip")return wizClose(false);
