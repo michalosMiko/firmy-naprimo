@@ -39,7 +39,11 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .search select{flex:0 1 40%;font-weight:600}
 .areabar{display:grid;gap:6px;font-size:13px;color:var(--muted);margin-top:-2px}
 .areabar:empty{display:none}
-.areabar .ab{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+/* poloha a sousední oblasti jsou v jednom řádku; když se nevejdou, řádek se dá posunout do strany */
+.areabar .ab{display:flex;align-items:center;flex-wrap:nowrap;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.areabar .ab::-webkit-scrollbar{display:none}
+.areabar .ab>*{flex:none}
+.areabar .ab span{white-space:nowrap}
 .areabar button{border:1px solid var(--line);background:var(--surface);color:inherit;border-radius:999px;padding:5px 10px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
 .areabar .ab button:not(.loc){color:var(--ink,#1a1a1a)}
 .areabar .loc{border-color:var(--accent);color:var(--accent)}
@@ -997,21 +1001,22 @@ function renderAreabar(){
   const m=st.areaMsg;
   if(m&&m.far) h=`<div class="areamsg">📍 <span>${esc(T("locFar",{a:shortArea(m.area),d:fmtKm(m.d)}))}</span><button data-area="${esc(m.area)}">${esc(T("locSwitch"))}</button><button class="x" data-amsg aria-label="${esc(T("closeHint"))}">×</button></div>`;
   else{
-    let a1="";
-    if(hasLok) a1+=`<button class="loc" data-myloc>${esc(T("myLoc"))}</button>`;
-    const l=st.area&&LOK[st.area];
+    /* vše do jednoho řádku: Moje poloha, aktuální lokalita, parkování, sousední oblasti */
+    let row="";
+    if(hasLok) row+=`<button class="loc" data-myloc>${esc(T("myLoc"))}</button>`;   /* tlačítko Moje poloha */
+    const l=st.area&&LOK[st.area];                                                 /* údaje o vybrané lokalitě */
     if(l){
-      if(m&&m.area===st.area) a1+=`<span>${esc(T("locBy",{a:shortArea(st.area)}))}${l.obvod?" · "+esc(l.obvod):""}</span>`;
-      else if(l.obvod) a1+=`<span>${esc(shortArea(st.area))} · ${esc(l.obvod)}</span>`;
+      if(m&&m.area===st.area) row+=`<span>${esc(T("locBy",{a:shortArea(st.area)}))}${l.obvod?" · "+esc(l.obvod):""}</span>`; /* „Podle polohy: …“ */
+      else if(l.obvod) row+=`<span>${esc(shortArea(st.area))} · ${esc(l.obvod)}</span>`;                                   /* název lokality a obvod */
     }
-    if(a1) h+=`<div class="ab">${a1}</div>`;
     if(l){
-      const have=new Set(firmy.map(f=>f.oblast));const nb=l.sousede.filter(a=>have.has(a));
-      const pk=parkSummary(st.area),np=firmy.some(f=>f.oblast===st.area&&isPark(f));
-      const pbtn=(pk.length||l.platba||np)?`<button class="loc" data-parkhow>🅿️ ${esc(T("parkHow").replace(/^🅿️\s*/,"").replace(/:$/,""))}</button>`:"";
-      if(pbtn&&!nb.length) h+=`<div class="ab">${pbtn}</div>`;
-      if(nb.length) h+=`<div class="ab">${pbtn}<span>${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join("")+`</div>`;
+      const have=new Set(firmy.map(f=>f.oblast));const nb=l.sousede.filter(a=>have.has(a));   /* sousední lokality, kde máme firmy */
+      const pk=parkSummary(st.area),np=firmy.some(f=>f.oblast===st.area&&isPark(f));          /* údaje o parkování */
+      const pbtn=(pk.length||l.platba||np)?`<button class="loc" data-parkhow>🅿️ ${esc(T("parkHow").replace(/^🅿️\s*/,"").replace(/:$/,""))}</button>`:""; /* tlačítko parkování */
+      row+=pbtn;                                                                                /* parkování přidej do řádku, pokud existuje */
+      if(nb.length) row+=`<span>${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join(""); /* sousední oblasti */
     }
+    if(row) h+=`<div class="ab">${row}</div>`;                                                  /* jeden řádek celé lišty */
   }
   el.innerHTML=h;
 }
