@@ -44,6 +44,14 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .areabar .ab::-webkit-scrollbar{display:none}
 .areabar .ab>*{flex:none}
 .areabar .ab span{white-space:nowrap}
+.mob-only{display:none!important}
+/* jen mobil: kratší řádek a spodní lišta, která se při tahu prstem dolů schová celá */
+@media (max-width:600px){
+  .mob-only{display:inline-flex!important}
+  .obv,.mob-hide{display:none!important}
+  nav.tabs{transition:transform .18s ease}
+  nav.tabs.navhide{transform:translateY(110%)}
+}
 .areabar button{border:1px solid var(--line);background:var(--surface);color:inherit;border-radius:999px;padding:5px 10px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
 .areabar .ab button:not(.loc){color:var(--ink,#1a1a1a)}
 .areabar .loc{border-color:var(--accent);color:var(--accent)}
@@ -1003,20 +1011,22 @@ function renderAreabar(){
   else{
     /* vše do jednoho řádku: Moje poloha, aktuální lokalita, parkování, sousední oblasti */
     let row="";
+    row+=`<button class="loc mob-only" data-az>${esc(T("azChip"))}</button>`;      /* Vše A–Z – jen na mobilu, na počítači je v řádku oborů */
     if(hasLok) row+=`<button class="loc" data-myloc>${esc(T("myLoc"))}</button>`;   /* tlačítko Moje poloha */
     const l=st.area&&LOK[st.area];                                                 /* údaje o vybrané lokalitě */
     if(l){
-      if(m&&m.area===st.area) row+=`<span>${esc(T("locBy",{a:shortArea(st.area)}))}${l.obvod?" · "+esc(l.obvod):""}</span>`; /* „Podle polohy: …“ */
-      else if(l.obvod) row+=`<span>${esc(shortArea(st.area))} · ${esc(l.obvod)}</span>`;                                   /* název lokality a obvod */
+      if(m&&m.area===st.area) row+=`<span>${esc(T("locBy",{a:shortArea(st.area)}))}<span class="obv">${l.obvod?" · "+esc(l.obvod):""}</span></span>`; /* „Podle polohy: …“; obvod se na mobilu skryje */
+      else if(l.obvod) row+=`<span>${esc(shortArea(st.area))}<span class="obv"> · ${esc(l.obvod)}</span></span>`;                                   /* název lokality a obvod (obvod jen na počítači) */
+      else row+=`<span>${esc(shortArea(st.area))}</span>`;                                                                                            /* název lokality bez obvodu */
     }
     if(l){
       const have=new Set(firmy.map(f=>f.oblast));const nb=l.sousede.filter(a=>have.has(a));   /* sousední lokality, kde máme firmy */
       const pk=parkSummary(st.area),np=firmy.some(f=>f.oblast===st.area&&isPark(f));          /* údaje o parkování */
       const pbtn=(pk.length||l.platba||np)?`<button class="loc" data-parkhow>🅿️ ${esc(T("parkHow").replace(/^🅿️\s*/,"").replace(/:$/,""))}</button>`:""; /* tlačítko parkování */
       row+=pbtn;                                                                                /* parkování přidej do řádku, pokud existuje */
-      if(nb.length) row+=`<span>${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join(""); /* sousední oblasti */
+      if(nb.length) row+=`<span class="mob-hide">${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join(""); /* sousední oblasti */
     }
-    if(row) h+=`<div class="ab">${row}</div>`;                                                  /* jeden řádek celé lišty */
+    if(hasLok||(st.area&&LOK[st.area])) h+=`<div class="ab">${row}</div>`;                    /* jeden řádek celé lišty (jen když je co ukázat) */
   }
   el.innerHTML=h;
 }
@@ -1276,6 +1286,7 @@ $("#areabar").addEventListener("click",e=>{
   if(e.target.closest("[data-myloc]")){myLocation();return}
   if(e.target.closest("[data-parkhow]")){parkHow(st.area);return}
   if(e.target.closest("[data-amsg]")){st.areaMsg=null;render();return}
+  if(e.target.closest("[data-az]")){st.obor=AZ;st.druh="";st.nove=false;st.pin="";track("vse-az",true);render();window.scrollTo(0,0);return} /* Vše A–Z – stejné jako čip v řádku oborů */
   const b=e.target.closest("[data-area]");if(b){const was=st.area;st.areaMsg=null;track("sousedni");setArea(b.dataset.area)}
 });
 $("#q").addEventListener("input",e=>{st.q=e.target.value;if(st.druh&&st.q)st.druh="";st.pin="";render()});
@@ -1384,6 +1395,13 @@ firmy.forEach(prep);
   addEventListener("resize",syncSpace);                                /* při změně velikosti přepočítej místo */
   if("ResizeObserver" in window)new ResizeObserver(()=>syncSpace()).observe(hdr); /* při změně obsahu hlavičky (lokalita, obor) přepočítej místo */
   syncSpace();})();
+/* spodní lišta na mobilu: při tahu prstem nahoru (stránka jede dolů) zůstane na místě, při tahu prstem dolů se schová celá */
+(()=>{const nav=document.querySelector("nav.tabs");let lastY=scrollY;  /* lišta a poslední poloha stránky */
+  const mobile=matchMedia("(max-width:600px)");                       /* jen úzká obrazovka (mobil) */
+  addEventListener("scroll",()=>{const y=scrollY;const d=y-lastY;lastY=y; /* o kolik se stránka posunula */
+    if(!mobile.matches||y<60){nav.classList.remove("navhide");return}   /* na počítači a nahoře lišta vždy zůstává */
+    if(Math.abs(d)<4)return;                                            /* drobný pohyb ignoruj, aby lišta neblikala */
+    nav.classList.toggle("navhide",d<0);},{passive:true});})();   /* posun nahoru (tah prstem dolů) = schovat */
 /* ---------- průvodce při první návštěvě + navádění na další krok ---------- */
 function renderHint(){
   const h=$("#hint"),a=$("#area");
