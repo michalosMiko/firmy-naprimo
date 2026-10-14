@@ -1,4 +1,4 @@
-<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style><title>Práce napřímo</title>
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>[hidden]{display:none!important}img{max-width:100%}</style><title>Práce napřímo</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Práce napřímo">
 <meta name="description" content="Oslovte podniky v okolí přímo – telefon, e-mail a hotové texty bez personalistů a inzerátů.">
@@ -27,12 +27,14 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:14px 16px 10px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;border-bottom:1px solid var(--line)}
+/* hlavička je přilepená nahoře (fixed), výška stránky se kvůli ní nemění – o místo se stará #hspace */
+header{position:fixed;top:0;left:0;right:0;z-index:5;background:var(--bg);padding:calc(10px + env(safe-area-inset-top,0px)) 16px 8px;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;border-bottom:1px solid var(--line)}
+#hspace{display:block}
 .brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02em;margin:0;text-wrap:balance}
 .count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .search{display:flex;gap:8px}
-.search input,.search select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.search input,.search select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;min-width:0}
 .search input{flex:1}
 .search select{flex:0 1 40%;font-weight:600}
 .areabar{display:grid;gap:6px;font-size:13px;color:var(--muted);margin-top:-2px}
@@ -45,7 +47,7 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .areamsg button{margin-left:auto;flex:0 0 auto;border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:6px 11px;font-weight:700;font-size:13px;cursor:pointer}
 .areamsg button.x{background:none;color:var(--muted);font-size:18px;padding:2px 4px;margin-left:0}
 .mode{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
-.mode button{border:0;background:none;border-radius:9px;padding:8px 6px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer}
+.mode button{border:0;background:none;border-radius:9px;padding:6px 6px;font-weight:600;font-size:13.5px;color:var(--muted);cursor:pointer}
 .mode button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
 .chips::-webkit-scrollbar{display:none}
@@ -53,7 +55,7 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .chip small{color:var(--muted);font-variant-numeric:tabular-nums}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chip[aria-pressed="true"] small{color:inherit;opacity:.7}
-.hcollapse{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;max-height:240px;overflow:hidden;transition:max-height .2s ease,opacity .2s ease,margin .2s ease}
+.hcollapse{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;max-height:240px;overflow:hidden;transition:opacity .15s ease}
 header.compact .hcollapse{max-height:0;opacity:0;margin-bottom:-10px;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.hcollapse{transition:none}}
 .addr{color:var(--muted);font-size:13.5px;margin-top:2px}
@@ -116,7 +118,7 @@ details.subidx{background:var(--surface);border:1px solid var(--line);border-rad
 details.subidx summary{cursor:pointer;font-weight:600;font-size:14px}
 details.subidx .idx{margin-top:10px}
 
-main{padding:12px 16px calc(132px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:720px;margin:0 auto}
+main{padding:12px 16px calc(86px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:720px;margin:0 auto}
 .area h2{font-family:var(--display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:4px 2px 8px}
 .list{display:grid;gap:10px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;min-width:0}
@@ -253,6 +255,7 @@ details.qa p{margin:8px 0 0}
   <div class="hint" id="hint" hidden></div>
   <div class="chips" id="chips" role="toolbar"></div>
 </header>
+<div id="hspace" aria-hidden="true"></div>
 <main id="firmy"></main>
 </div>
 
@@ -1356,15 +1359,26 @@ async function loadLive(){
 firmy.forEach(prep);
 
 /* hlavička: při posouvání dolů se schová hledání, obory zůstanou */
-(()=>{let last=0,lock=0;const hdr=document.querySelector("#view-firmy header");
-  const set=c=>{if(hdr.classList.contains("compact")===c)return;hdr.classList.toggle("compact",c);lock=Date.now()+400};
-  addEventListener("scroll",()=>{const y=scrollY;
-    /* krátká stránka: schování hlavičky by zkrátilo stránku a ta by „skákala“ zpět – nech hlavičku být */
+(()=>{let last=0,ticking=false;
+  const hdr=document.querySelector("#view-firmy header");   /* hlavička (fixed) */
+  const hsp=document.getElementById("hspace");               /* distanční prvek, který drží místo pod hlavičkou */
+  /* výška sbaleného stavu se změří a nastaví na distanční prvek; při posouvání se už nemění, takže se obsah neposkakuje */
+  const syncSpace=()=>{const was=hdr.classList.contains("compact");   /* zapamatuj si aktuální stav */
+    hdr.classList.add("compact");                                      /* dočasně přepni do sbaleného stavu */
+    const h=hdr.offsetHeight+"px";                                     /* přečti výšku sbalené hlavičky */
+    hdr.classList.toggle("compact",was);                               /* vrať původní stav */
+    if(hsp.style.height!==h)hsp.style.height=h;};                      /* nastav výšku jen když se změnila */
+  const set=c=>{if(hdr.classList.contains("compact")!==c)hdr.classList.toggle("compact",c)};
+  const update=()=>{ticking=false;const y=scrollY;
+    /* krátká stránka: schování hlavičky by ji zbytečně přepínalo – nech ji být */
     if(y<60||document.documentElement.scrollHeight-innerHeight<320){set(false);last=y;return}
-    if(Date.now()<lock){last=y;return}
-    if(document.activeElement===$("#q")||document.activeElement===$("#area"))set(false);
-    else if(y>last+20)set(true);else if(y<last-40)set(false);
-    if(Math.abs(y-last)>20)last=y;},{passive:true});})();
+    if(document.activeElement===$("#q")||document.activeElement===$("#area")){set(false);last=y;return}
+    if(y>last+20){set(true);last=y}            /* sjíždím dolů o 20 px – sbal hlavičku */
+    else if(y<last-40){set(false);last=y}};    /* vyjíždím nahoru o 40 px – rozbal hlavičku */
+  addEventListener("scroll",()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true}); /* posouvání zpracuj max. jednou na snímek */
+  addEventListener("resize",syncSpace);                                /* při změně velikosti přepočítej místo */
+  if("ResizeObserver" in window)new ResizeObserver(()=>syncSpace()).observe(hdr); /* při změně obsahu hlavičky (lokalita, obor) přepočítej místo */
+  syncSpace();})();
 /* ---------- průvodce při první návštěvě + navádění na další krok ---------- */
 function renderHint(){
   const h=$("#hint"),a=$("#area");
