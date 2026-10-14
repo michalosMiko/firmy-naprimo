@@ -49,6 +49,8 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 @media (max-width:600px){
   .mob-only{display:inline-flex!important}
   .obv,.mob-hide{display:none!important}
+  .chip.az{display:none!important}                 /* Vše A–Z je v řádku nahoře, tady ho netřeba */
+  .areabar .ab #chips{display:contents}            /* čipy oborů se stanou položkami jednoho řádku */
   nav.tabs{transition:transform .18s ease}
   nav.tabs.navhide{transform:translateY(110%)}
 }
@@ -1004,6 +1006,8 @@ function missHtml(msg,test){
 }
 function renderAreabar(){
   const el=$("#areabar");if(!el)return;
+  const chipsEl=$("#chips"),hdr=$("#view-firmy header");          /* řádek oborů (čipy) */
+  if(chipsEl&&chipsEl.parentNode!==hdr) hdr.appendChild(chipsEl); /* vrať čipy do hlavičky, než se přepíše obsah lišty */
   const hasLok=Object.values(LOK).some(l=>l.lat!=null);
   let h="";
   const m=st.areaMsg;
@@ -1026,10 +1030,14 @@ function renderAreabar(){
       row+=pbtn;                                                                                /* parkování přidej do řádku, pokud existuje */
       if(nb.length) row+=`<span class="mob-hide">${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join(""); /* sousední oblasti */
     }
-    if(hasLok||(st.area&&LOK[st.area])) h+=`<div class="ab">${row}</div>`;                    /* jeden řádek celé lišty (jen když je co ukázat) */
+    if(hasLok||(st.area&&LOK[st.area])||MOB.matches) h+=`<div class="ab">${row}${MOB.matches?'<div class="ab-chips"></div>':""}</div>`; /* jeden řádek; na mobilu sem přijdou i čipy oborů */
   }
   el.innerHTML=h;
+  const slot=el.querySelector(".ab-chips");                       /* místo pro čipy na mobilu */
+  if(slot&&chipsEl) slot.replaceWith(chipsEl);                    /* přesuň čipy do jednoho řádku s lokalitou */
 }
+const MOB=matchMedia("(max-width:600px)");                        /* úzká obrazovka = mobil */
+MOB.addEventListener("change",()=>renderAreabar());               /* při změně šířky přestav řádek */
 function shortArea(a){return String(a||"").replace(/^Praha\s*-\s*/,"")}
 function renderAreas(){
   const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
