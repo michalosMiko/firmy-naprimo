@@ -44,10 +44,12 @@ h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02
 .areapop input{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:2px;min-width:0}
 .alist{overflow:auto;overscroll-behavior:contain;display:grid;align-content:start}
 .agrp{display:flex;justify-content:space-between;gap:10px;padding:10px 10px 3px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.aopt.aobv{margin-top:6px;color:var(--ink);font-weight:700;font-size:1.04em} /* obvod (Praha 4, Praha-západ…): tučně, klik = všechny jeho lokality */
+.aopt.aobv .n{color:var(--ink);font-weight:700}
 .aopt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border:0;background:none;text-align:left;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:400}
 .aopt .n,.agrp .n{font-variant-numeric:tabular-nums}
 .aopt .n{color:var(--muted);font-size:12.5px}
-.aopt.act{background:var(--bg)}
+.aopt.act,.aopt[aria-selected="true"]{background:var(--bg)}
 .aopt[aria-selected="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
 .aopt[aria-selected="true"] .n{color:var(--accent)}
 .anone{padding:10px;color:var(--muted)}
@@ -884,10 +886,11 @@ function renderSugg(){
   const qq=q.replace(/\s+/g," ").trim();
   const allA=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
   const ah=allA.filter(a=>a!==st.area&&(norm(shortArea(a)).split(/[\s\/–-]+/).some(w=>w.startsWith(qq))||norm(shortArea(a)).startsWith(qq)||(LOK[a]&&LOK[a].obvod&&qq.length>=5&&norm(LOK[a].obvod).replace(/\s+/g," ").startsWith(qq)))).slice(0,6);
+  const gs=[...new Set(allA.map(areaGroup).filter(Boolean))].filter(g=>"@"+g!==st.area&&(norm(g).split(/[\s\/–-]+/).some(w=>w.startsWith(qq))||norm(g).startsWith(qq))).slice(0,3);
   let h="";
-  if(ah.length) h+=`<div class="lbl">${esc(T("areasLbl"))}</div>`+ah.map(a=>`<button data-sarea="${esc(a)}"><span>📍 ${esc(shortArea(a))}</span><small>${esc(LOK[a]&&LOK[a].obvod||"")}</small></button>`).join("");
+  if(ah.length||gs.length) h+=`<div class="lbl">${esc(T("areasLbl"))}</div>`+gs.map(g=>`<button data-sarea="@${esc(g)}"><span>📍 <b>${esc(g)}</b></span><small>${firmy.filter(f=>areaGroup(f.oblast)===g).length}</small></button>`).join("")+ah.map(a=>`<button data-sarea="${esc(a)}"><span>📍 ${esc(shortArea(a))}</span><small>${esc(LOK[a]&&LOK[a].obvod||"")}</small></button>`).join("");
   if(hasDruhy()){
-    const pool=firmy.filter(f=>!st.area||f.oblast===st.area);
+    const pool=firmy.filter(f=>areaHas(f.oblast));
     const hit=d=>[d,druhName(d)].some(x=>{const n=norm(x);return n.split(/[\s\/–-]+/).some(w=>w.startsWith(q))||n.includes(q)});
     const here=druhCounts(pool);
     const m=[...here.entries()].filter(([d])=>hit(d)).sort((a,b)=>b[1]-a[1]||COLL.compare(druhName(a[0]),druhName(b[0]))).slice(0,6);
@@ -904,11 +907,11 @@ function renderChips(){
   // jen obory, které mají aspoň jeden podnik; ostatní se objeví samy, až se naplní
   const active=OBORY.filter(o=>firmy.some(f=>f.obor===o));
   if(active.length&&!active.includes(st.obor)&&st.obor!==AZ) st.obor=active[0];
-  const tot=firmy.filter(f=>!st.area||f.oblast===st.area).length;
+  const tot=firmy.filter(f=>areaHas(f.oblast)).length;
   const az=hasDruhy()?`<button class="chip az" aria-pressed="${st.obor===AZ&&!st.nove&&!st.pin}" data-o="${AZ}">${esc(T("azChip"))} <small>${tot}</small></button>`:"";
   $("#chips").innerHTML = az+active.map(o=>{
     const all=firmy.filter(f=>f.obor===o);
-    const n=st.area?all.filter(f=>f.oblast===st.area).length:all.length;
+    const n=st.area?all.filter(f=>areaHas(f.oblast)).length:all.length;
     return `<button class="chip" aria-pressed="${o===st.obor&&!st.nove&&!st.pin}" data-o="${o}">${esc(oborName(o))} <small>${n}</small></button>`}).join("");
 }
 const MOBIL=matchMedia("(max-width:600px)");
@@ -1025,7 +1028,7 @@ function parkHow(a){
 /* Kde nejblíž je to, co ve vybrané lokalitě chybí. Vzdálenost od polohy uživatele, jinak od středu vybrané lokality. */
 function nearestAreaWith(test){
   const o=st.near||st.pos||(st.area&&LOK[st.area]&&LOK[st.area].lat!=null?LOK[st.area]:null);
-  const by={};firmy.forEach(f=>{if(!f.oblast||f.oblast===st.area||!test(f))return;
+  const by={};firmy.forEach(f=>{if(!f.oblast||areaHas(f.oblast)||!test(f))return;
     const d=o&&f.lat!=null?distKm(o,f):null;const b=by[f.oblast]||(by[f.oblast]={n:0,d:null});b.n++;if(d!=null&&(b.d==null||d<b.d))b.d=d});
   Object.entries(by).forEach(([a,b])=>{if(b.d==null&&o&&LOK[a]&&LOK[a].lat!=null)b.d=distKm(o,LOK[a])});
   const best=Object.entries(by).sort((x,y)=>(x[1].d??1e9)-(y[1].d??1e9)||y[1].n-x[1].n)[0];
@@ -1054,7 +1057,7 @@ function renderAreabar(){
         const pk=parkSummary(st.area),np=firmy.some(f=>f.oblast===st.area&&isPark(f));
         if(pk.length||l.platba||np) row+=`<button class="loc" data-parkhow>🅿️ ${esc(T("parkHow").replace(/^🅿️\s*/,"").replace(/:$/,""))}</button>`;
         if(nb.length) row+=`<span class="mob-hide">${esc(T("nbrs"))}</span>`+nb.map(a=>`<button data-area="${esc(a)}">${esc(shortArea(a))}</button>`).join("");
-      }
+      }else if(st.area) row+=`<span><span class="cur">${esc(shortArea(st.area))}</span></span>`;
       h+=`<div class="ab">${row}</div>`;
     }else{
     let a1="";
@@ -1075,15 +1078,18 @@ function renderAreabar(){
   }
   el.innerHTML=h;
 }
-function shortArea(a){return String(a||"").replace(/^Praha\s*-\s*/,"")}
+function shortArea(a){a=String(a||"");return a[0]==="@"?a.slice(1):a.replace(/^Praha\s*-\s*/,"")}
+/* Obvod lokality pro seznam: Praha podle čísla (Praha 4…), jinak skupina (Praha-západ…). Celý obvod se vybírá jako "@Praha 4". */
+function areaGroup(a){const l=LOK[a];return !NAHORU.includes(a)&&l?(l.skupina==="Praha"&&l.obvod?l.obvod:(l.skupina||l.obvod||"")):""}
+function areaHas(o,a){a=a===undefined?st.area:a;return !a||(a[0]==="@"?!!o&&areaGroup(o)===a.slice(1):o===a)}
 function renderAreas(){
   const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
-  if(!areas.includes(st.area)) st.area="";
   /* počty provozů u lokalit i skupin – stejné číslo jako Vše A–Z v dané lokalitě */
   const cnt={};firmy.forEach(f=>{if(f.oblast)cnt[f.oblast]=(cnt[f.oblast]||0)+1});
-  const grp=a=>{const l=LOK[a];return !NAHORU.includes(a)&&l?(l.skupina==="Praha"&&l.obvod?l.obvod:(l.skupina||l.obvod||"")):""};
+  const grp=areaGroup;
   const gcnt={};areas.forEach(a=>{const g=grp(a);if(g)gcnt[g]=(gcnt[g]||0)+(cnt[a]||0)});
   /* Skupiny v seznamu: Praha podle obvodu (Praha 4, Praha 5 …), pak Praha-západ a další okresy. NAHORU zůstává úplně nahoře. */
+  if(st.area[0]==="@"?!gcnt[st.area.slice(1)]:!areas.includes(st.area)) st.area="";
   areaItems=[{a:"",name:T("all"),n:firmy.length,g:"",gn:0},...areas.map(a=>{const g=grp(a);return {a,name:shortArea(a),n:cnt[a]||0,g,gn:gcnt[g]||0}})];
   $("#arealbl").textContent=st.area?shortArea(st.area):T("all");
   if($(".areapop"))areaList();
@@ -1097,7 +1103,7 @@ function areaList(){
   const hit=i=>!q||norm(i.name).includes(q)||norm(i.a).includes(q)||norm(i.g).includes(q);
   let h="",cur=null;
   areaItems.filter(hit).forEach(i=>{
-    if(i.g!==cur){cur=i.g;if(i.g)h+=`<div class="agrp" role="presentation"><span>${esc(i.g)}</span><span class="n">${i.gn}</span></div>`}
+    if(i.g!==cur){cur=i.g;if(i.g)h+=`<button type="button" class="aopt aobv" role="option" data-a="@${esc(i.g)}" aria-selected="${"@"+i.g===st.area}" tabindex="-1"><span>${esc(i.g)}</span><span class="n">${i.gn}</span></button>`}
     h+=`<button type="button" class="aopt" role="option" data-a="${esc(i.a)}" aria-selected="${i.a===st.area}" tabindex="-1"><span>${esc(i.name)}</span><span class="n">${i.n}</span></button>`;
   });
   pop.querySelector(".alist").innerHTML=h||`<div class="anone">${esc(T("areaNone"))}</div>`;
@@ -1274,7 +1280,7 @@ function render(){
   renderAreas(); renderChips(); renderSugg(); renderHint();
   if(st.obor===AZ&&!hasDruhy()) st.obor="Gastronomie";
   const q=norm(st.q);
-  const inArea=firmy.filter(f=>!st.area||f.oblast===st.area);
+  const inArea=firmy.filter(f=>areaHas(f.oblast));
   const tot=inArea.length;
   $("#count").textContent=nT("total",tot);
   if(LMAP&&(st.view!=="map")){LMAP.remove();LMAP=null}
@@ -1295,7 +1301,7 @@ function render(){
     return;
   }
   const allObory=st.obor===AZ||st.nove;
-  let list=firmy.map((f,i)=>[f,i]).filter(([f])=>(allObory||f.obor===st.obor) && (!st.druh||druhOk(f,st.druh)) && (st.mode==="sluzba"||!isPark(f)||druhOk(f,st.druh)) && (!st.area||f.oblast===st.area) && (!st.nove||isNew(f)) &&
+  let list=firmy.map((f,i)=>[f,i]).filter(([f])=>(allObory||f.obor===st.obor) && (!st.druh||druhOk(f,st.druh)) && (st.mode==="sluzba"||!isPark(f)||druhOk(f,st.druh)) && areaHas(f.oblast) && (!st.nove||isNew(f)) &&
     (!q||matchQ(f,q)));
   list.forEach(x=>x[2]=km(x[0]));
   list.sort((a,b)=>(st.near?(a[2]==null)-(b[2]==null)||(a[2]??0)-(b[2]??0):0)||(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):(!hiring(a[0]))-(!hiring(b[0])))||ABC.compare(a[0].nazev||"",b[0].nazev||""));
@@ -1496,7 +1502,7 @@ function renderHint(){
   const h=$("#hint"),a=$("#area");
   const need=!st.area&&!st.areaMsg&&!store.get("areaPicked")&&!store.get("hintOff");
   a.classList.toggle("nudge",need);
-  const nNew=NEWREF?firmy.filter(f=>isNew(f)&&(!st.area||f.oblast===st.area)).length:0;
+  const nNew=NEWREF?firmy.filter(f=>isNew(f)&&areaHas(f.oblast)).length:0;
   if(need){h.innerHTML=`📍 <span>${T("areaHint")}</span><button aria-label="${esc(T("closeHint"))}" data-x="area">×</button>`;h.hidden=false}
   else if(nNew&&!st.nove&&store.get("newOff")!==NEWREF){h.innerHTML=`🆕 <span>${nT("newHint",nNew)} <a href="#" class="link" data-shownew>${esc(T("newShow"))}</a></span><button aria-label="${esc(T("closeHint"))}" data-x="new">×</button>`;h.hidden=false}
   else{h.hidden=true;h.innerHTML=""}
@@ -1525,7 +1531,7 @@ function wizShow(step){
       <button class="wiz-opt all" data-w="area" data-v="">${esc(T("all"))}<small>${firmy.length}</small></button></div>
       <button class="wiz-back" data-w="back">${esc(T("wBack"))}</button>`;
   } else {
-    const pool=firmy.filter(f=>!st.area||f.oblast===st.area);
+    const pool=firmy.filter(f=>areaHas(f.oblast));
     const ob=OBORY.filter(o=>pool.some(f=>f.obor===o));
     h+=`<h2>${esc(T("wQ3"))}</h2><p class="lead">${esc(nT("wL3",pool.length,{a:st.area?shortArea(st.area)+": ":""}))}</p><div class="wiz-grid two">
       ${ob.map(o=>`<button class="wiz-opt" data-w="obor" data-v="${o}">${esc(oborName(o))}<small>${pool.filter(f=>f.obor===o).length}</small></button>`).join("")}
