@@ -34,9 +34,25 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var
 h1{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02em;margin:0;text-wrap:balance}
 .count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .search{display:flex;gap:8px}
-.search input,.search select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.search input,.search .areasel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
 .search input{flex:1}
-.search select{flex:0 1 40%;font-weight:600}
+.search .areasel{flex:0 1 40%;font-weight:600;display:flex;align-items:center;gap:6px;text-align:left;cursor:pointer}
+.areasel span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.areasel::after{content:"";flex:none;width:7px;height:7px;border:solid var(--muted);border-width:0 2px 2px 0;transform:translateY(-2px) rotate(45deg);margin-right:2px}
+/* vlastní seznam lokalit: názvy normálním písmem, počty malé šedé vpravo; na mobilu vyjede zespodu */
+.areapop{position:fixed;z-index:9;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column;gap:4px;font-size:14.5px}
+.areapop input{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:2px;min-width:0}
+.alist{overflow:auto;overscroll-behavior:contain;display:grid;align-content:start}
+.agrp{display:flex;justify-content:space-between;gap:10px;padding:10px 10px 3px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.aopt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border:0;background:none;text-align:left;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:400}
+.aopt .n,.agrp .n{font-variant-numeric:tabular-nums}
+.aopt .n{color:var(--muted);font-size:12.5px}
+.aopt.act{background:var(--bg)}
+.aopt[aria-selected="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.aopt[aria-selected="true"] .n{color:var(--accent)}
+.anone{padding:10px;color:var(--muted)}
+.areabg{position:fixed;inset:0;z-index:8}
+@media (hover:hover){.aopt:hover{background:var(--bg)}.aopt[aria-selected="true"]:hover{background:var(--accent-soft)}}
 .areabar{display:grid;gap:6px;font-size:13px;color:var(--muted);margin-top:-2px}
 .areabar:empty{display:none}
 .areabar .ab{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
@@ -250,6 +266,9 @@ details.qa p{margin:8px 0 0}
   .areabar .ab>*{flex:none}
   .areabar .ab span{white-space:nowrap}
   .areabar .cur{display:inline-block;max-width:6.5em;overflow:hidden;text-overflow:ellipsis;vertical-align:middle} /* dlouhý název se zkrátí */
+  .areabg{background:rgba(0,0,0,.4)}
+  .areapop{left:0!important;right:0!important;top:auto!important;bottom:0;width:auto!important;max-height:80vh!important;border-radius:20px 20px 0 0;border-width:1px 0 0;padding:12px 10px calc(12px + env(safe-area-inset-bottom,0px));font-size:15.5px}
+  .aopt{padding:9px 10px}
   .obv,.mob-hide{display:none!important}
   .chip.az{display:none!important}                          /* Vše A–Z je už v řádku nahoře */
   .chips{flex-wrap:wrap;overflow:visible;margin:0 16px;padding:0} /* obory (Gastronomie, Služby…) se zalamují do více řádků */
@@ -270,7 +289,7 @@ details.qa p{margin:8px 0 0}
   </div>
   <div class="search">
     <input id="q" type="search" placeholder="Hledat…" aria-label="Hledat">
-    <select id="area" aria-label="Lokalita"></select>
+    <button type="button" id="area" class="areasel" aria-haspopup="listbox" aria-expanded="false" aria-label="Lokalita"><span id="arealbl"></span></button>
   </div>
   </div>
   <div class="areabar" id="areabar"></div>
@@ -330,7 +349,7 @@ const EMBEDDED = [{"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev":
 const LANGS=[["cs","🇨🇿","Čeština"],["uk","🇺🇦","Українська"],["en","🇬🇧","English"]];
 const I18N={
 cs:{
- modePrace:"Hledám práci",modeSluzba:"Hledám službu / info",search:"Hledat…",area:"Lokalita",all:"Všude",azChip:"Vše A–Z",
+ modePrace:"Hledám práci",modeSluzba:"Hledám službu / info",search:"Hledat…",area:"Lokalita",all:"Všude",areaFind:"Hledat lokalitu…",areaNone:"Žádná lokalita neodpovídá",azChip:"Vše A–Z",
  nForms:["podnik","podniky","podniků"],total:"{n} {podniky} celkem",
  tabFirmy:"Firmy",tabMoje:"Moje",tabNavody:"Návody",tabOnas:"O aplikaci",
  details:"Podrobnosti",call:"Zavolat",write:"Napsat",map:"Mapa",menuWeb:"Menu / web",showMap:"Ukázat na mapě",
@@ -361,7 +380,7 @@ cs:{
  rerun:"Spustit průvodce znovu",tplNote:""
 },
 uk:{
- modePrace:"Шукаю роботу",modeSluzba:"Шукаю послугу / інфо",search:"Пошук…",area:"Район",all:"Усюди",azChip:"Усе А–Я",
+ modePrace:"Шукаю роботу",modeSluzba:"Шукаю послугу / інфо",search:"Пошук…",area:"Район",all:"Усюди",areaFind:"Пошук району…",areaNone:"Такого району немає",azChip:"Усе А–Я",
  nForms:["підприємство","підприємства","підприємств"],total:"{n} {podniky} загалом",
  tabFirmy:"Фірми",tabMoje:"Моє",tabNavody:"Поради",tabOnas:"Про застосунок",
  details:"Детальніше",call:"Подзвонити",write:"Написати",map:"Мапа",menuWeb:"Меню / сайт",showMap:"Показати на мапі",
@@ -393,7 +412,7 @@ uk:{
  tplNote:"Тексти нижче – чеською. Ви надсилаєте або кажете їх чеському роботодавцю, тому вони залишаються чеською. Замініть частини в [дужках] своїми даними. Якщо не розумієте текст, вставте його в будь-який AI-чат і попросіть: «Переклади українською»."
 },
 en:{
- modePrace:"Looking for work",modeSluzba:"Looking for a service",search:"Search…",area:"Area",all:"Everywhere",azChip:"All A–Z",
+ modePrace:"Looking for work",modeSluzba:"Looking for a service",search:"Search…",area:"Area",all:"Everywhere",areaFind:"Find an area…",areaNone:"No matching area",azChip:"All A–Z",
  nForms:["business","businesses","businesses"],total:"{n} {podniky} in total",
  tabFirmy:"Businesses",tabMoje:"Mine",tabNavody:"Guides",tabOnas:"About",
  details:"Details",call:"Call",write:"Write",map:"Map",menuWeb:"Menu / website",showMap:"Show on map",
@@ -1062,20 +1081,64 @@ function renderAreas(){
   if(!areas.includes(st.area)) st.area="";
   /* počty provozů u lokalit i skupin – stejné číslo jako Vše A–Z v dané lokalitě */
   const cnt={};firmy.forEach(f=>{if(f.oblast)cnt[f.oblast]=(cnt[f.oblast]||0)+1});
-  const opt=a=>`<option value="${esc(a)}" ${a===st.area?"selected":""}>${esc(shortArea(a))} (${cnt[a]||0})</option>`;
   const grp=a=>{const l=LOK[a];return !NAHORU.includes(a)&&l?(l.skupina==="Praha"&&l.obvod?l.obvod:(l.skupina||l.obvod||"")):""};
   const gcnt={};areas.forEach(a=>{const g=grp(a);if(g)gcnt[g]=(gcnt[g]||0)+(cnt[a]||0)});
   /* Skupiny v seznamu: Praha podle obvodu (Praha 4, Praha 5 …), pak Praha-západ a další okresy. NAHORU zůstává úplně nahoře. */
-  let h=`<option value="">${esc(T("all"))} (${firmy.length})</option>`,cur=null,open=false;
-  areas.forEach(a=>{
-    const g=grp(a);
-    if(g!==cur){if(open)h+=`</optgroup>`;open=!!g;if(g)h+=`<optgroup label="${esc(g)} (${gcnt[g]})">`;cur=g}
-    h+=opt(a);
-  });
-  if(open)h+=`</optgroup>`;
-  $("#area").innerHTML=h;
+  areaItems=[{a:"",name:T("all"),n:firmy.length,g:"",gn:0},...areas.map(a=>{const g=grp(a);return {a,name:shortArea(a),n:cnt[a]||0,g,gn:gcnt[g]||0}})];
+  $("#arealbl").textContent=st.area?shortArea(st.area):T("all");
+  if($(".areapop"))areaList();
   renderAreabar();
 }
+/* ---------- výběr lokality: vlastní seznam místo systémového menu ---------- */
+let areaItems=[];
+function areaList(){
+  const pop=$(".areapop");if(!pop)return;
+  const q=norm(pop.querySelector("input").value.trim());
+  const hit=i=>!q||norm(i.name).includes(q)||norm(i.a).includes(q)||norm(i.g).includes(q);
+  let h="",cur=null;
+  areaItems.filter(hit).forEach(i=>{
+    if(i.g!==cur){cur=i.g;if(i.g)h+=`<div class="agrp" role="presentation"><span>${esc(i.g)}</span><span class="n">${i.gn}</span></div>`}
+    h+=`<button type="button" class="aopt" role="option" data-a="${esc(i.a)}" aria-selected="${i.a===st.area}" tabindex="-1"><span>${esc(i.name)}</span><span class="n">${i.n}</span></button>`;
+  });
+  pop.querySelector(".alist").innerHTML=h||`<div class="anone">${esc(T("areaNone"))}</div>`;
+}
+function areaPlace(){
+  const pop=$(".areapop");if(!pop||matchMedia("(max-width:600px)").matches)return;
+  const r=$("#area").getBoundingClientRect(),w=Math.min(Math.max(r.width,300),innerWidth-32);
+  pop.style.width=w+"px";pop.style.top=(r.bottom+6)+"px";
+  pop.style.left=Math.max(16,Math.min(r.right-w,innerWidth-16-w))+"px";
+  const nav=document.querySelector("nav.tabs"),bot=nav?nav.getBoundingClientRect().top:innerHeight; /* seznam končí nad spodní lištou */
+  pop.style.maxHeight=Math.max(220,bot-r.bottom-16)+"px";
+}
+function areaClose(focus){
+  if(!$(".areapop"))return;
+  $(".areapop").remove();$(".areabg")?.remove();$("#area").setAttribute("aria-expanded","false");
+  if(focus)$("#area").focus();
+}
+function areaOpen(){
+  if($(".areapop")){areaClose();return}
+  const bg=document.createElement("div");bg.className="areabg";
+  const pop=document.createElement("div");pop.className="areapop";
+  pop.innerHTML=`<input type="search" placeholder="${esc(T("areaFind"))}" aria-label="${esc(T("areaFind"))}" autocomplete="off"><div class="alist" role="listbox" aria-label="${esc(T("area"))}"></div>`;
+  document.body.append(bg,pop);$("#area").setAttribute("aria-expanded","true");
+  areaList();areaPlace();
+  pop.querySelector('[aria-selected="true"]')?.scrollIntoView({block:"center"});
+  if(matchMedia("(hover:hover)").matches)pop.querySelector("input").focus(); /* na dotykovém displeji nevyskakuje klávesnice */
+  bg.addEventListener("click",()=>areaClose());
+  pop.addEventListener("click",e=>{const o=e.target.closest(".aopt");if(o){areaClose();pickArea(o.dataset.a)}});
+  pop.querySelector("input").addEventListener("input",areaList);
+  pop.addEventListener("keydown",e=>{
+    const os=[...pop.querySelectorAll(".aopt")];let i=os.findIndex(o=>o.classList.contains("act"));
+    if(e.key==="Escape"){e.preventDefault();areaClose(true)}
+    else if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();if(!os.length)return;
+      if(i<0)i=os.findIndex(o=>o.getAttribute("aria-selected")==="true");
+      i=e.key==="ArrowDown"?Math.min(os.length-1,i+1):Math.max(0,i-1);
+      os.forEach(o=>o.classList.remove("act"));os[i].classList.add("act");os[i].scrollIntoView({block:"nearest"})}
+    else if(e.key==="Enter"){const o=os[i]||os[0];if(o){e.preventDefault();areaClose(true);pickArea(o.dataset.a)}}
+    else if(e.key==="Tab")areaClose();
+  });
+}
+function pickArea(v){st.areaMsg=null;st.area=v;store.set("area",st.area);store.set("areaPicked",true);render()}
 function mapUrl(f){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([f.nazev,f.adresa,f.mesto&&!String(f.adresa).includes(f.mesto)?f.mesto:""].filter(Boolean).join(", "))}
 /* ---------- otevírací doba: "Po–Pá 10–20, So zavřeno", "denně 11–22 (Pá–So do 23)", "sezóna 1. 4.–15. 10.; …" ---------- */
 const DNY=["Po","Út","St","Čt","Pá","So","Ne"];
@@ -1316,7 +1379,9 @@ async function shareFirm(f){const url=shareUrl(f),title=f.nazev,text=T("shareTxt
 $("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.druh="";st.nove=false;st.pin="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();window.scrollTo(0,0)});
 $("#sugg").addEventListener("click",e=>{const a=e.target.closest("[data-sarea]");if(a){st.q="";$("#q").value="";st.areaMsg=null;track("hledani-lokalita");setArea(a.dataset.sarea);return}
   const b=e.target.closest("[data-druh]");if(b)pickDruh(b.dataset.druh,"hledani")});
-$("#area").addEventListener("change",e=>{st.areaMsg=null;st.area=e.target.value;store.set("area",st.area);store.set("areaPicked",true);render()});
+$("#area").addEventListener("click",areaOpen);
+addEventListener("resize",()=>{if(!matchMedia("(max-width:600px)").matches)areaClose()});
+addEventListener("scroll",areaPlace,{passive:true});
 $("#areabar").addEventListener("click",e=>{
   if(e.target.closest("[data-myloc]")){myLocation();return}
   if(e.target.closest("[data-az]")){st.obor=AZ;st.druh="";st.nove=false;st.pin="";track("vse-az",true);render();window.scrollTo(0,0);return} /* Vše A–Z – stejné jako čip v řádku oborů */
@@ -1416,7 +1481,7 @@ firmy.forEach(prep);
     /* krátká stránka: schování hlavičky by zkrátilo stránku a ta by „skákala“ zpět – nech hlavičku být */
     if(y<60||document.documentElement.scrollHeight-innerHeight<320){set(false);last=y;return}
     if(Date.now()<lock){last=y;return}
-    if(document.activeElement===$("#q")||document.activeElement===$("#area"))set(false);
+    if(document.activeElement===$("#q")||document.activeElement===$("#area")||$(".areapop"))set(false);
     else if(y>last+20)set(true);else if(y<last-40)set(false);
     if(Math.abs(y-last)>20)last=y;},{passive:true});})();
 /* spodní lišta na mobilu: tah prstem nahoru (stránka jede dolů) nechá lištu na místě, tah prstem dolů ji schová celou */
