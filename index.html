@@ -211,6 +211,14 @@ details.qa p{margin:8px 0 0}
 /* nové: jazyk, Moje, štítky, vzdálenost, mapa */
 .bright{display:flex;flex-direction:column-reverse;align-items:flex-end;gap:5px;min-width:0;text-align:right}
 .brand h1{white-space:nowrap}
+.langflags{display:flex;gap:4px}
+.langflags button{display:flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 9px 3px 5px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.langflags button:hover,.langflags button:focus-visible{border-color:var(--accent);color:var(--ink)}
+.langflags button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.flag{width:20px;height:14px;border-radius:3px;flex:none;box-shadow:0 0 0 1px #0002;display:block}
+.langbtn .flag{display:inline-block;vertical-align:-2px;margin-right:4px}
+@media (max-width:600px){.langflags{display:none}}
+@media (min-width:601px){.langbtn{display:none}}
 .langbtn{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 9px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
 .side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
 .star{border:0;background:none;font-size:23px;line-height:1;padding:0 2px;cursor:pointer;color:var(--muted)}
@@ -356,6 +364,11 @@ const EMBEDDED = [{"oblast": "Praha - Zbraslav", "obor": "Gastronomie", "nazev":
 /* ====== JAZYKY: čeština (výchozí), ukrajinština, angličtina ======
    Šablony e-mailů a telefonátů zůstávají česky (posílají se české firmě). Překládá se rozhraní, nadpisy a vysvětlení. */
 const LANGS=[["cs","🇨🇿","Čeština"],["uk","🇺🇦","Українська"],["en","🇬🇧","English"]];
+/* vlajky jako SVG – Windows emoji vlajky nevykreslí (ukáže jen písmena CZ) */
+const FLAG={cs:'<svg class="flag" viewBox="0 0 6 4" aria-hidden="true"><path fill="#fff" d="M0 0h6v2H0z"/><path fill="#D7141A" d="M0 2h6v2H0z"/><path fill="#11457E" d="M0 0l3 2-3 2z"/></svg>',
+  uk:'<svg class="flag" viewBox="0 0 6 4" aria-hidden="true"><path fill="#0057B7" d="M0 0h6v2H0z"/><path fill="#FFD700" d="M0 2h6v2H0z"/></svg>',
+  en:'<svg class="flag" viewBox="0 0 60 40" aria-hidden="true"><path fill="#012169" d="M0 0h60v40H0z"/><path stroke="#fff" stroke-width="8" d="M0 0l60 40M60 0L0 40"/><path stroke="#C8102E" stroke-width="3" d="M0 0l60 40M60 0L0 40"/><path stroke="#fff" stroke-width="12" d="M30 0v40M0 20h60"/><path stroke="#C8102E" stroke-width="7" d="M30 0v40M0 20h60"/></svg>'};
+const LCODE={cs:"CS",uk:"UA",en:"EN"};
 const I18N={
 cs:{
  modePrace:"Hledám práci",modeSluzba:"Hledám službu / info",search:"Hledat…",area:"Lokalita",all:"Všude",areaFind:"Hledat lokalitu…",areaNone:"Žádná lokalita neodpovídá",azChip:"Vše A–Z",
@@ -1573,11 +1586,15 @@ function applyLang(){
   COLL=new Intl.Collator(st.lang,{sensitivity:"base",numeric:true});
   document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=T(el.dataset.i18n));
   $("#q").placeholder=T("search");$("#q").setAttribute("aria-label",T("search"));$("#area").setAttribute("aria-label",T("area"));
-  const L=LANGS.find(x=>x[0]===st.lang);document.querySelectorAll("[data-langbtn]").forEach(b=>{b.textContent=L[1]+" "+L[0].toUpperCase();b.setAttribute("aria-label",T("langQ")+": "+L[2])});
+  const L=LANGS.find(x=>x[0]===st.lang);document.querySelectorAll("[data-langbtn]").forEach(b=>{b.innerHTML=FLAG[L[0]]+LCODE[L[0]];b.setAttribute("aria-label",T("langQ")+": "+L[2]);
+    /* na počítači místo jednoho tlačítka tři vlajky vedle sebe */
+    let g=b.previousElementSibling;if(!g||!g.classList.contains("langflags")){g=document.createElement("span");g.className="langflags";g.setAttribute("role","group");b.before(g)}
+    g.setAttribute("aria-label",T("langQ"));g.innerHTML=["cs","en","uk"].map(c=>LANGS.find(x=>x[0]===c)).map(([c,,n])=>`<button type="button" data-setlang="${c}" aria-pressed="${c===st.lang}" title="${esc(n)}" aria-label="${esc(n)}" lang="${c}">${FLAG[c]}${LCODE[c]}</button>`).join("")});
 }
 function setLang(l){if(!I18N[l])return;st.lang=l;store.set("lang",l);track("jazyk-"+l);applyLang();render();
   if(!$("#view-navody").hidden)renderGuide();if(!$("#view-moje").hidden)renderMoje();if(!$("#view-onas").hidden)renderAbout()}
-document.addEventListener("click",e=>{if(!e.target.closest("[data-langbtn]"))return;
+document.addEventListener("click",e=>{const f=e.target.closest("[data-setlang]");if(f){if(f.dataset.setlang!==st.lang)setLang(f.dataset.setlang);return}
+  if(!e.target.closest("[data-langbtn]"))return;
   document.querySelector(".sheet-bg")?.remove();
   const bg=document.createElement("div");bg.className="sheet-bg";
   bg.innerHTML=`<div class="sheet" role="dialog" aria-label="${esc(T("langQ"))}"><h3>${esc(T("langQ"))}</h3>${langRow().replace(/data-w="lang"/g,'data-lang')}<button class="btn" id="closesheet">${esc(T("close"))}</button></div>`;
