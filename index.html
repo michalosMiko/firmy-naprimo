@@ -897,7 +897,7 @@ MOBIL.addEventListener("change",()=>{if(typeof firmy!=="undefined")renderAreas()
 const ABC=new Intl.Collator("cs",{sensitivity:"base",numeric:true});
 /* Pořadí lokalit: nejdřív NAHORU (v tomto pořadí), pak podle počtu podniků (nejplnější první).
    Až budou lokality zaplněné, přepni RAZENI_LOKALIT na "abeceda". */
-const NAHORU=["Praha - Zbraslav"];
+const NAHORU=[]; // Zbraslav je ve skupině Praha 16 spolu s Radotínem, ne samostatně nahoře
 const RAZENI_LOKALIT="relevance"; // "relevance" nebo "abeceda"
 /* ---------- Údaje o lokalitách (list Lokality ve veřejné tabulce: obvod, skupina, pořadí, střed, sousední) ----------
    LOKALITY_CSV_URL = zveřejněné CSV listu Lokality (až bude). Jinak se zkusí sdílená tabulka, jinak záloha LOK_ZALOHA.
@@ -1060,13 +1060,16 @@ function shortArea(a){return String(a||"").replace(/^Praha\s*-\s*/,"")}
 function renderAreas(){
   const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
   if(!areas.includes(st.area)) st.area="";
-  const opt=a=>`<option value="${esc(a)}" ${a===st.area?"selected":""}>${esc(shortArea(a))}</option>`;
+  /* počty provozů u lokalit i skupin – stejné číslo jako Vše A–Z v dané lokalitě */
+  const cnt={};firmy.forEach(f=>{if(f.oblast)cnt[f.oblast]=(cnt[f.oblast]||0)+1});
+  const opt=a=>`<option value="${esc(a)}" ${a===st.area?"selected":""}>${esc(shortArea(a))} (${cnt[a]||0})</option>`;
+  const grp=a=>{const l=LOK[a];return !NAHORU.includes(a)&&l?(l.skupina==="Praha"&&l.obvod?l.obvod:(l.skupina||l.obvod||"")):""};
+  const gcnt={};areas.forEach(a=>{const g=grp(a);if(g)gcnt[g]=(gcnt[g]||0)+(cnt[a]||0)});
   /* Skupiny v seznamu: Praha podle obvodu (Praha 4, Praha 5 …), pak Praha-západ a další okresy. NAHORU zůstává úplně nahoře. */
-  let h=`<option value="">${esc(T("all"))}</option>`,cur=null,open=false;
+  let h=`<option value="">${esc(T("all"))} (${firmy.length})</option>`,cur=null,open=false;
   areas.forEach(a=>{
-    const l=LOK[a];let g="";
-    if(!NAHORU.includes(a)&&l) g=l.skupina==="Praha"&&l.obvod?l.obvod:(l.skupina||l.obvod||"");
-    if(g!==cur){if(open)h+=`</optgroup>`;open=!!g;if(g)h+=`<optgroup label="${esc(g)}">`;cur=g}
+    const g=grp(a);
+    if(g!==cur){if(open)h+=`</optgroup>`;open=!!g;if(g)h+=`<optgroup label="${esc(g)} (${gcnt[g]})">`;cur=g}
     h+=opt(a);
   });
   if(open)h+=`</optgroup>`;
