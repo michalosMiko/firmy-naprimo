@@ -163,6 +163,10 @@ details.dumit>summary .ds{color:var(--muted);font-size:12.5px;flex:none;max-widt
 details.dumit[open]{margin-bottom:6px}
 details.dumit .card{margin-top:4px}
 .rowlist{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:6px 10px;display:grid;gap:2px} /* dlouhý druh: kompaktní seznam názvů, klik rozbalí kartu */
+.osoba{font-size:14px;font-weight:600;margin-top:2px}
+.nm small.os{display:block;color:var(--muted);font-size:12.5px;font-weight:400}
+.legal{font-size:12px;line-height:1.5;color:var(--muted);margin:18px 4px 8px;text-align:center}
+.legal a{color:inherit;text-decoration:underline}
 .rowlist .tag{flex:none;font-size:11px;padding:2px 7px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;min-width:0}
 .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
@@ -411,7 +415,7 @@ cs:{
  areaHint:"<b>Vyber svou lokalitu</b> – ukážeme podniky blízko tebe.",closeHint:"Zavřít nápovědu",
  idxLead:"{n} druhů podniků{a}. Klepni na druh a zobrazí se podniky.",inArea:" v lokalitě {a}",nothing:"Nic nenalezeno",tryArea:"Zkus jinou lokalitu.",tryAll:"V této lokalitě zatím nic nemáme. Zkus „Všude“.",tryWord:"Zkus jiné slovo.",
  oborSoon:"Obor {o} připravujeme",oborSoonT:"Další obory přibudou.",oborNone:"{o} v lokalitě {a} zatím nemáme",oborNoneT:"Databázi postupně doplňujeme. Zkus jiný obor nebo jinou lokalitu.",tryOther:"Zkus jiné slovo nebo jinou lokalitu.",
- refine:"Upřesnit druh ({n})",druhyLbl:"Druhy podniků",live:"Data načtena živě z tabulky",dataAt:"Data k {d}",loading:"Načítám…",
+ refine:"Upřesnit druh ({n})",legal:"Údaje o provozovnách slouží k veřejné orientaci a hledání práce a služeb. Pocházejí z veřejně dostupných zdrojů: © přispěvatelé OpenStreetMap (ODbL), veřejné registry, weby provozoven a veřejné katalogy firem. Správce Michal Mamula je zpracovává na základě oprávněného zájmu. Jste tu uvedeni a chcete údaje opravit, odstranit nebo vznést námitku? Napište na {mail}, vyřídíme to bez zbytečného odkladu.",legalLink:"Ochrana osobních údajů",druhyLbl:"Druhy podniků",live:"Data načtena živě z tabulky",dataAt:"Data k {d}",loading:"Načítám…",
  copied:"Zkopírováno",numCopied:"Číslo zkopírováno",
  navH:"Návody",forWrite:"Pro tlačítko Napsat",copyBtn:"Zkopírovat",useWrite:"Použít pro Napsat",copiedTpl:"Zkopírováno – přepiš části v [závorkách]",selected:"Text je označený – zkopíruj ho",tplSet:"Tlačítko Napsat teď použije tento text",whenSay:"Když řeknou…",
  shOpening:"Otevírám Mail…",shFor:"Zpráva pro {n}",shHas:"Adresa: <strong>{e}</strong>. V Mailu přepiš části v [závorkách] a přilož životopis přes sponku. Pokud se Mail neotevřel, zkopíruj text a adresu ručně.",
@@ -442,7 +446,7 @@ uk:{
  areaHint:"<b>Оберіть свій район</b> – покажемо фірми поруч із вами.",closeHint:"Закрити підказку",
  idxLead:"{n} видів підприємств{a}. Натисніть на вид, щоб побачити фірми.",inArea:" у районі {a}",nothing:"Нічого не знайдено",tryArea:"Спробуйте інший район.",tryAll:"У цьому районі поки нічого немає. Спробуйте «Усюди».",tryWord:"Спробуйте інше слово.",
  oborSoon:"Галузь {o} готуємо",oborSoonT:"Інші галузі з'являться згодом.",oborNone:"{o} у районі {a} поки немає",oborNoneT:"Базу поступово доповнюємо. Спробуйте іншу галузь або інший район.",tryOther:"Спробуйте інше слово або інший район.",
- refine:"Уточнити вид ({n})",druhyLbl:"Види підприємств",live:"Дані завантажено з таблиці",dataAt:"Дані станом на {d}",loading:"Завантаження…",
+ refine:"Уточнити вид ({n})",legal:"Дані про заклади служать для орієнтації та пошуку роботи й послуг. Вони з відкритих джерел: © учасники OpenStreetMap (ODbL), публічні реєстри, сайти закладів і публічні каталоги фірм. Адміністратор даних Michal Mamula обробляє їх на підставі законного інтересу. Ви тут є і хочете виправити чи видалити дані або заперечити? Напишіть на {mail}.",legalLink:"Захист персональних даних (чеською)",druhyLbl:"Види підприємств",live:"Дані завантажено з таблиці",dataAt:"Дані станом на {d}",loading:"Завантаження…",
  copied:"Скопійовано",numCopied:"Номер скопійовано",
  navH:"Поради",forWrite:"Для кнопки «Написати»",copyBtn:"Скопіювати",useWrite:"Використати для «Написати»",copiedTpl:"Скопійовано – замініть частини в [дужках]",selected:"Текст виділено – скопіюйте його",tplSet:"Кнопка «Написати» тепер використає цей текст",whenSay:"Якщо вам скажуть…",
  shOpening:"Відкриваю пошту…",shFor:"Повідомлення для {n}",shHas:"Адреса: <strong>{e}</strong>. У листі замініть частини в [дужках] і додайте резюме через скріпку. Якщо пошта не відкрилася, скопіюйте текст і адресу вручну.",
@@ -474,7 +478,7 @@ en:{
  areaHint:"<b>Choose your area</b> – we'll show businesses near you.",closeHint:"Close hint",
  idxLead:"{n} types of business{a}. Tap a type to see the businesses.",inArea:" in {a}",nothing:"Nothing found",tryArea:"Try another area.",tryAll:"Nothing in this area yet. Try “Everywhere”.",tryWord:"Try another word.",
  oborSoon:"{o} coming soon",oborSoonT:"More sectors are coming.",oborNone:"No {o} in {a} yet",oborNoneT:"We're adding businesses step by step. Try another sector or area.",tryOther:"Try another word or area.",
- refine:"Narrow down ({n})",druhyLbl:"Types of business",live:"Live data from the spreadsheet",dataAt:"Data as of {d}",loading:"Loading…",
+ refine:"Narrow down ({n})",legal:"Business details help people find work and services. They come from publicly available sources: © OpenStreetMap contributors (ODbL), public registers, business websites and public business directories. The controller, Michal Mamula, processes them on the basis of legitimate interest. Listed here and want your details corrected, removed, or to object? Write to {mail}.",legalLink:"Privacy policy (in Czech)",druhyLbl:"Types of business",live:"Live data from the spreadsheet",dataAt:"Data as of {d}",loading:"Loading…",
  copied:"Copied",numCopied:"Number copied",
  navH:"Guides",forWrite:"For the Write button",copyBtn:"Copy",useWrite:"Use for Write",copiedTpl:"Copied – replace the parts in [brackets]",selected:"Text is selected – copy it",tplSet:"The Write button will now use this text",whenSay:"If they say…",
  shOpening:"Opening Mail…",shFor:"Message for {n}",shHas:"Address: <strong>{e}</strong>. In Mail, replace the parts in [brackets] and attach your CV. If Mail didn't open, copy the text and address manually.",
@@ -566,17 +570,17 @@ cs:`<section class="item"><h3>Práce napřímo</h3><p>Firmy ve vašem okolí s p
 <section class="item"><h3>Proč vznikla</h3><p>Aplikace vznikla, protože jsem sám hledal práci a chtěl jsem firmy oslovovat napřímo.</p><p class="sign">Michal Mamula, zakladatel projektu Práce napřímo</p></section>
 <section class="item"><h3>Kontakt</h3><p>Dotazy, nápady i chyby pište na <a class="link" href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a>.</p><div class="row">{addBtn}{fixBtn}</div></section>
 <section class="item"><h3>Pro firmy</h3><ul><li><strong>Základní zápis</strong> – zdarma. Stačí napsat přes tlačítko „Chybí tu vaše firma?“.</li><li><strong>Hledáte lidi?</strong> – napište nám, u vaší firmy se zobrazí štítek „Hledá lidi“ i s pozicemi.</li><li><strong>Zvýraznění</strong><span class="soon">připravujeme</span> – firma se ukáže nahoře ve svém oboru a lokalitě, viditelně označená jako „Doporučeno“.</li><li><strong>Banner</strong><span class="soon">připravujeme</span> – reklamní pruh v aplikaci.</li></ul><div class="row">{hireBtn}<a class="btn" href="mailto:domecekcafe@gmail.com?subject=Zv%C3%BDrazn%C4%9Bn%C3%AD%20firmy%20%E2%80%93%20Pr%C3%A1ce%20nap%C5%99%C3%ADmo">Mám zájem o zvýraznění</a></div></section>
-<section class="item"><h3>Ochrana údajů</h3><ul><li>Údaje o firmách pochází z veřejných zdrojů: webů firem, obchodního a živnostenského rejstříku a veřejných katalogů. Zobrazujeme jen firemní kontakty.</li><li>Chcete své údaje opravit nebo odstranit? Napište nám přes „Oprava údajů“, vyřídíme to.</li><li>U živnostníků, lékařů a dalších podnikajících osob jména nezobrazujeme. Uvádíme jen druh služby, adresu provozovny a pracovní kontakt.</li><li>Aplikace nic neodesílá o vás. Uložené podniky, poznámky a jazyk zůstávají jen ve vašem telefonu.</li><li>Polohu použijeme jen ve vašem telefonu pro řazení podle vzdálenosti, nikam ji neposíláme. Mapové podklady © přispěvatelé OpenStreetMap.</li><li>Návštěvnost měříme anonymně přes GoatCounter, bez cookies.</li></ul></section>`,
+<section class="item"><h3>Ochrana údajů</h3><ul><li>Údaje o firmách pochází z veřejných zdrojů: webů firem, obchodního a živnostenského rejstříku a veřejných katalogů. Zobrazujeme jen firemní kontakty.</li><li>Chcete své údaje opravit nebo odstranit? Napište nám přes „Oprava údajů“, vyřídíme to.</li><li>U lékařů a ordinací uvádíme jméno lékaře, aby bylo jasné, kam voláte (např. když je v jedné poliklinice víc zubních ordinací). U ostatních živnostníků jména nezobrazujeme.</li><li>Správcem údajů je Michal Mamula. Podrobnosti v <a class="link" href="ochrana-udaju/" target="_blank" rel="noopener">Zásadách ochrany osobních údajů</a>.</li><li>Aplikace nic neodesílá o vás. Uložené podniky, poznámky a jazyk zůstávají jen ve vašem telefonu.</li><li>Polohu použijeme jen ve vašem telefonu pro řazení podle vzdálenosti, nikam ji neposíláme. Mapové podklady © přispěvatelé OpenStreetMap.</li><li>Návštěvnost měříme anonymně přes GoatCounter, bez cookies.</li></ul></section>`,
 uk:`<section class="item"><h3>Práce napřímo</h3><p>Фірми поруч із вами з прямими контактами. Шукаєте роботу? Подзвоніть або напишіть фірмі напряму, без оголошень і агентств. Шукаєте послугу? Тут є магазини, автосервіси, перукарні, транспорт та інші послуги поруч.</p></section>
 <section class="item"><h3>Чому застосунок з'явився</h3><p>Застосунок з'явився, бо я сам шукав роботу і хотів звертатися до фірм напряму.</p><p class="sign">Міхал Мамула, засновник проєкту Práce napřímo</p></section>
 <section class="item"><h3>Контакт</h3><p>Питання, ідеї та помилки пишіть на <a class="link" href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a> (можна українською).</p><div class="row">{addBtn}{fixBtn}</div></section>
 <section class="item"><h3>Для фірм</h3><ul><li><strong>Базовий запис</strong> – безкоштовно.</li><li><strong>Шукаєте працівників?</strong> – напишіть нам, і біля вашої фірми з'явиться позначка «Шукає працівників».</li><li><strong>Виділення</strong><span class="soon">готуємо</span> – фірма буде вгорі у своїй галузі та районі з позначкою «Рекомендовано».</li></ul><div class="row">{hireBtn}</div></section>
-<section class="item"><h3>Захист даних</h3><ul><li>Дані про фірми з відкритих джерел: сайтів фірм, торгового та промислового реєстру і публічних каталогів. Показуємо лише робочі контакти.</li><li>Імена підприємців і лікарів не показуємо – лише вид послуги, адресу та робочий контакт.</li><li>Застосунок нічого не надсилає про вас. Збережені фірми, нотатки та мова залишаються лише у вашому телефоні.</li><li>Місцезнаходження використовується лише у вашому телефоні для сортування за відстанню і нікуди не надсилається. Мапи © учасники OpenStreetMap.</li><li>Відвідуваність вимірюємо анонімно через GoatCounter, без cookies.</li><li>Переклад українською готувався з допомогою AI. Якщо побачите помилку, напишіть нам.</li></ul></section>`,
+<section class="item"><h3>Захист даних</h3><ul><li>Дані про фірми з відкритих джерел: сайтів фірм, торгового та промислового реєстру і публічних каталогів. Показуємо лише робочі контакти.</li><li>У лікарів і ординацій показуємо ім'я лікаря, щоб було зрозуміло, куди ви телефонуєте. Імена інших підприємців не показуємо.</li><li>Адміністратор даних – Michal Mamula. Детальніше в <a class="link" href="ochrana-udaju/" target="_blank" rel="noopener">політиці захисту даних (чеською)</a>.</li><li>Застосунок нічого не надсилає про вас. Збережені фірми, нотатки та мова залишаються лише у вашому телефоні.</li><li>Місцезнаходження використовується лише у вашому телефоні для сортування за відстанню і нікуди не надсилається. Мапи © учасники OpenStreetMap.</li><li>Відвідуваність вимірюємо анонімно через GoatCounter, без cookies.</li><li>Переклад українською готувався з допомогою AI. Якщо побачите помилку, напишіть нам.</li></ul></section>`,
 en:`<section class="item"><h3>Práce napřímo</h3><p>Local businesses with direct contacts. Looking for work? Call or write to a business directly, without job ads or agencies. Looking for a service? Find shops, car repair, hairdressers, transport and other services near you.</p></section>
 <section class="item"><h3>Why it exists</h3><p>I built this app because I was looking for work myself and wanted to contact businesses directly.</p><p class="sign">Michal Mamula, founder of Práce napřímo</p></section>
 <section class="item"><h3>Contact</h3><p>Questions, ideas and bugs: <a class="link" href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a>.</p><div class="row">{addBtn}{fixBtn}</div></section>
 <section class="item"><h3>For businesses</h3><ul><li><strong>Basic listing</strong> – free.</li><li><strong>Hiring?</strong> – write to us and your business will show a “Hiring” label.</li><li><strong>Featured listing</strong><span class="soon">coming soon</span> – shown at the top of your sector and area, marked “Recommended”.</li></ul><div class="row">{hireBtn}</div></section>
-<section class="item"><h3>Privacy</h3><ul><li>Business details come from public sources: company websites, business registers and public directories. We only show business contacts.</li><li>We don't show names of sole traders or doctors – only the type of service, address and work contact.</li><li>The app sends nothing about you. Saved businesses, notes and language stay on your phone only.</li><li>Your location is used only on your phone to sort by distance and is never sent anywhere. Map data © OpenStreetMap contributors.</li><li>We measure visits anonymously with GoatCounter, no cookies.</li></ul></section>`
+<section class="item"><h3>Privacy</h3><ul><li>Business details come from public sources: company websites, business registers and public directories. We only show business contacts.</li><li>For doctors and surgeries we show the doctor's name, so you know whom you are calling. We don't show names of other sole traders.</li><li>The data controller is Michal Mamula. Details in the <a class="link" href="ochrana-udaju/" target="_blank" rel="noopener">privacy policy (in Czech)</a>.</li><li>The app sends nothing about you. Saved businesses, notes and language stay on your phone only.</li><li>Your location is used only on your phone to sort by distance and is never sent anywhere. Map data © OpenStreetMap contributors.</li><li>We measure visits anonymously with GoatCounter, no cookies.</li></ul></section>`
 };
 const ABOUT_BTN={cs:["Chybí tu vaše firma?","Oprava údajů","Hledáme lidi – přidat štítek"],uk:["Вашої фірми тут немає?","Виправлення даних","Шукаємо працівників"],en:["Is your business missing?","Fix details","We're hiring – add label"]};
 
@@ -1271,7 +1275,7 @@ function card(f,i,extra){
     /částečně|neověřeno/i.test(f.overeno||"")?`<span class="tag" title="${esc(T("incompleteT"))}">${esc(T("incomplete"))}</span>`:""].filter(Boolean).join("");
   const stLine=saved&&!sluzba&&!extra&&saved.s!=="ulozeno"?`<div class="mstate">✓ ${esc(T("st_"+saved.s))} · ${esc(fmtDate(saved.d))}</div>`:"";
   return `<article class="card">
-    <div class="top"><div><h3>${esc(f.nazev)}</h3>${druhLine?`<div class="meta">${esc(druhLine)}</div>`:""}${park?ptagHtml(f.typp):""}${addr?`<div class="addr">${esc(addr)}${k!=null?` · <span class="dist">${fmtKm(k)}</span>`:""}</div>`:""}${hours}${nearLine}${stLine}</div>
+    <div class="top"><div><h3>${esc(f.nazev)}</h3>${f.osoba?`<div class="osoba">👤 ${esc(f.osoba)}</div>`:""}${druhLine?`<div class="meta">${esc(druhLine)}</div>`:""}${park?ptagHtml(f.typp):""}${addr?`<div class="addr">${esc(addr)}${k!=null?` · <span class="dist">${fmtKm(k)}</span>`:""}</div>`:""}${hours}${nearLine}${stLine}</div>
     <div class="side"><button class="star" data-star="${i}" aria-pressed="${!!saved}" aria-label="${esc(T("save"))}">${saved?"★":"☆"}</button>${tags?`<div class="tags">${tags}</div>`:""}</div></div>
     ${hi&&hi.txt&&st.lang==="cs"?`<div class="hire-line">${esc(T("hiringDet",{txt:hi.txt}))}${hi.d?` <span>(${esc(T("checked",{d:fmtDate(hi.d)}))})</span>`:""}</div>`:""}
     <details class="more"><summary>${esc(T("details"))}</summary><div class="inner">
@@ -1318,7 +1322,7 @@ function toolsHtml(n){return `<div class="tools"><div class="seg" role="group" a
 
 /* hledání: každé zadané slovo musí být někde v názvu, adrese, lokalitě, stylu, popisu nebo druhu (pořadí slov je jedno, diakritika se nehlídá) */
 function matchQ(f,q){
-  const h=norm([f.nazev,f.dum,f.adresa,f.mesto,f.oblast,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" "));
+  const h=norm([f.nazev,f.osoba,f.dum,f.adresa,f.mesto,f.oblast,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" "));
   return q.split(/\s+/).filter(Boolean).every(w=>h.includes(w));
 }
 /* pracoviště jednoho domu (sloupec „Dům / areál“) se v seznamu spojí do jedné položky, řazené abecedně mezi ostatní podniky */
@@ -1342,12 +1346,14 @@ function dumHtml(u){
   const prac=it.filter(([f])=>!isMain(f,u.dum)).length;
   const n=T("dumN",{n:prac,prac:plF(prac,"pracForms")});
   return `<details class="dum" data-dum="${esc(u.dum)}"${DUM_OPEN.has(u.dum)?" open":""}><summary><span class="dn"><h3>🏥 ${esc(u.dum)}</h3><div class="meta">${esc(n)}</div>${addr?`<div class="addr">${esc(addr)}</div>`:""}</span><span class="chev">›</span></summary>
-    <div class="dumlist">${it.map(([f,i])=>`<details class="dumit" data-i="${i}"${DUMIT_OPEN.has(i)?" open":""}><summary><span class="nm">${esc(short(f.nazev))}</span>${f.druh?`<span class="ds">${esc(cap(druhName(f.druh)))}</span>`:""}<span class="chev">›</span></summary>${card(f,i)}</details>`).join("")}</div></details>`;
+    <div class="dumlist">${it.map(([f,i])=>`<details class="dumit" data-i="${i}"${DUMIT_OPEN.has(i)?" open":""}><summary><span class="nm">${esc(short(f.nazev))}${f.osoba?`<small class="os">${esc(f.osoba)}</small>`:""}</span>${f.druh?`<span class="ds">${esc(cap(druhName(f.druh)))}</span>`:""}<span class="chev">›</span></summary>${card(f,i)}</details>`).join("")}</div></details>`;
 }
 /* druh s víc než ROWS_MIN provozy: místo karet řádky (název + ulice nebo vzdálenost), klik rozbalí kartu */
 const ROWS_MIN=15;
+/* právní patička pod seznamem: zdroje dat, správce, kontakt pro opravu/výmaz, odkaz na zásady */
+function legalHtml(){const m=`<a href="mailto:domecekcafe@gmail.com">domecekcafe@gmail.com</a>`;return `<p class="legal">${esc(T("legal")).replace("{mail}",m)} <a href="ochrana-udaju/" target="_blank" rel="noopener">${esc(T("legalLink"))}</a></p>`}
 function rowHtml(f,i,d){const sub=d!=null?fmtKm(d):String(f.adresa||"").split(",")[0];
-  return `<details class="dumit" data-i="${i}"${DUMIT_OPEN.has(i)?" open":""}><summary><span class="nm">${esc(f.nazev)}</span>${hiring(f)?`<span class="tag hire">${esc(T("hiring"))}</span>`:""}${sub?`<span class="ds">${esc(sub)}</span>`:""}<span class="chev">›</span></summary>${card(f,i)}</details>`}
+  return `<details class="dumit" data-i="${i}"${DUMIT_OPEN.has(i)?" open":""}><summary><span class="nm">${esc(f.nazev)}${f.osoba?`<small class="os">${esc(f.osoba)}</small>`:""}</span>${hiring(f)?`<span class="tag hire">${esc(T("hiring"))}</span>`:""}${sub?`<span class="ds">${esc(sub)}</span>`:""}<span class="chev">›</span></summary>${card(f,i)}</details>`}
 const PAGE_SIZE=50;let pageShown=PAGE_SIZE,pageSig="";
 function render(){
   renderAreas(); renderChips(); renderSugg(); renderHint(); syncQ();
@@ -1364,7 +1370,7 @@ function render(){
   }
   if(st.obor===AZ&&!st.druh&&!q&&!st.nove){
     const c=druhCountsAZ(inArea);
-    $("#firmy").innerHTML=`<p class="idx-lead">${esc(T("idxLead",{n:c.size,a:st.area?T("inArea",{a:shortArea(st.area)}):""}))}</p>`+(c.size?idxHtml(c,true):`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(T("tryArea"))}</div>`);
+    $("#firmy").innerHTML=`<p class="idx-lead">${esc(T("idxLead",{n:c.size,a:st.area?T("inArea",{a:shortArea(st.area)}):""}))}</p>`+(c.size?idxHtml(c,true):`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(T("tryArea"))}</div>`)+legalHtml();
     return;
   }
   if(st.obor===AZ&&st.druh===GAS&&!q&&!st.nove){
@@ -1378,7 +1384,7 @@ function render(){
     (!q||matchQ(f,q)));
   list.forEach(x=>x[2]=km(x[0]));
   list.sort((a,b)=>(st.near?(a[2]==null)-(b[2]==null)||(a[2]??0)-(b[2]??0):0)||(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):(!hiring(a[0]))-(!hiring(b[0])))||ABC.compare(a[0].nazev||"",b[0].nazev||""));
-  const status=`<p class="status">${esc(dataSource!=="embedded"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`;
+  const status=`<p class="status">${esc(dataSource!=="embedded"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`+legalHtml();
   let top="";
   if(st.nove) top=`<div class="druhbar"><button data-back="1">← ${esc(T("back"))}</button><strong>${esc(T("newH"))}</strong></div>`;
   else if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.gasSub?esc(oborName("Gastronomie")):(st.obor===AZ?esc(T("backAll")):esc(oborName(st.obor)))}</button><strong>${esc(cap(druhName(st.druh)))}</strong></div>`;
@@ -1531,10 +1537,10 @@ function csvToFirmy(text){
   if(!rows.length||!rows[0]) return null;
   const h=rows[0].map(x=>norm(x).trim());
   const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"],
-    pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"],typp:["typ parkovani"],platba:["odkaz na platbu"],dum:["dum","dum / areal"]};
+    pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"],typp:["typ parkovani"],platba:["odkaz na platbu"],dum:["dum","dum / areal"],osoba:["osoba","lekar / osoba"]};
   const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
   if(ix("nazev")<0) return null;
-  const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk","typp","platba","dum"];
+  const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk","typp","platba","dum","osoba"];
   const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return prep(o)});
   return data.length?data:null;
 }
