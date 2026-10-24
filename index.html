@@ -162,6 +162,8 @@ details.dumit>summary .nm{flex:1;min-width:0;overflow-wrap:anywhere}
 details.dumit>summary .ds{color:var(--muted);font-size:12.5px;flex:none;max-width:40%;text-align:right}
 details.dumit[open]{margin-bottom:6px}
 details.dumit .card{margin-top:4px}
+.rowlist{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:6px 10px;display:grid;gap:2px} /* dlouhý druh: kompaktní seznam názvů, klik rozbalí kartu */
+.rowlist .tag{flex:none;font-size:11px;padding:2px 7px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;min-width:0}
 .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .top>div{min-width:0}
@@ -1342,6 +1344,10 @@ function dumHtml(u){
   return `<details class="dum" data-dum="${esc(u.dum)}"${DUM_OPEN.has(u.dum)?" open":""}><summary><span class="dn"><h3>🏥 ${esc(u.dum)}</h3><div class="meta">${esc(n)}</div>${addr?`<div class="addr">${esc(addr)}</div>`:""}</span><span class="chev">›</span></summary>
     <div class="dumlist">${it.map(([f,i])=>`<details class="dumit" data-i="${i}"${DUMIT_OPEN.has(i)?" open":""}><summary><span class="nm">${esc(short(f.nazev))}</span>${f.druh?`<span class="ds">${esc(cap(druhName(f.druh)))}</span>`:""}<span class="chev">›</span></summary>${card(f,i)}</details>`).join("")}</div></details>`;
 }
+/* druh s víc než ROWS_MIN provozy: místo karet řádky (název + ulice nebo vzdálenost), klik rozbalí kartu */
+const ROWS_MIN=15;
+function rowHtml(f,i,d){const sub=d!=null?fmtKm(d):String(f.adresa||"").split(",")[0];
+  return `<details class="dumit" data-i="${i}"${DUMIT_OPEN.has(i)?" open":""}><summary><span class="nm">${esc(f.nazev)}</span>${hiring(f)?`<span class="tag hire">${esc(T("hiring"))}</span>`:""}${sub?`<span class="ds">${esc(sub)}</span>`:""}<span class="chev">›</span></summary>${card(f,i)}</details>`}
 const PAGE_SIZE=50;let pageShown=PAGE_SIZE,pageSig="";
 function render(){
   renderAreas(); renderChips(); renderSugg(); renderHint(); syncQ();
@@ -1398,17 +1404,19 @@ function render(){
   if(sig!==pageSig){pageSig=sig;pageShown=PAGE_SIZE}
   let left=pageShown;
   let body;
-  if(st.near){const part=list.slice(0,left);left-=part.length;body=`<div class="list">${part.map(([f,i])=>card(f,i)).join("")}</div>`}
+  const rows=st.druh&&list.length>ROWS_MIN;
+  if(st.near){const part=list.slice(0,left);left-=part.length;body=rows?`<div class="rowlist">${part.map(([f,i,d])=>rowHtml(f,i,d)).join("")}</div>`:`<div class="list">${part.map(([f,i])=>card(f,i)).join("")}</div>`}
   else{
     const groups={};list.forEach(x=>(groups[x[0].oblast]??=[]).push(x));
     const ord=areaOrder(firmy.filter(f=>allObory||f.obor===st.obor).map(f=>f.oblast));
     body=Object.entries(groups).sort((x,y)=>ord.indexOf(x[0])-ord.indexOf(y[0])).map(([a,items])=>{
       if(left<=0)return "";
+      if(rows){const part=items.slice(0,left);left-=part.length;return `<section class="area"><h2>${esc(shortArea(a))} · ${items.length}</h2><div class="rowlist">${part.map(([f,i])=>rowHtml(f,i)).join("")}</div></section>`}
       const units=dumUnits(items);
       const part=units.slice(0,left);left-=part.length;
       return `<section class="area"><h2>${esc(shortArea(a))} · ${items.length}</h2><div class="list">${part.map(u=>u.dum?dumHtml(u):card(u.f,u.i)).join("")}</div></section>`}).join("");
   }
-  const nUnits=st.near?list.length:Object.values(list.reduce((g,x)=>((g[x[0].oblast]??=[]).push(x),g),{})).reduce((s,it)=>s+dumUnits(it).length,0);
+  const nUnits=st.near||rows?list.length:Object.values(list.reduce((g,x)=>((g[x[0].oblast]??=[]).push(x),g),{})).reduce((s,it)=>s+dumUnits(it).length,0);
   if(nUnits>pageShown) body+=`<button class="btn wide" data-more="1">${esc(T("moreBtn",{n:Math.min(PAGE_SIZE,nUnits-pageShown)}))}</button>`;
   $("#firmy").innerHTML=top+body+status;
 }
@@ -1571,7 +1579,8 @@ firmy.forEach(prep);
   addEventListener("scroll",()=>{const y=scrollY;const d=y-lastY;lastY=y; /* o kolik se stránka posunula */
     if(!mobile.matches||y<60){nav.classList.remove("navhide");return}   /* na počítači a nahoře lišta zůstává */
     if(Math.abs(d)<4)return;                                            /* drobný pohyb ignoruj */
-    nav.classList.toggle("navhide",d<0);},{passive:true});})();       /* posun nahoru (tah prstem dolů) = schovat */
+    const end=y+innerHeight>=document.documentElement.scrollHeight-40;   /* konec seznamu */
+    nav.classList.toggle("navhide",d>0&&!end);},{passive:true});})();  /* čtení dál (posun dolů) = schovat, kousek zpět nahoru nebo konec = ukázat */
 /* ---------- průvodce při první návštěvě + navádění na další krok ---------- */
 function renderHint(){
   const h=$("#hint"),a=$("#area");
