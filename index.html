@@ -146,6 +146,22 @@ details.subidx .idx{margin-top:10px}
 main{padding:12px 16px calc(132px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:720px;margin:0 auto}
 .area h2{font-family:var(--display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:4px 2px 8px}
 .list{display:grid;gap:10px}
+/* dům (nemocnice, poliklinika): jedna položka v seznamu, po rozkliknutí abecední seznam pracovišť */
+details.dum{background:var(--surface);border:1px solid var(--line);border-radius:16px;min-width:0}
+details.dum>summary{list-style:none;cursor:pointer;padding:14px;display:flex;align-items:center;gap:10px}
+details.dum>summary::-webkit-details-marker,details.dumit>summary::-webkit-details-marker{display:none}
+details.dum>summary .dn{flex:1;min-width:0}
+details.dum>summary h3{margin:0;font-size:17px;font-weight:600;line-height:1.25;text-wrap:balance}
+details.dum>summary .meta{margin-top:2px}
+details.dum>summary .chev,details.dumit>summary .chev{flex:none;color:var(--muted);transition:transform .15s}
+details[open]>summary .chev{transform:rotate(90deg)}
+.dumlist{border-top:1px solid var(--line);padding:6px 10px 10px;display:grid;gap:2px}
+details.dumit>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:9px 6px;border-radius:10px;font-size:15px}
+details.dumit>summary:hover{background:var(--accent-soft)}
+details.dumit>summary .nm{flex:1;min-width:0;overflow-wrap:anywhere}
+details.dumit>summary .ds{color:var(--muted);font-size:12.5px;flex:none;max-width:40%;text-align:right}
+details.dumit[open]{margin-bottom:6px}
+details.dumit .card{margin-top:4px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;min-width:0}
 .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .top>div{min-width:0}
@@ -373,7 +389,7 @@ const LCODE={cs:"CS",uk:"UA",en:"EN"};
 const I18N={
 cs:{
  modePrace:"Hledám práci",modeSluzba:"Hledám službu / info",search:"Hledat…",area:"Lokalita",all:"Všude",areaFind:"Hledat lokalitu…",areaNone:"Žádná lokalita neodpovídá",azChip:"Vše A–Z",
- nForms:["podnik","podniky","podniků"],total:"{n} {podniky} celkem",
+ nForms:["podnik","podniky","podniků"],total:"{n} {podniky} celkem",dumN:"{n} {prac}",pracForms:["pracoviště","pracoviště","pracovišť"],
  tabFirmy:"Firmy",tabMoje:"Moje",tabNavody:"Návody",tabOnas:"O aplikaci",
  details:"Podrobnosti",call:"Zavolat",write:"Napsat",map:"Mapa",menuWeb:"Menu / web",showMap:"Ukázat na mapě",
  fPhone:"Telefon",fEmail:"E-mail",fHours:"Otevřeno",openNow:"Teď otevřeno",closed:"Zavřeno",incomplete:"Neúplné",incompleteT:"Některé údaje chybí",
@@ -404,7 +420,7 @@ cs:{
 },
 uk:{
  modePrace:"Шукаю роботу",modeSluzba:"Шукаю послугу / інфо",search:"Пошук…",area:"Район",all:"Усюди",areaFind:"Пошук району…",areaNone:"Такого району немає",azChip:"Усе А–Я",
- nForms:["підприємство","підприємства","підприємств"],total:"{n} {podniky} загалом",
+ nForms:["підприємство","підприємства","підприємств"],total:"{n} {podniky} загалом",dumN:"{n} {prac}",pracForms:["відділення","відділення","відділень"],
  tabFirmy:"Фірми",tabMoje:"Моє",tabNavody:"Поради",tabOnas:"Про застосунок",
  details:"Детальніше",call:"Подзвонити",write:"Написати",map:"Мапа",menuWeb:"Меню / сайт",showMap:"Показати на мапі",
  fPhone:"Телефон",fEmail:"E-mail",fHours:"Відчинено",openNow:"Зараз відчинено",closed:"Зачинено",incomplete:"Неповні дані",incompleteT:"Деякі дані відсутні",
@@ -436,7 +452,7 @@ uk:{
 },
 en:{
  modePrace:"Looking for work",modeSluzba:"Looking for a service",search:"Search…",area:"Area",all:"Everywhere",areaFind:"Find an area…",areaNone:"No matching area",azChip:"All A–Z",
- nForms:["business","businesses","businesses"],total:"{n} {podniky} in total",
+ nForms:["business","businesses","businesses"],total:"{n} {podniky} in total",dumN:"{n} {prac}",pracForms:["department","departments","departments"],
  tabFirmy:"Businesses",tabMoje:"Mine",tabNavody:"Guides",tabOnas:"About",
  details:"Details",call:"Call",write:"Write",map:"Map",menuWeb:"Menu / website",showMap:"Show on map",
  fPhone:"Phone",fEmail:"E-mail",fHours:"Open",openNow:"Open now",closed:"Closed",incomplete:"Incomplete",incompleteT:"Some details are missing",
@@ -576,7 +592,8 @@ const store = {get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){re
 /* ---------- jazyk ---------- */
 function T(k,v){let s=(I18N[st.lang]&&I18N[st.lang][k]);if(s==null)s=I18N.cs[k];if(s==null)return k;
   if(v)s=String(s).replace(/\{(\w+)\}/g,(m,x)=>v[x]!=null?v[x]:m);return s}
-function pl(n){const f=T("nForms");if(st.lang==="en")return n===1?f[0]:f[1];
+function pl(n){return plF(n,"nForms")}
+function plF(n,k){const f=T(k);if(st.lang==="en")return n===1?f[0]:f[1];
   if(st.lang==="uk"){const a=n%10,b=n%100;return a===1&&b!==11?f[0]:a>=2&&a<=4&&(b<10||b>=20)?f[1]:f[2]}
   return n===1?f[0]:n>=2&&n<=4?f[1]:f[2]}
 function nT(k,n,v){return T(k,Object.assign({n,podniky:pl(n)},v||{}))}
@@ -1299,8 +1316,31 @@ function toolsHtml(n){return `<div class="tools"><div class="seg" role="group" a
 
 /* hledání: každé zadané slovo musí být někde v názvu, adrese, lokalitě, stylu, popisu nebo druhu (pořadí slov je jedno, diakritika se nehlídá) */
 function matchQ(f,q){
-  const h=norm([f.nazev,f.adresa,f.mesto,f.oblast,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" "));
+  const h=norm([f.nazev,f.dum,f.adresa,f.mesto,f.oblast,f.styl,f.popis,locText(f,"styl"),locText(f,"popis"),f.druh,druhName(f.druh)].join(" "));
   return q.split(/\s+/).filter(Boolean).every(w=>h.includes(w));
+}
+/* pracoviště jednoho domu (sloupec „Dům / areál“) se v seznamu spojí do jedné položky, řazené abecedně mezi ostatní podniky */
+const DUM_OPEN=new Set(),DUMIT_OPEN=new Set();
+function dumUnits(items){
+  const units=[],by={};
+  items.forEach(([f,i])=>{if(!f.dum){units.push({f,i});return}
+    if(!by[f.dum]){by[f.dum]={dum:f.dum,items:[]};units.push(by[f.dum])}by[f.dum].items.push([f,i])});
+  /* dům s jediným pracovištěm zůstane obyčejnou kartou */
+  return units.map(u=>u.dum&&u.items.length===1?{f:u.items[0][0],i:u.items[0][1]}:u)
+    .sort((a,b)=>{const h=u=>st.mode!=="sluzba"&&!u.dum&&!!hiring(u.f);return h(b)-h(a)||ABC.compare(a.dum||a.f.nazev||"",b.dum||b.f.nazev||"")});
+}
+/* hlavní záznam domu (recepce, ústředna) jde v seznamu pracovišť první */
+const isMain=(f,d)=>{const n=norm(f.nazev||"");return n===norm(d)||n.startsWith(norm(d)+" ")&&!/[–-]/.test(f.nazev.slice(d.length))};
+function dumHtml(u){
+  const it=u.items.slice().sort((a,b)=>isMain(b[0],u.dum)-isMain(a[0],u.dum)||ABC.compare(a[0].nazev||"",b[0].nazev||""));
+  const main=it.find(([f])=>isMain(f,u.dum)),addr=(main||it[0])[0].adresa;
+  /* „Zubní ordinace – Poliklinika X“ → „Zubní ordinace“, „FN Motol – Ortopedie“ → „Ortopedie“ (název domu se pod domem neopakuje) */
+  const short=n=>{n=String(n||"");for(const sep of [" – "," - "]){if(n.endsWith(sep+u.dum)&&n.length>u.dum.length+3)return n.slice(0,-(sep+u.dum).length);
+    const k=n.indexOf(sep);if(k>0&&norm(u.dum).includes(norm(n.slice(0,k))))return n.slice(k+sep.length)}return n};
+  const prac=it.filter(([f])=>!isMain(f,u.dum)).length;
+  const n=T("dumN",{n:prac,prac:plF(prac,"pracForms")});
+  return `<details class="dum" data-dum="${esc(u.dum)}"${DUM_OPEN.has(u.dum)?" open":""}><summary><span class="dn"><h3>🏥 ${esc(u.dum)}</h3><div class="meta">${esc(n)}</div>${addr?`<div class="addr">${esc(addr)}</div>`:""}</span><span class="chev">›</span></summary>
+    <div class="dumlist">${it.map(([f,i])=>`<details class="dumit" data-i="${i}"${DUMIT_OPEN.has(i)?" open":""}><summary><span class="nm">${esc(short(f.nazev))}</span>${f.druh?`<span class="ds">${esc(cap(druhName(f.druh)))}</span>`:""}<span class="chev">›</span></summary>${card(f,i)}</details>`).join("")}</div></details>`;
 }
 const PAGE_SIZE=50;let pageShown=PAGE_SIZE,pageSig="";
 function render(){
@@ -1364,10 +1404,12 @@ function render(){
     const ord=areaOrder(firmy.filter(f=>allObory||f.obor===st.obor).map(f=>f.oblast));
     body=Object.entries(groups).sort((x,y)=>ord.indexOf(x[0])-ord.indexOf(y[0])).map(([a,items])=>{
       if(left<=0)return "";
-      const part=items.slice(0,left);left-=part.length;
-      return `<section class="area"><h2>${esc(shortArea(a))} · ${items.length}</h2><div class="list">${part.map(([f,i])=>card(f,i)).join("")}</div></section>`}).join("");
+      const units=dumUnits(items);
+      const part=units.slice(0,left);left-=part.length;
+      return `<section class="area"><h2>${esc(shortArea(a))} · ${items.length}</h2><div class="list">${part.map(u=>u.dum?dumHtml(u):card(u.f,u.i)).join("")}</div></section>`}).join("");
   }
-  if(list.length>pageShown) body+=`<button class="btn wide" data-more="1">${esc(T("moreBtn",{n:Math.min(PAGE_SIZE,list.length-pageShown)}))}</button>`;
+  const nUnits=st.near?list.length:Object.values(list.reduce((g,x)=>((g[x[0].oblast]??=[]).push(x),g),{})).reduce((s,it)=>s+dumUnits(it).length,0);
+  if(nUnits>pageShown) body+=`<button class="btn wide" data-more="1">${esc(T("moreBtn",{n:Math.min(PAGE_SIZE,nUnits-pageShown)}))}</button>`;
   $("#firmy").innerHTML=top+body+status;
 }
 
@@ -1450,6 +1492,7 @@ $("#firmy").addEventListener("click",e=>{
   const v=e.target.closest("[data-view]");if(v){st.view=v.dataset.view;if(st.view==="map")track("mapa");render();return}
   cardClick(e,false);
 });
+$("#firmy").addEventListener("toggle",e=>{const d=e.target;if(d.matches&&d.matches("details.dum")){d.open?DUM_OPEN.add(d.dataset.dum):DUM_OPEN.delete(d.dataset.dum);if(d.open)track("dum-otevrit")}else if(d.matches&&d.matches("details.dumit")){d.open?DUMIT_OPEN.add(+d.dataset.i):DUMIT_OPEN.delete(+d.dataset.i)}},true);
 document.addEventListener("click",e=>{const a=e.target.closest(".pop [data-call]");if(a){track("zavolat");const f=firmy[+a.dataset.call];autoLog(f,"volano")}});
 function show(tab){
   ["firmy","moje","navody","onas"].forEach(n=>{$("#view-"+n).hidden=n!==tab;$("#tab-"+n).setAttribute("aria-selected",n===tab)});
@@ -1480,10 +1523,10 @@ function csvToFirmy(text){
   if(!rows.length||!rows[0]) return null;
   const h=rows[0].map(x=>norm(x).trim());
   const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"],
-    pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"],typp:["typ parkovani"],platba:["odkaz na platbu"]};
+    pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"],typp:["typ parkovani"],platba:["odkaz na platbu"],dum:["dum","dum / areal"]};
   const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
   if(ix("nazev")<0) return null;
-  const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk","typp","platba"];
+  const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk","typp","platba","dum"];
   const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return prep(o)});
   return data.length?data:null;
 }
