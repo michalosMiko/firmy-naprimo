@@ -248,6 +248,9 @@ details.qa p{margin:8px 0 0}
 .iform .cnt.max{color:var(--warn);font-weight:600}
 .iform .inzid{color:var(--muted);font-size:13px;margin:0}
 .iform .actions{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+.uchban{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--accent-soft);border-radius:16px;padding:12px 14px;margin:14px 0;font-size:14px;line-height:1.45}
+.uchban .btn{flex:none}
+@media (max-width:420px){.uchban{flex-direction:column;align-items:stretch}}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:999px;font-size:13.5px;z-index:10;max-width:calc(100% - 32px);text-align:center}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
 /* nové: jazyk, Moje, štítky, vzdálenost, mapa */
@@ -865,6 +868,7 @@ function renderGuide(){
   const s=SECS.find(x=>x.id===st.sec)||SECS[0];
   let h=`<div class="sec-intro"><h2>${esc(navT(s.id,"name")||s.name)}</h2><p class="lead">${esc(navT(s.id,"intro")||s.intro)}</p></div>`;
   if(st.lang!=="cs") h+=`<p class="note">${esc(T("tplNote"))}</p>`;
+  if(UCHAZEC_URL&&s.id===SECS[0].id) h+=uchBanner();
   h+=s.items.map(it=>`<article class="item" id="it-${it.id}"><h3>${esc(navT(it.id,"t")||it.t)}${s.id==="email"&&it.id===defTpl?`<span class="default-badge">${esc(T("forWrite"))}</span>`:""}</h3>
     <p class="when">${esc(navT(it.id,"w")||it.w)}</p><pre lang="cs">${esc(it.x)}</pre>
     <div class="row"><button class="btn primary" data-copy-item="${it.id}">${ICON.copy} ${esc(T("copyBtn"))}</button>
@@ -1427,6 +1431,114 @@ function inzForm(f){
   });
 }
 
+/* ---------- Hledám práci: formulář pro uchazeče ----------
+   Odesílá se do stejného Apps Scriptu jako inzeráty (apps-script/uchazeci.gs, typ:"uchazec").
+   Uchazeč zadá lokalitu, obor a profesi, může přiložit životopis. Skript mu hned pošle e-mail s tipy,
+   které podniky v jeho okolí oslovit a jak. Údaje i životopis zůstávají neveřejné (12 měsíců). */
+/* Zapnutí: až bude ve skriptu soubor uchazeci.gs (a háčky v inzeraty.gs), nastav UCHAZEC_ZAPNUTO = true.
+   Do té doby se formulář ani pozvánky „Zapsat se“ na webu neukazují. */
+const UCHAZEC_ZAPNUTO=true;
+const UCHAZEC_URL=UCHAZEC_ZAPNUTO?INZERAT_URL:"";
+const UCH_MAX_CV=5*1024*1024, UCH_MAX_OMNE=1000;
+const UCH_CV_TYP={pdf:"application/pdf",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",odt:"application/vnd.oasis.opendocument.text",jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png"};
+const UCH_OPT={
+  nastup:["Ihned","Do měsíce","Dohodou"],
+  praxe:["Bez praxe","Do 1 roku","1 až 3 roky","3 až 5 let","Víc než 5 let"],
+  dojezd:["Jen v mé lokalitě","I do sousedních čtvrtí","Kamkoli po Praze a okolí"],
+  mam:["Řidičský průkaz sk. B","Zdravotní průkaz","Čistý trestní rejstřík","Vlastní auto"]
+};
+function uchBanner(){return UCHAZEC_URL&&st.mode==="prace"?`<div class="uchban"><div><b>Hledáte práci?</b> Napište nám, co umíte a kde chcete pracovat. Pošleme vám e-mailem podniky z vašeho okolí a návod, jak je oslovit.</div><button class="btn primary" data-uch="1">Zapsat se</button></div>`:""}
+function uchAreaOpts(sel){
+  const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
+  if(!areas.length)return "";
+  const g=[];areas.forEach(a=>{const k=areaGroup(a)||"Další";let x=g.find(y=>y[0]===k);if(!x)g.push(x=[k,[]]);x[1].push(a)});
+  return `<option value="">Vyberte lokalitu…</option>`+g.map(([k,l])=>`<optgroup label="${esc(k)}">${l.length>1&&k!=="Další"?`<option value="@${esc(k)}"${sel==="@"+k?" selected":""}>Celý obvod ${esc(k)}</option>`:""}${l.map(a=>`<option value="${esc(a)}"${a===sel?" selected":""}>${esc(shortArea(a))}</option>`).join("")}</optgroup>`).join("");
+}
+function uchChks(name,opts){return `<div class="chks">${opts.map(o=>`<label><input type="checkbox" name="${name}" value="${esc(o)}"> ${esc(o)}</label>`).join("")}</div>`}
+function uchForm(){
+  document.querySelector(".sheet-bg")?.remove();
+  track("uchazec-formular");
+  const obor=INZ_OBORY.includes(st.obor)?st.obor:"Gastronomie";
+  const ao=uchAreaOpts(st.area);
+  const bg=document.createElement("div");bg.className="sheet-bg";
+  bg.innerHTML=`<form class="sheet iform" role="dialog" aria-label="Hledám práci" novalidate>
+    <h3>Hledám práci</h3>
+    <p class="note">Vyplňte, co hledáte. Hned vám pošleme e-mail s podniky ve vaší lokalitě a návodem, jak je napřímo oslovit. Údaje ani životopis nikde nezveřejňujeme.</p>
+    <div class="two"><div class="field"><label for="u-jmeno">Jméno a příjmení *</label><input id="u-jmeno" name="jmeno" maxlength="80" autocomplete="name"></div>
+      <div class="field"><label for="u-email">E-mail *</label><input id="u-email" name="email" type="email" maxlength="100" autocomplete="email" placeholder="sem pošleme tipy"></div></div>
+    <div class="field"><label for="u-telefon">Telefon</label><input id="u-telefon" name="telefon" type="tel" maxlength="40" autocomplete="tel" placeholder="nepovinné"></div>
+    <div class="two"><div class="field"><label for="u-lokalita">Kde chcete pracovat *</label>${ao?`<select id="u-lokalita" name="lokalita">${ao}</select>`:`<input id="u-lokalita" name="lokalita" maxlength="80" placeholder="např. Praha - Nusle">`}</div>
+      <div class="field"><label for="u-dojezd">Dojíždění</label>${inzSel("dojezd",UCH_OPT.dojezd,UCH_OPT.dojezd[1]).replace('id="i-dojezd"','id="u-dojezd"')}</div></div>
+    <div class="two"><div class="field"><label for="u-obor">Obor *</label>${inzSel("obor",INZ_OBORY,obor).replace('id="i-obor"','id="u-obor"')}</div>
+      <div class="field"><label for="u-profese">Profese *</label><select name="profese" id="u-profese">${inzProfOpts(obor)}</select></div></div>
+    <div class="field" id="u-jinabox" hidden><label for="u-jina">Jaká profese? *</label><input id="u-jina" name="jina" maxlength="60"></div>
+    <div class="field"><label for="u-dalsi">Co dalšího byste dělal/a</label><input id="u-dalsi" name="dalsi" maxlength="120" placeholder="nepovinné, např. barista nebo prodavač"></div>
+    <fieldset class="field"><legend>Úvazek *</legend>${inzChks("uvazek",1)}</fieldset>
+    <fieldset class="field"><legend>Smlouva</legend>${inzChks("smlouva")}</fieldset>
+    <fieldset class="field"><legend>Kdy můžete pracovat</legend>${inzChks("smeny")}</fieldset>
+    <div class="three"><div class="field"><label for="u-nastup">Nástup</label>${inzSel("nastup",UCH_OPT.nastup,"Ihned").replace('id="i-nastup"','id="u-nastup"')}</div>
+      <div class="field"><label for="u-praxe">Praxe v oboru</label>${inzSel("praxe",UCH_OPT.praxe,"Bez praxe").replace('id="i-praxe"','id="u-praxe"')}</div>
+      <div class="field"><label for="u-vzdelani">Vzdělání</label>${inzSel("vzdelani",["Neuvádím",...INZ_OPT.vzdelani.slice(1)],"Neuvádím").replace('id="i-vzdelani"','id="u-vzdelani"')}</div></div>
+    <fieldset class="field"><legend>Domluvím se</legend>${inzChks("jazyky")}</fieldset>
+    <fieldset class="field"><legend>Mám</legend>${uchChks("mam",UCH_OPT.mam)}</fieldset>
+    <fieldset class="field"><legend>Představa o mzdě (hrubého)</legend>
+      <div class="two"><input name="mzda" type="number" min="0" step="1" inputmode="numeric" placeholder="nepovinné" aria-label="Mzda">${inzSel("mzdaJed",["Kč/měsíc","Kč/hodinu"],"Kč/měsíc")}</div></fieldset>
+    <div class="field"><label for="u-omne">Krátce o sobě</label><textarea id="u-omne" name="omne" maxlength="${UCH_MAX_OMNE}" placeholder="Co umíte, kde jste pracoval/a, co by vás bavilo…"></textarea><span class="cnt" id="u-cnt" aria-live="polite">0 / ${UCH_MAX_OMNE} znaků</span></div>
+    <div class="field"><label for="u-cv">Životopis</label><input id="u-cv" name="cv" type="file" accept=".pdf,.doc,.docx,.odt,.jpg,.jpeg,.png"><span class="hint">PDF, Word nebo fotka, nejvýš 5 MB. Nepovinné. Uložíme ho neveřejně, podnikům ho neposíláme.</span></div>
+    <input name="web2" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+    <label class="one"><input type="checkbox" name="upozornit"><span>Pošlete mi e-mail, když se v mé lokalitě objeví inzerát v mém oboru.</span></label>
+    <label class="one"><input type="checkbox" name="souhlas"><span>Souhlasím se <a class="link" href="ochrana-udaju/#uchazeci" target="_blank" rel="noopener">zpracováním údajů</a> na 12 měsíců. Kdykoli je můžu smazat odkazem z e-mailu. *</span></label>
+    <p class="ierr" role="alert" hidden></p>
+    <div class="actions"><button class="btn primary" type="submit">Poslat a získat tipy</button><button class="btn" type="button" data-close>Zavřít</button></div>
+  </form>`;
+  document.body.appendChild(bg);
+  const fm=bg.querySelector("form"),$i=n=>fm.elements[n],err=bg.querySelector(".ierr");
+  const close=()=>bg.remove();
+  bg.querySelector("[data-close]").onclick=close;
+  bg.addEventListener("click",e=>{if(e.target===bg)close()});
+  $i("obor").onchange=()=>{$i("profese").innerHTML=inzProfOpts($i("obor").value);bg.querySelector("#u-jinabox").hidden=true};
+  $i("profese").onchange=()=>{const j=$i("profese").value==="_jina";bg.querySelector("#u-jinabox").hidden=!j;if(j)$i("jina").focus()};
+  $i("omne").oninput=()=>{const n=$i("omne").value.length,c=bg.querySelector("#u-cnt");c.textContent=`${n} / ${UCH_MAX_OMNE} znaků`;c.classList.toggle("max",n>=UCH_MAX_OMNE*.95)};
+  const readCv=file=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]||"");r.onerror=()=>ko(new Error("Životopis se nepodařilo načíst."));r.readAsDataURL(file)});
+  fm.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const all=n=>[...fm.querySelectorAll(`input[name="${n}"]:checked`)].map(x=>x.value);
+    const v=n=>String($i(n).value||"").trim();
+    const prof=v("profese")==="_jina"?v("jina"):v("profese");
+    const file=$i("cv").files[0],ext=file?(file.name.split(".").pop()||"").toLowerCase():"";
+    const d={typ:"uchazec",jmeno:v("jmeno"),email:v("email"),telefon:v("telefon"),lokalita:v("lokalita"),dojezd:v("dojezd"),
+      obor:v("obor"),profese:prof,dalsi:v("dalsi"),uvazek:all("uvazek"),smlouva:all("smlouva"),smeny:all("smeny"),
+      nastup:v("nastup"),praxe:v("praxe"),vzdelani:v("vzdelani")==="Neuvádím"?"":v("vzdelani"),jazyky:all("jazyky"),mam:all("mam"),
+      mzda:v("mzda"),mzdaJed:v("mzda")?v("mzdaJed"):"",omne:v("omne"),upozornit:$i("upozornit").checked,
+      lang:st.lang,souhlas:$i("souhlas").checked,web2:v("web2")};
+    const miss=[[!d.jmeno,"jméno"],[!d.email,"e-mail"],[!d.lokalita,"kde chcete pracovat"],[!d.profese,"profesi"],[!d.uvazek.length,"úvazek"],[!d.souhlas,"souhlas"]].filter(x=>x[0]).map(x=>x[1]);
+    if(d.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email))miss.push("e-mail ve správném tvaru");
+    if(file&&!UCH_CV_TYP[ext])miss.push("životopis jako PDF, Word nebo fotku");
+    if(file&&file.size>UCH_MAX_CV)miss.push("menší životopis (nejvýš 5 MB)");
+    if(miss.length){err.textContent="Doplňte prosím: "+miss.join(", ")+".";err.hidden=false;err.scrollIntoView({block:"nearest"});return}
+    err.hidden=true;const sb=fm.querySelector("[type=submit]");sb.disabled=true;sb.textContent="Odesílám…";
+    try{
+      if(file)d.cv={nazev:file.name,typ:UCH_CV_TYP[ext],data:await readCv(file)};
+      const r=await fetch(UCHAZEC_URL,{method:"POST",body:JSON.stringify(d)});const o=await r.json();
+      if(!o.ok)throw new Error(o.err||"Chyba");
+      track("uchazec-odeslan");
+      const kde=shortArea(d.lokalita),ob=OBORY.includes(d.obor)?d.obor:"";
+      fm.innerHTML=`<h3>Hotovo, tipy jsou na cestě</h3>
+        <p>Na <b>${esc(d.email)}</b> jsme poslali e-mail s návodem, jak podniky oslovit. Když nepřijde do pár minut, podívejte se do spamu.</p>
+        ${o.podniku?`<p>V lokalitě ${esc(kde)} máme <b>${o.podniku} ${o.podniku===1?"podnik":o.podniku<5?"podniky":"podniků"}</b>${ob?` v oboru ${esc(oborName(ob))}`:""}.</p>`:""}
+        ${o.hledaji?`<p class="note">${o.hledaji} z nich právě hledá lidi. Na webu mají štítek <b>Hledá lidi</b>.</p>`:""}
+        <p>Nemusíte čekat: podniky si můžete prohlédnout hned. U každého je telefon a tlačítko <b>Napsat</b> s hotovým textem.</p>
+        ${o.id?`<p class="inzid">Číslo přihlášky: ${esc(o.id)}</p>`:""}
+        <div class="actions"><button class="btn primary" type="button" data-uchgo>Ukázat podniky</button><button class="btn" type="button" data-uchnav>Návody</button></div>`;
+      fm.querySelector("[data-uchgo]").onclick=()=>{close();st.mode="prace";store.set("mode","prace");applyMode();if(ob){st.obor=ob;store.set("obor",ob)}show("firmy");setArea(d.lokalita)};
+      fm.querySelector("[data-uchnav]").onclick=()=>{close();show("navody")};
+    }catch(ex){
+      err.textContent=(ex&&ex.message&&ex.message!=="Failed to fetch"?ex.message+" ":"")+"Přihlášku se nepodařilo odeslat. Zkuste to znovu, nebo nám napište na domecekcafe@gmail.com.";
+      err.hidden=false;sb.disabled=false;sb.textContent="Poslat a získat tipy"}
+  });
+}
+document.addEventListener("click",e=>{if(e.target.closest("[data-uch]")){e.preventDefault();uchForm()}});
+
 /* ---------- mapa (Leaflet + OpenStreetMap, načte se až při prvním otevření) ---------- */
 let LMAP=null,leafletP=null;
 function loadLeaflet(){if(window.L)return Promise.resolve();if(leafletP)return leafletP;
@@ -1506,7 +1618,7 @@ function render(){
   }
   if(st.obor===AZ&&!st.druh&&!q&&!st.nove){
     const c=druhCountsAZ(inArea);
-    $("#firmy").innerHTML=`<p class="idx-lead">${esc(T("idxLead",{n:c.size,a:st.area?T("inArea",{a:shortArea(st.area)}):""}))}</p>`+(c.size?idxHtml(c,true):`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(T("tryArea"))}</div>`)+legalHtml();
+    $("#firmy").innerHTML=`<p class="idx-lead">${esc(T("idxLead",{n:c.size,a:st.area?T("inArea",{a:shortArea(st.area)}):""}))}</p>`+(c.size?idxHtml(c,true):`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(T("tryArea"))}</div>`)+uchBanner()+legalHtml();
     return;
   }
   if(st.obor===AZ&&st.druh===GAS&&!q&&!st.nove){
@@ -1520,7 +1632,7 @@ function render(){
     (!q||matchQ(f,q)));
   list.forEach(x=>x[2]=km(x[0]));
   list.sort((a,b)=>(st.near?(a[2]==null)-(b[2]==null)||(a[2]??0)-(b[2]??0):0)||(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):(!hiring(a[0]))-(!hiring(b[0])))||ABC.compare(a[0].nazev||"",b[0].nazev||""));
-  const status=`<p class="status">${esc(dataSource!=="embedded"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`+legalHtml();
+  const status=`<p class="status">${esc(dataSource!=="embedded"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`+uchBanner()+legalHtml();
   let top="";
   if(st.nove) top=`<div class="druhbar"><button data-back="1">← ${esc(T("back"))}</button><strong>${esc(T("newH"))}</strong></div>`;
   else if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.gasSub?esc(oborName("Gastronomie")):(st.obor===AZ?esc(T("backAll")):esc(oborName(st.obor)))}</button><strong>${esc(cap(druhName(st.druh)))}</strong></div>`;
@@ -1809,12 +1921,14 @@ st.obor=OBORY.includes(store.get("obor"))?store.get("obor"):"Gastronomie";
 st.mode=store.get("mode")==="sluzba"?"sluzba":"prace";
 st.lang=(()=>{const s=store.get("lang");if(I18N[s])return s;const n=(navigator.languages||[navigator.language||""]).map(x=>String(x).toLowerCase());return n.some(x=>x.startsWith("uk"))?"uk":"cs"})();
 try{const p=new URLSearchParams(location.search).get("p");if(p)st.pin=p;const l=new URLSearchParams(location.search).get("lang");if(I18N[l]){st.lang=l;store.set("lang",l)}}catch(e){}
+try{const sp=new URLSearchParams(location.search),lk=sp.get("lokalita"),ob=sp.get("obor");if(lk){st.area=lk;store.set("area",lk);store.set("areaPicked",true);st.mode="prace";store.set("mode","prace");store.set("onb",true)}if(OBORY.includes(ob)){st.obor=ob;store.set("obor",ob)}}catch(e){}
 function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode)));
   const sl=st.mode==="sluzba";document.documentElement.dataset.mode=st.mode;$("#tab-navody").hidden=sl}
 document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
 applyLang();applyMode();renderTabBadge();
 loadCached(); render(); loadLive(); loadLok();
 const h0=(location.hash||"").slice(1); if(["navody","onas","moje"].includes(h0)) show(h0);
+else if(h0==="hledam-praci"&&UCHAZEC_URL) setTimeout(uchForm,0);
 else if(!store.get("onb")&&!st.pin) startWizard();
 </script>
 </body></html>
