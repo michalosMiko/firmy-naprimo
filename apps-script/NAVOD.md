@@ -48,3 +48,15 @@ Ve fázi 1 se aktivní inzeráty na webu ještě neukazují. Zobrazení na kart�
 - **Ochrana:** jeden podnik smí mít nejvýš 5 rozpracovaných a aktivních inzerátů a celkem přijde nejvýš 30 inzerátů za hodinu. Obojí jde změnit nahoře ve skriptu v `CFG`.
 - **Úprava skriptu:** po změně kódu dej **Nasadit → Spravovat implementace → tužka → Verze: Nová verze → Nasadit**. Adresa `/exec` zůstane stejná.
 - **Test:** na webu otevři kartu podniku bez e-mailu a pošli zkušební inzerát. Měl by ti přijít e-mail „Inzerát k ověření telefonem“. Pak ho v tabulce **Zamítni**.
+
+## Aktualizace skriptu (nová verze)
+
+Když se skript změní (nové funkce), adresa `/exec` zůstává stejná. Postup:
+
+1. Otevři neveřejnou tabulku → **Rozšíření → Apps Script**.
+2. V souboru **Kód.gs** dej **Ctrl+A**, **Delete** a vlož novou verzi z [inzeraty.gs](https://raw.githubusercontent.com/michalosMiko/firmy-naprimo/main/apps-script/inzeraty.gs) (Ctrl+A, Ctrl+C v otevřeném odkazu). Ulož (**Ctrl+S**).
+3. Další soubory (např. `osloveni.gs`, `uchazeci.gs`): vlevo u „Soubory“ klikni na **+ → Skript**, pojmenuj ho (např. `osloveni`), vlož obsah a ulož.
+4. Nahoře vyber funkci **nastavit** a klikni **▷ Spustit**. Když se Google zeptá na nová oprávnění, potvrď je stejně jako poprvé (**Rozšířené / Advanced → Přejít na projekt → Vybrat vše → Pokračovat**).
+5. Vpravo nahoře **Implementovat → Spravovat implementace** → tužka ✏️ → u „Verze“ vyber **Nová verze** → **Implementovat**.
+
+Teprve potom slučuj PR, který na novou verzi skriptu spoléhá.

@@ -248,6 +248,27 @@ details.qa p{margin:8px 0 0}
 .iform .cnt.max{color:var(--warn);font-weight:600}
 .iform .inzid{color:var(--muted);font-size:13px;margin:0}
 .iform .actions{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+.inzbox{margin-top:10px;border:1px solid var(--accent-soft);background:color-mix(in srgb,var(--accent-soft) 45%,var(--surface));border-radius:12px;padding:8px;display:grid;gap:4px}
+.inzhead{font-size:13px;font-weight:700;color:var(--accent);padding:2px 4px}
+.inzrow{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;border:0;background:var(--surface);border-radius:9px;padding:8px 10px;cursor:pointer;width:100%}
+.inzrow:hover,.inzrow:focus-visible{outline:1px solid var(--accent)}
+.inzrow .p{font-weight:600;font-size:14.5px}.inzrow .m{font-size:12.5px;color:var(--muted)}
+#inzbar:empty{display:none}
+#inzbar{max-width:720px;margin:0 auto;padding:8px 16px 0}
+.inzbanner{width:100%;display:flex;align-items:center;gap:8px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:14px;cursor:pointer;text-align:left}
+.inzbanner span{margin-left:auto;color:var(--accent);font-weight:700}
+.inzbanner small{color:var(--muted)}
+.inzcard{cursor:pointer}.inzcard h3{margin:0}.inzcard .inzline{font-size:13.5px;margin-top:4px}
+.inzcard:hover,.inzcard:focus-visible{border-color:var(--accent)}
+.inzchips{margin:4px 0 8px}
+.inzdet h4{margin:0 0 4px;font-size:14px}
+.inzdet .inzfirm{margin:-6px 0 0;color:var(--muted)}
+.inzdet .inztags{display:flex;gap:6px;flex-wrap:wrap}
+.inzdet .inzul{margin:0;padding-left:20px}
+.inzdet .inzpopis{white-space:pre-line;margin:0}
+.inzdet .inzmeta{font-size:12.5px;color:var(--muted);margin:0}
+.inzdet .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mk.job i{background:var(--warn);width:18px;height:18px}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:999px;font-size:13.5px;z-index:10;max-width:calc(100% - 32px);text-align:center}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
 /* nové: jazyk, Moje, štítky, vzdálenost, mapa */
@@ -357,6 +378,7 @@ details.qa p{margin:8px 0 0}
   <div class="hint" id="hint" hidden></div>
   <div class="chips" id="chips" role="toolbar"></div>
 </header>
+<div id="inzbar"></div>
 <main id="firmy"></main>
 </div>
 
@@ -421,7 +443,7 @@ cs:{
  tabFirmy:"Firmy",tabMoje:"Moje",tabNavody:"Návody",tabOnas:"O aplikaci",
  details:"Podrobnosti",call:"Zavolat",write:"Napsat",map:"Mapa",menuWeb:"Menu / web",showMap:"Ukázat na mapě",
  fPhone:"Telefon",fEmail:"E-mail",fHours:"Otevřeno",openNow:"Teď otevřeno",closed:"Zavřeno",incomplete:"Neúplné",incompleteT:"Některé údaje chybí",
- inzAdd:"Přidat pracovní inzerát (pro firmy)",newTag:"Nové",hiring:"Hledá lidi",hiringDet:"Hledá: {txt}",checked:"ověřeno {d}",
+ inzAdd:"Přidat pracovní inzerát (pro firmy)",uprAdd:"Upravit údaje (pro firmy)",inzBox:"Volné pozice ({n})",inzBanner:"Pracovní inzeráty ({n})",inzJinde:"zatím jinde v Praze",inzList:"Pracovní inzeráty",inzBack:"Zpět na podniky",inzVse:"Vše",inzNoArea:"V lokalitě {a} zatím inzerát není, ukazujeme všechny.",inzDohodou:"mzda dohodou",inzOd:"od",inzDo:"do",inzMzda:"Mzda",inzUvazek:"Úvazek",inzSmlouva:"Smlouva",inzSmeny:"Směny",inzNastup:"Nástup",inzMist:"Počet míst",inzVzdelani:"Vzdělání",inzPraxe:"Praxe",inzJazyky:"Jazyky",inzPozadavky:"Požadavky",inzNabizime:"Co nabízíme",inzPopis:"Popis práce",inzJak:"Jak se ucházet",inzOsoba:"kontakt",inzPlati:"Platí do {d}",inzFirma:"O podniku",newTag:"Nové",hiring:"Hledá lidi",hiringDet:"Hledá: {txt}",checked:"ověřeno {d}",
  share:"Sdílet",shareTxt:"{n} – v aplikaci Práce napřímo",linkCopied:"Odkaz zkopírován",fix:"Opravit údaje / Jsem majitel",atmo:"Hodnocení zaměstnavatele (Atmoskop)",
  save:"Uložit",saved:"Uloženo do Moje",removed:"Odebráno z Moje",autoSaved:"Zapsáno do Moje: {s}",
  st_ulozeno:"Uloženo",st_napsano:"Napsáno",st_volano:"Voláno",st_pohovor:"Pohovor",st_nabidka:"Nabídka",st_odmitnuto:"Odmítnuto",
@@ -452,7 +474,7 @@ uk:{
  tabFirmy:"Фірми",tabMoje:"Моє",tabNavody:"Поради",tabOnas:"Про застосунок",
  details:"Детальніше",call:"Подзвонити",write:"Написати",map:"Мапа",menuWeb:"Меню / сайт",showMap:"Показати на мапі",
  fPhone:"Телефон",fEmail:"E-mail",fHours:"Відчинено",openNow:"Зараз відчинено",closed:"Зачинено",incomplete:"Неповні дані",incompleteT:"Деякі дані відсутні",
- newTag:"Нове",hiring:"Шукає працівників",hiringDet:"Шукає: {txt}",checked:"перевірено {d}",
+ inzBox:"Вільні вакансії ({n})",inzBanner:"Вакансії ({n})",inzJinde:"поки в інших районах Праги",inzList:"Вакансії",inzBack:"Назад до компаній",inzVse:"Усі",inzNoArea:"У районі {a} вакансій поки немає, показуємо всі.",inzDohodou:"зарплата за домовленістю",inzOd:"від",inzDo:"до",inzMzda:"Зарплата",inzUvazek:"Зайнятість",inzSmlouva:"Договір",inzSmeny:"Зміни",inzNastup:"Початок",inzMist:"Кількість місць",inzVzdelani:"Освіта",inzPraxe:"Досвід",inzJazyky:"Мови",inzPozadavky:"Вимоги",inzNabizime:"Що пропонуємо",inzPopis:"Опис роботи",inzJak:"Як відгукнутися",inzOsoba:"контакт",inzPlati:"Дійсне до {d}",inzFirma:"Про компанію",newTag:"Нове",hiring:"Шукає працівників",hiringDet:"Шукає: {txt}",checked:"перевірено {d}",
  share:"Поділитися",shareTxt:"{n} – у застосунку Práce napřímo",linkCopied:"Посилання скопійовано",fix:"Виправити дані / Я власник",atmo:"Відгуки про роботодавця (Atmoskop)",
  save:"Зберегти",saved:"Збережено в «Моє»",removed:"Видалено з «Моє»",autoSaved:"Записано в «Моє»: {s}",
  st_ulozeno:"Збережено",st_napsano:"Написав(-ла)",st_volano:"Дзвонив(-ла)",st_pohovor:"Співбесіда",st_nabidka:"Пропозиція",st_odmitnuto:"Відмова",
@@ -484,7 +506,7 @@ en:{
  tabFirmy:"Businesses",tabMoje:"Mine",tabNavody:"Guides",tabOnas:"About",
  details:"Details",call:"Call",write:"Write",map:"Map",menuWeb:"Menu / website",showMap:"Show on map",
  fPhone:"Phone",fEmail:"E-mail",fHours:"Open",openNow:"Open now",closed:"Closed",incomplete:"Incomplete",incompleteT:"Some details are missing",
- newTag:"New",hiring:"Hiring",hiringDet:"Looking for: {txt}",checked:"checked {d}",
+ inzBox:"Open positions ({n})",inzBanner:"Job ads ({n})",inzJinde:"elsewhere in Prague for now",inzList:"Job ads",inzBack:"Back to businesses",inzVse:"All",inzNoArea:"No job ads in {a} yet, showing all.",inzDohodou:"salary negotiable",inzOd:"from",inzDo:"up to",inzMzda:"Salary",inzUvazek:"Hours",inzSmlouva:"Contract",inzSmeny:"Shifts",inzNastup:"Start",inzMist:"Openings",inzVzdelani:"Education",inzPraxe:"Experience",inzJazyky:"Languages",inzPozadavky:"Requirements",inzNabizime:"What we offer",inzPopis:"Job description",inzJak:"How to apply",inzOsoba:"contact",inzPlati:"Valid until {d}",inzFirma:"About the business",newTag:"New",hiring:"Hiring",hiringDet:"Looking for: {txt}",checked:"checked {d}",
  share:"Share",shareTxt:"{n} – in the Práce napřímo app",linkCopied:"Link copied",fix:"Fix details / I'm the owner",atmo:"Employer reviews (Atmoskop)",
  save:"Save",saved:"Saved to Mine",removed:"Removed from Mine",autoSaved:"Added to Mine: {s}",
  st_ulozeno:"Saved",st_napsano:"Emailed",st_volano:"Called",st_pohovor:"Interview",st_nabidka:"Offer",st_odmitnuto:"Rejected",
@@ -1279,6 +1301,7 @@ function card(f,i,extra){
   const open=sluzba?isOpen(f.hodiny):null;
   const hours=sluzba&&f.hodiny?`<div class="hours">${open===null?"":`<span class="state ${open?"open":"closed"}">${esc(T(open?"openNow":"closed"))}</span>`}<span class="txt">${esc(hoursText(f.hodiny))}</span></div>`:"";
   const hi=!sluzba?hiring(f):null;
+  const inzB=!sluzba?inzBoxHtml(f):"";
   const k=km(f);
   const saved=MO[fkey(f)];
   const druhLine=st.lang!=="cs"?(f.druh?cap(druhName(f.druh)):locText(f,"styl")):f.styl;
@@ -1290,17 +1313,19 @@ function card(f,i,extra){
     :howBtn?`<p class="parknear">🅿️ ${esc(T("parkHere"))}: ${howBtn}</p>`:"";
   const links=[!sluzba&&f.web?`<a class="link" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(f.web.replace(/^https?:\/\//,""))} ↗</a>`:"",
     !sluzba&&f.adresa?`<a class="link" href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("showMap"))} ↗</a>`:"",
+    ...socLinks(f),
     !sluzba?`<a class="link" href="https://www.google.com/search?q=${encodeURIComponent("atmoskop "+f.nazev)}" target="_blank" rel="noopener" data-ev="atmoskop">${esc(T("atmo"))} ↗</a>`:"",
     `<button class="link linkbtn" data-share="${i}">${esc(T("share"))}</button>`,
     `<a class="link" href="${fixHref(f)}" data-ev="opravit-udaje">${esc(T("fix"))}</a>`,
-    INZERAT_URL&&!sluzba?`<button class="link linkbtn" data-inz="${i}">📢 ${esc(T("inzAdd"))}</button>`:""].filter(Boolean);
-  const tags=[isNew(f)?`<span class="tag new">${esc(T("newTag"))}</span>`:"",hi?`<span class="tag hire">${esc(T("hiring"))}</span>`:"",
+    INZERAT_URL&&!sluzba?`<button class="link linkbtn" data-inz="${i}">📢 ${esc(T("inzAdd"))}</button>`:"",
+    INZERAT_URL&&!sluzba?`<button class="link linkbtn" data-upr="${i}">✏️ ${esc(T("uprAdd"))}</button>`:""].filter(Boolean);
+  const tags=[isNew(f)?`<span class="tag new">${esc(T("newTag"))}</span>`:"",hi||inzB?`<span class="tag hire">${esc(T("hiring"))}</span>`:"",
     /částečně|neověřeno/i.test(f.overeno||"")?`<span class="tag" title="${esc(T("incompleteT"))}">${esc(T("incomplete"))}</span>`:""].filter(Boolean).join("");
   const stLine=saved&&!sluzba&&!extra&&saved.s!=="ulozeno"?`<div class="mstate">✓ ${esc(T("st_"+saved.s))} · ${esc(fmtDate(saved.d))}</div>`:"";
   return `<article class="card">
     <div class="top"><div><h3>${esc(f.nazev)}</h3>${f.osoba?`<div class="osoba">👤 ${esc(f.osoba)}</div>`:""}${druhLine?`<div class="meta">${esc(druhLine)}</div>`:""}${park?ptagHtml(f.typp):""}${addr?`<div class="addr">${esc(addr)}${k!=null?` · <span class="dist">${fmtKm(k)}</span>`:""}</div>`:""}${hours}${nearLine}${stLine}</div>
     <div class="side"><button class="star" data-star="${i}" aria-pressed="${!!saved}" aria-label="${esc(T("save"))}">${saved?"★":"☆"}</button>${tags?`<div class="tags">${tags}</div>`:""}</div></div>
-    ${hi&&hi.txt&&st.lang==="cs"?`<div class="hire-line">${esc(T("hiringDet",{txt:hi.txt}))}${hi.d?` <span>(${esc(T("checked",{d:fmtDate(hi.d)}))})</span>`:""}</div>`:""}
+    ${inzB}${hi&&hi.txt&&st.lang==="cs"?`<div class="hire-line">${esc(T("hiringDet",{txt:hi.txt}))}${hi.d?` <span>(${esc(T("checked",{d:fmtDate(hi.d)}))})</span>`:""}</div>`:""}
     <details class="more"><summary>${esc(T("details"))}</summary><div class="inner">
       ${st.lang!=="cs"&&locText(f,"styl")&&norm(locText(f,"styl"))!==norm(druhLine)?`<p class="desc">${esc(locText(f,"styl"))}</p>`:""}
       ${locText(f,"popis")?`<p class="desc">${esc(locText(f,"popis"))}</p>`:""}
@@ -1312,6 +1337,170 @@ function card(f,i,extra){
         ?(f.adresa?`<a class="btn" href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("map"))}</a>`:`<a class="btn" aria-disabled="true">${esc(T("map"))}</a>`)+(f.web?`<a class="btn soft wide" href="${esc(webUrl(f.web))}" target="_blank" rel="noopener">${esc(T("menuWeb"))} ↗</a>`:"")
         :`<button class="btn" data-mail="${i}">${ICON.mail} ${esc(T("write"))}</button>`}
     </div>${extra||""}</article>`}`;
+}
+
+/* ---------- pracovní inzeráty: zobrazení (fáze 2) ----------
+   Aktivní inzeráty čte z listu „Inzeráty“ ve veřejné tabulce (QUERY zrcadlo neveřejné tabulky,
+   jen stav „aktivní“ a platnost od dneška). Inzerát patří k podniku podle názvu a adresy. */
+let INZ=[];                 /* všechny aktivní inzeráty */
+let INZ_BY={};              /* klíč podniku → [inzeráty] */
+const inzKey=(n,a)=>norm(n)+"|"+norm(a);
+function adsFor(f){return INZ_BY[inzKey(f.nazev,f.adresa)]||[]}
+function inzFromCsv(text){
+  const rows=parseCSV(text);if(!rows.length)return [];
+  const h=rows[0].map(x=>norm(x).trim());const ix=k=>h.indexOf(k);
+  const K={id:"id",zverejneno:"zverejneno",platiDo:"plati do",podnik:"podnik",adresa:"adresa",lokalita:"lokalita",pozice:"pozice",obor:"obor",profese:"profese",
+    uvazek:"uvazek",smlouva:"smlouva",smeny:"smeny",mzdaOd:"mzda od",mzdaDo:"mzda do",mzdaJed:"mzda jednotka",vzdelani:"vzdelani",praxe:"praxe",jazyky:"jazyky",
+    pozadavky:"pozadavky",nabizime:"nabizime",popis:"popis prace",nastup:"nastup",mist:"pocet mist",jak:"jak se uchazet",tel:"telefon pro uchazece",mail:"e-mail pro uchazece",osoba:"kontaktni osoba"};
+  if(ix("id")<0||ix("pozice")<0)return [];
+  return rows.slice(1).filter(r=>r[ix("id")]).map(r=>{const o={};for(const k in K){const i=ix(K[k]);o[k]=i<0?"":String(r[i]||"").trim()}return o});
+}
+function setInz(list){INZ=list||[];INZ_BY={};INZ.forEach(a=>(INZ_BY[inzKey(a.podnik,a.adresa)]??=[]).push(a))}
+async function loadInz(){
+  if(!SHEET_ID)return;
+  try{const c=store.get("inzCache");if(c&&c.t)setInz(inzFromCsv(c.t))}catch(e){}
+  try{
+    const ctl=new AbortController();setTimeout(()=>ctl.abort(),10000);
+    const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent("Inzeráty")}`,{signal:ctl.signal,cache:"no-store"});
+    if(!r.ok)return;const t=await r.text();if(/^\s*</.test(t))return;
+    setInz(inzFromCsv(t));store.set("inzCache",{t});
+  }catch(e){}
+  render();deepLink();
+}
+const czk=n=>{const x=Number(String(n).replace(/\s/g,"").replace(",","."));return isNaN(x)||!String(n).trim()?String(n):x.toLocaleString("cs-CZ")};
+function mzdaText(a){if(/dohod/i.test(a.mzdaJed)||(!a.mzdaOd&&!a.mzdaDo))return T("inzDohodou");
+  const r=a.mzdaOd&&a.mzdaDo?czk(a.mzdaOd)+"–"+czk(a.mzdaDo):a.mzdaOd?T("inzOd")+" "+czk(a.mzdaOd):T("inzDo")+" "+czk(a.mzdaDo);
+  return r+" "+(a.mzdaJed||"Kč")}
+const splitL=s=>String(s||"").split(/\s*;\s*/).filter(Boolean);
+function inzRowHtml(a){return `<button class="inzrow" data-inzid="${esc(a.id)}"><span class="p">${esc(a.pozice)}</span><span class="m">${esc([splitL(a.uvazek)[0],mzdaText(a)].filter(Boolean).join(" · "))}</span></button>`}
+function inzBoxHtml(f){const ads=adsFor(f);if(!ads.length)return "";
+  return `<div class="inzbox"><div class="inzhead">📢 ${esc(T("inzBox",{n:ads.length}))}</div>${ads.map(inzRowHtml).join("")}</div>`}
+function inzFirm(a){return firmy.findIndex(f=>inzKey(f.nazev,f.adresa)===inzKey(a.podnik,a.adresa))}
+function inzShareUrl(a){return location.origin+location.pathname+"?inz="+encodeURIComponent(a.id)+"&zdroj=sdileni"}
+function inzDetail(a){
+  document.querySelector(".sheet-bg")?.remove();
+  track("inzerat-detail");
+  const fi=inzFirm(a);
+  const ph=firstPhone(a.tel);
+  const subj=`Reakce na inzerát: ${a.pozice}`;
+  const dl=[["inzMzda",mzdaText(a)],["inzUvazek",a.uvazek],["inzSmlouva",a.smlouva],["inzSmeny",a.smeny],["inzNastup",a.nastup],["inzMist",a.mist&&a.mist!=="1"?a.mist:""],
+    ["inzVzdelani",a.vzdelani],["inzPraxe",a.praxe],["inzJazyky",a.jazyky],["inzPozadavky",a.pozadavky]].filter(x=>x[1]);
+  const bg=document.createElement("div");bg.className="sheet-bg";
+  bg.innerHTML=`<div class="sheet inzdet" role="dialog" aria-label="${esc(a.pozice)}">
+    <h3>${esc(a.pozice)}</h3>
+    <p class="inzfirm">${esc(a.podnik)}${a.adresa?` · ${esc(a.adresa)}`:""}</p>
+    ${a.profese?`<div class="inztags"><span class="tag hire">${esc(a.profese)}</span>${a.obor?`<span class="tag">${esc(oborName(a.obor))}</span>`:""}</div>`:""}
+    <dl class="facts">${dl.map(([k,v])=>`<div><dt>${esc(T(k))}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+    ${a.nabizime?`<div><h4>${esc(T("inzNabizime"))}</h4><ul class="inzul">${splitL(a.nabizime).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
+    ${a.popis?`<div><h4>${esc(T("inzPopis"))}</h4><p class="desc inzpopis">${esc(a.popis)}</p></div>`:""}
+    <div><h4>${esc(T("inzJak"))}</h4><p class="desc">${esc(a.jak||"")}${a.osoba?` · ${esc(T("inzOsoba"))}: ${esc(a.osoba)}`:""}</p></div>
+    <p class="inzmeta">${esc(T("inzPlati",{d:fmtDate(isoOf(a.platiDo))||a.platiDo}))} · ${esc(a.id)}</p>
+    <div class="actions">
+      ${ph?`<a class="btn primary" href="tel:${ph}" data-ev="inzerat-zavolat">${ICON.tel} ${esc(T("call"))}</a>`:""}
+      ${a.mail?`<a class="btn${ph?"":" primary"}" href="mailto:${encodeURIComponent(a.mail)}?subject=${encodeURIComponent(subj)}" data-ev="inzerat-napsat">${ICON.mail} ${esc(T("write"))}</a>`:""}
+      ${fi>=0?`<button class="btn" data-inzfirm="${fi}">${esc(T("inzFirma"))}</button>`:""}
+      <button class="btn" data-inzshare>${esc(T("share"))}</button>
+    </div>
+    <button class="btn" data-close>${esc(T("close"))}</button></div>`;
+  document.body.appendChild(bg);
+  const close=()=>bg.remove();
+  bg.querySelector("[data-close]").onclick=close;
+  bg.addEventListener("click",e=>{
+    if(e.target===bg){close();return}
+    if(e.target.closest("[data-ev]"))track(e.target.closest("[data-ev]").dataset.ev);
+    if(e.target.closest("[data-inzshare]")){const url=inzShareUrl(a);track("inzerat-sdilet");
+      if(navigator.share)navigator.share({title:a.pozice,text:`${a.pozice} – ${a.podnik}`,url}).catch(()=>{});else copy(url,T("linkCopied"));return}
+    const fb=e.target.closest("[data-inzfirm]");if(fb){close();st.inzv=false;st.pin=firmy[+fb.dataset.inzfirm].nazev;show("firmy");render();window.scrollTo(0,0)}
+  });
+}
+/* proužek nad seznamem: kolik je inzerátů v lokalitě, klik otevře seznam inzerátů */
+function renderInzBar(){
+  const bar=$("#inzbar");if(!bar)return;
+  const n=INZ.filter(a=>areaHas(a.lokalita)).length,all=INZ.length;
+  if(st.mode!=="prace"||!all||st.inzv||st.pin){bar.innerHTML="";return}
+  bar.innerHTML=`<button class="inzbanner" data-inzlist>📢 <b>${esc(T("inzBanner",{n:n||all}))}</b>${st.area&&!n?` <small>${esc(T("inzJinde"))}</small>`:""} <span aria-hidden="true">→</span></button>`;
+}
+function inzListHtml(){
+  let list=INZ.filter(a=>areaHas(a.lokalita));const jinde=!list.length;if(jinde)list=INZ.slice();
+  const obory=[...new Set(list.map(a=>a.obor).filter(Boolean))];
+  if(st.inzObor&&!obory.includes(st.inzObor))st.inzObor="";
+  const vis=st.inzObor?list.filter(a=>a.obor===st.inzObor):list;
+  return `<div class="druhbar"><button data-inzback="1">← ${esc(T("inzBack"))}</button><strong>${esc(T("inzList"))}</strong></div>`+
+    (jinde&&st.area?`<p class="note">${esc(T("inzNoArea",{a:shortArea(st.area)}))}</p>`:"")+
+    (obory.length>1?`<div class="chips inzchips">${["",...obory].map(o=>`<button class="chip" data-inzobor="${esc(o)}" aria-pressed="${o===(st.inzObor||"")}">${esc(o?oborName(o):T("inzVse"))}</button>`).join("")}</div>`:"")+
+    `<div class="list">${vis.map(a=>`<article class="card inzcard" data-inzid="${esc(a.id)}" tabindex="0"><h3>${esc(a.pozice)}</h3><div class="meta">${esc(a.podnik)} · ${esc(shortArea(a.lokalita)||a.adresa)}</div><div class="inzline">${esc([a.profese,splitL(a.uvazek).join(", "),mzdaText(a)].filter(Boolean).join(" · "))}</div></article>`).join("")}</div>`+legalHtml();
+}
+/* odkazy z e-mailů a sdílení: ?p=<název>&inzerat=1 | &upravit=1, ?inz=<ID> */
+const DEEP=(()=>{try{const p=new URLSearchParams(location.search);return {inzerat:p.get("inzerat")==="1",upravit:p.get("upravit")==="1",inz:p.get("inz")||""}}catch(e){return {}}})();
+function deepLink(){
+  if((DEEP.inzerat||DEEP.upravit)&&st.pin){
+    const i=firmy.findIndex(f=>f.nazev===st.pin);
+    if(i>=0){const f=firmy[i];if(st.mode!=="prace"){st.mode="prace";store.set("mode","prace");applyMode();render()}
+      if(DEEP.upravit){DEEP.upravit=false;DEEP.inzerat=false;track("odkaz-upravit");editForm(f)}
+      else if(DEEP.inzerat&&INZERAT_URL){DEEP.inzerat=false;track("odkaz-inzerat");inzForm(f)}}
+  }
+  if(DEEP.inz){const a=INZ.find(x=>x.id===DEEP.inz);if(a){DEEP.inz="";inzDetail(a)}}
+}
+
+/* ---------- úprava údajů podniku (formulář pro firmy) ---------- */
+const UPR_MAX_POPIS=400; /* stejné číslo jako UPR_MAX_POPIS ve skriptu */
+function socUrl(v,kind){v=String(v||"").trim();if(!v)return "";if(/^https?:\/\//i.test(v))return v;
+  if(/^(www\.)?(facebook|fb|instagram|tiktok)\.com\//i.test(v))return "https://"+v.replace(/^www\./i,"www.");
+  const u=v.replace(/^@/,"");
+  if(kind==="fb")return "https://www.facebook.com/"+u;if(kind==="ig")return "https://www.instagram.com/"+u;if(kind==="tt")return "https://www.tiktok.com/@"+u;
+  return /\./.test(v)?"https://"+v:v}
+function socLinks(f){return [["fb","Facebook"],["ig","Instagram"],["tt","TikTok"]].filter(([k])=>f[k]).map(([k,n])=>`<a class="link" href="${esc(socUrl(f[k],k))}" target="_blank" rel="noopener" data-ev="soc-${k}">${n} ↗</a>`)
+  .concat(f.odkaz?[`<a class="link" href="${esc(socUrl(f.odkaz))}" target="_blank" rel="noopener" data-ev="soc-odkaz">${esc(String(f.odkaz).replace(/^https?:\/\/(www\.)?/,"").split("/")[0])} ↗</a>`]:[])}
+function editForm(f){
+  document.querySelector(".sheet-bg")?.remove();
+  track("upravit-formular");
+  const bg=document.createElement("div");bg.className="sheet-bg";
+  const fld=(n,l,v,ph,type="text",max=200)=>`<div class="field"><label for="u-${n}">${l}</label><input id="u-${n}" name="${n}" type="${type}" maxlength="${max}" value="${esc(v||"")}"${ph?` placeholder="${esc(ph)}"`:""}></div>`;
+  bg.innerHTML=`<form class="sheet iform" role="dialog" aria-label="Upravit údaje podniku" novalidate>
+    <h3>Upravit údaje podniku</h3>
+    <p class="note">Podnik <b>${esc(f.nazev)}</b>${f.adresa?`, ${esc(f.adresa)}`:""}. Opravte nebo doplňte, co je potřeba. Změnu potvrdíte odkazem, který pošleme na e-mail, který u podniku vedeme (když ho nemáme, zavoláme). Zveřejníme ji po kontrole.</p>
+    <div class="two">${fld("telefon","Telefon",f.telefon,"","tel",60)}${fld("email","E-mail",String(f.email||"").split(/[,;\s]+/)[0],"","email",80)}</div>
+    <div class="two">${fld("web","Web",f.web,"např. mujpodnik.cz","text",120)}${fld("hodiny","Otevírací doba",f.hodiny,"např. Po–Pá 8–17, So 9–12","text",150)}</div>
+    <div class="field"><label for="u-popis">Krátký popis</label><textarea id="u-popis" name="popis" maxlength="${UPR_MAX_POPIS}" placeholder="Co děláte, čím jste jiní…">${esc(f.popis||"")}</textarea><span class="cnt" id="u-cnt">${String(f.popis||"").length} / ${UPR_MAX_POPIS} znaků</span></div>
+    <fieldset class="field"><legend>Sociální sítě a odkazy</legend>
+      <div class="two">${fld("fb","Facebook",f.fb,"odkaz nebo název stránky","text",200)}${fld("ig","Instagram",f.ig,"@uzivatel nebo odkaz","text",200)}</div>
+      <div class="two">${fld("tt","TikTok",f.tt,"@uzivatel nebo odkaz","text",200)}${fld("odkaz","Jiný odkaz",f.odkaz,"menu, rezervace, Google Mapy…","text",300)}</div></fieldset>
+    <div class="two">${fld("osoba","Vaše jméno *","","","text",80)}${fld("funkce","Funkce v podniku","","např. majitel, provozní","text",60)}</div>
+    <div class="field"><label for="u-poznamka">Poznámka pro nás</label><input id="u-poznamka" name="poznamka" maxlength="300" placeholder="Např. co smazat nebo co je jinak (nepovinné)"></div>
+    <input name="web2" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+    <label class="one"><input type="checkbox" name="souhlas"><span>Jsem oprávněn/a údaje za podnik měnit a souhlasím se <a class="link" href="ochrana-udaju/" target="_blank" rel="noopener">zpracováním údajů</a>. *</span></label>
+    <p class="ierr" role="alert" hidden></p>
+    <div class="actions"><button class="btn primary" type="submit">Odeslat ke schválení</button><button class="btn" type="button" data-close>Zavřít</button></div>
+  </form>`;
+  document.body.appendChild(bg);
+  const fm=bg.querySelector("form"),$i=n=>fm.elements[n],err=bg.querySelector(".ierr"),close=()=>bg.remove();
+  bg.querySelector("[data-close]").onclick=close;
+  bg.addEventListener("click",e=>{if(e.target===bg)close()});
+  $i("popis").oninput=()=>{const n=$i("popis").value.length,c=bg.querySelector("#u-cnt");c.textContent=`${n} / ${UPR_MAX_POPIS} znaků`;c.classList.toggle("max",n>=UPR_MAX_POPIS*.95)};
+  fm.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const v=n=>String($i(n).value||"").trim();
+    const orig={telefon:f.telefon,email:String(f.email||"").split(/[,;\s]+/)[0],web:f.web,hodiny:f.hodiny,popis:f.popis,fb:f.fb,ig:f.ig,tt:f.tt,odkaz:f.odkaz};
+    /* posíláme jen to, co se změnilo */
+    const d={typ:"uprava",podnik:f.nazev,adresa:f.adresa||"",osoba:v("osoba"),funkce:v("funkce"),poznamka:v("poznamka"),souhlas:$i("souhlas").checked,lang:st.lang,web2:v("web2")};
+    let zmen=0;for(const k in orig){let x=v(k);if(["fb","ig","tt","odkaz"].includes(k))x=socUrl(x,k);if(x&&x!==String(orig[k]||"").trim()){d[k]=x;zmen++}}
+    const miss=[[!zmen,"aspoň jeden změněný údaj"],[!d.osoba,"vaše jméno"],[!d.souhlas,"souhlas"]].filter(x=>x[0]).map(x=>x[1]);
+    if(d.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email))miss.push("e-mail ve správném tvaru");
+    if(miss.length){err.textContent="Doplňte prosím: "+miss.join(", ")+".";err.hidden=false;err.scrollIntoView({block:"nearest"});return}
+    err.hidden=true;const sb=fm.querySelector("[type=submit]");sb.disabled=true;sb.textContent="Odesílám…";
+    try{
+      const r=await fetch(INZERAT_URL,{method:"POST",body:JSON.stringify(d)});const o=await r.json();
+      if(!o.ok)throw new Error(o.err||"Chyba");
+      track("upravit-odeslano");
+      fm.innerHTML=`<h3>Děkujeme, úprava je odeslaná</h3>
+        <p>${o.stav==="email"?`Na e-mail podniku <b>${esc(o.mail)}</b> jsme poslali odkaz k potvrzení. Po kliknutí na něj změny zkontrolujeme a zapíšeme.`
+          :`Ozveme se na telefon podniku, abychom změnu ověřili. Pak ji zapíšeme.`}</p>
+        <p class="inzid">Číslo úpravy: ${esc(o.id||"")}</p><button class="btn" type="button" data-close>Zavřít</button>`;
+      fm.querySelector("[data-close]").onclick=close;
+    }catch(ex){
+      err.textContent=(ex&&ex.message&&ex.message!=="Failed to fetch"?ex.message+" ":"")+"Pokud to nepůjde, napište nám na domecekcafe@gmail.com.";
+      err.hidden=false;sb.disabled=false;sb.textContent="Odeslat ke schválení"}
+  });
 }
 
 /* ---------- pracovní inzeráty: formulář „Přidat inzerát“ (fáze 1) ----------
@@ -1442,7 +1631,7 @@ async function drawMap(items){
   const b=[];
   pts.forEach(([f,i])=>{const ph=firstPhone(f.telefon);
     /* tečka jako HTML prvek 34×34 px – na iPhonu se na ni dá spolehlivě klepnout */
-    const m=L.marker([f.lat,f.lng],{icon:L.divIcon({className:"mk",html:"<i></i>",iconSize:[34,34],iconAnchor:[17,17],popupAnchor:[0,-10],tooltipAnchor:[8,0]}),title:f.nazev,keyboard:true}).addTo(LMAP);
+    const m=L.marker([f.lat,f.lng],{icon:L.divIcon({className:adsFor(f).length?"mk job":"mk",html:"<i></i>",iconSize:[34,34],iconAnchor:[17,17],popupAnchor:[0,-10],tooltipAnchor:[8,0]}),title:f.nazev,keyboard:true}).addTo(LMAP);
     m.bindTooltip(esc(f.nazev),{permanent:true,direction:"right",offset:[-2,-8],className:"lbl"});
     m.bindPopup(`<div class="pop"><b>${esc(f.nazev)}</b>${f.druh?`<span>${esc(cap(druhName(f.druh)))}</span>`:""}${st.mode==="sluzba"&&f.hodiny?`<span>${esc(hoursText(f.hodiny))}</span>`:""}
       <div class="pop-a">${ph?`<a href="tel:${ph}" data-call="${i}">${esc(T("call"))}</a>`:""}<a href="${mapUrl(f)}" target="_blank" rel="noopener">${esc(T("navigate"))}</a></div></div>`);
@@ -1499,6 +1688,8 @@ function render(){
   const tot=inArea.length;
   $("#count").textContent=nT("total",tot);
   if(LMAP&&(st.view!=="map")){LMAP.remove();LMAP=null}
+  renderInzBar();
+  if(st.inzv&&st.mode==="prace"&&!st.pin){if(LMAP){LMAP.remove();LMAP=null}$("#firmy").innerHTML=inzListHtml();return}
   if(st.pin){
     const items=firmy.map((f,i)=>[f,i]).filter(([f])=>f.nazev===st.pin);
     $("#firmy").innerHTML=`<div class="druhbar"><button data-unpin="1">← ${esc(T("allFirms"))}</button></div>`+(items.length?`<div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div>`:`<div class="empty">${esc(dataSource==="live"?T("nothing"):T("loading"))}</div>`);
@@ -1601,10 +1792,12 @@ async function shareFirm(f){const url=shareUrl(f),title=f.nazev,text=T("shareTxt
   copy(url,T("linkCopied"))}
 
 /* ---------- události ---------- */
-$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.obor=b.dataset.o;st.druh="";st.nove=false;st.pin="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();window.scrollTo(0,0)});
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;st.inzv=false;st.obor=b.dataset.o;st.druh="";st.nove=false;st.pin="";if(st.obor!==AZ)store.set("obor",st.obor);else track("vse-az",true);render();window.scrollTo(0,0)});
 $("#sugg").addEventListener("click",e=>{const a=e.target.closest("[data-sarea]");if(a){st.q="";$("#q").value="";st.areaMsg=null;track("hledani-lokalita");setArea(a.dataset.sarea);return}
   const b=e.target.closest("[data-druh]");if(b)pickDruh(b.dataset.druh,"hledani")});
 $("#area").addEventListener("click",areaOpen);
+$("#inzbar").addEventListener("click",e=>{if(e.target.closest("[data-inzlist]")){st.inzv=true;st.inzObor="";track("inzeraty-seznam");render();window.scrollTo(0,0)}});
+$("#firmy").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.matches(".inzcard")){const a=INZ.find(x=>x.id===e.target.dataset.inzid);if(a)inzDetail(a)}});
 addEventListener("resize",()=>{if(!matchMedia("(max-width:600px)").matches)areaClose()});
 addEventListener("scroll",areaPlace,{passive:true});
 $("#areabar").addEventListener("click",e=>{
@@ -1626,6 +1819,8 @@ function cardClick(e,inMoje){
   const s=e.target.closest("[data-star]");if(s){toggleSave(firmy[+s.dataset.star]);inMoje?renderMoje():render();return true}
   const sh=e.target.closest("[data-share]");if(sh){shareFirm(firmy[+sh.dataset.share]);return true}
   const iz=e.target.closest("[data-inz]");if(iz){inzForm(firmy[+iz.dataset.inz]);return true}
+  const up=e.target.closest("[data-upr]");if(up){editForm(firmy[+up.dataset.upr]);return true}
+  const ia=e.target.closest("[data-inzid]");if(ia){const a=INZ.find(x=>x.id===ia.dataset.inzid);if(a)inzDetail(a);return true}
   const ev=e.target.closest("[data-ev]");if(ev){track(ev.dataset.ev);return true}
   return false;
 }
@@ -1633,6 +1828,8 @@ $("#firmy").addEventListener("click",e=>{
   const dz=e.target.closest("[data-druh]");if(dz){if(st.obor===AZ)pickDruh(dz.dataset.druh,"rejstrik");else{st.druh=dz.dataset.druh;track("druh-"+st.druh);render();window.scrollTo(0,0)}return}
   if(e.target.closest("[data-back]")){if(st.nove)st.nove=false;else if(st.gasSub){st.druh=GAS;st.gasSub=false}else st.druh="";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-more]")){pageShown+=PAGE_SIZE;const y=scrollY;render();scrollTo(0,y);return}
+  if(e.target.closest("[data-inzback]")){st.inzv=false;render();window.scrollTo(0,0);return}
+  const io=e.target.closest("[data-inzobor]");if(io){st.inzObor=io.dataset.inzobor;render();return}
   if(e.target.closest("[data-unpin]")){st.pin="";history.replaceState(null,"",location.pathname);render();return}
   const so=e.target.closest("[data-sort]");if(so){
     if(so.dataset.sort==="az"){if(st.near){st.near=null;render()}return}
@@ -1674,10 +1871,10 @@ function csvToFirmy(text){
   if(!rows.length||!rows[0]) return null;
   const h=rows[0].map(x=>norm(x).trim());
   const AL={druh:["druh","druh (pro statistiku)"],oblast:["oblast","lokalita"],nazev:["nazev","nazev podniku"],email:["email","e-mail pro aplikaci"],hodiny:["hodiny","oteviraci doba"],styl:["styl","druh kuchyne / styl"],overeno:["overeno","stav overeni udaju"],
-    pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"],typp:["typ parkovani"],platba:["odkaz na platbu"],dum:["dum","dum / areal"],osoba:["osoba","lekar / osoba"]};
+    pridano:["pridano","pridano (datum)"],nabira:["hleda lidi","hleda lidi (pozice | datum)"],gps:["gps","gps (lat, lng)"],stylEn:["styl en"],popisEn:["popis en"],stylUk:["styl uk"],popisUk:["popis uk"],typp:["typ parkovani"],platba:["odkaz na platbu"],dum:["dum","dum / areal"],osoba:["osoba","lekar / osoba"],fb:["facebook"],ig:["instagram"],tt:["tiktok"],odkaz:["dalsi odkaz"]};
   const ix=k=>{for(const a of (AL[k]||[k])){const i=h.indexOf(a);if(i>=0)return i}return -1};
   if(ix("nazev")<0) return null;
-  const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk","typp","platba","dum","osoba"];
+  const keys=["oblast","obor","nazev","adresa","mesto","telefon","email","web","hodiny","styl","popis","overeno","druh","pridano","nabira","gps","stylEn","popisEn","stylUk","popisUk","typp","platba","dum","osoba","fb","ig","tt","odkaz"];
   const data=rows.slice(1).filter(r=>r[ix("nazev")]).map(r=>{const o={};keys.forEach(k=>o[k]=ix(k)>=0?(r[ix(k)]||"").trim():"");o.obor=o.obor||"Gastronomie";return prep(o)});
   return data.length?data:null;
 }
@@ -1701,7 +1898,7 @@ async function loadLive(){
     /* stejná data jako uložená kopie: nic se nepřekresluje */
     if(dataSource==="cache"&&text===cacheGet()){dataSource="live";return}
     const data=csvToFirmy(text);
-    if(data){firmy=data;dataSource="live";cacheSet(text);render();if(!$("#view-moje").hidden)renderMoje();renderHint()}
+    if(data){firmy=data;dataSource="live";cacheSet(text);render();if(!$("#view-moje").hidden)renderMoje();renderHint();deepLink()}
   }catch(e){/* zůstanou vložená nebo uložená data */}
 }
 firmy.forEach(prep);
@@ -1813,7 +2010,7 @@ function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setA
   const sl=st.mode==="sluzba";document.documentElement.dataset.mode=st.mode;$("#tab-navody").hidden=sl}
 document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
 applyLang();applyMode();renderTabBadge();
-loadCached(); render(); loadLive(); loadLok();
+loadCached(); render(); loadLive(); loadLok(); loadInz();
 const h0=(location.hash||"").slice(1); if(["navody","onas","moje"].includes(h0)) show(h0);
 else if(!store.get("onb")&&!st.pin) startWizard();
 </script>
