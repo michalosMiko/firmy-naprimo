@@ -1287,7 +1287,7 @@ function hiring(f){if(!f.nabira)return null;const [txt,d]=String(f.nabira).split
 function km(f){if(!st.near||f.lat==null)return null;const R=6371,r=x=>x*Math.PI/180;const dLa=r(f.lat-st.near.lat),dLo=r(f.lng-st.near.lng);
   const a=Math.sin(dLa/2)**2+Math.cos(r(st.near.lat))*Math.cos(r(f.lat))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(a))}
 function fmtKm(k){return k<1?Math.round(k*1000/50)*50+" m":(Math.round(k*10)/10).toLocaleString(LOC[st.lang])+" km"}
-function shareUrl(f){return location.origin+location.pathname+"?p="+encodeURIComponent(f.nazev)+"&zdroj=sdileni"}
+function shareUrl(f){return location.origin+location.pathname+"?p="+encodeURIComponent(f.nazev)+(f.adresa?"&a="+encodeURIComponent(f.adresa):"")+"&zdroj=sdileni"}
 function fixHref(f){const subj=`Oprava údajů – ${f.nazev}`;const body=`Dobrý den,\n\nu podniku ${f.nazev} (${f.adresa||""}) v aplikaci Práce napřímo prosím o opravu / doplnění:\n\n[co je špatně nebo co doplnit – telefon, otevírací doba, e-mail, hledáme lidi…]\n\nJsem: [majitel / zaměstnanec / zákazník]\n`;
   return `mailto:domecekcafe@gmail.com?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`}
 
@@ -1411,7 +1411,7 @@ function inzDetail(a){
     if(e.target.closest("[data-ev]"))track(e.target.closest("[data-ev]").dataset.ev);
     if(e.target.closest("[data-inzshare]")){const url=inzShareUrl(a);track("inzerat-sdilet");
       if(navigator.share)navigator.share({title:a.pozice,text:`${a.pozice} – ${a.podnik}`,url}).catch(()=>{});else copy(url,T("linkCopied"));return}
-    const fb=e.target.closest("[data-inzfirm]");if(fb){close();st.inzv=false;st.pin=firmy[+fb.dataset.inzfirm].nazev;show("firmy");render();window.scrollTo(0,0)}
+    const fb=e.target.closest("[data-inzfirm]");if(fb){close();st.inzv=false;{const ff=firmy[+fb.dataset.inzfirm];st.pin=ff.nazev;st.pinA=ff.adresa||""}show("firmy");render();window.scrollTo(0,0)}
   });
 }
 /* proužek nad seznamem: kolik je inzerátů v lokalitě, klik otevře seznam inzerátů */
@@ -1431,11 +1431,14 @@ function inzListHtml(){
     (obory.length>1?`<div class="chips inzchips">${["",...obory].map(o=>`<button class="chip" data-inzobor="${esc(o)}" aria-pressed="${o===(st.inzObor||"")}">${esc(o?oborName(o):T("inzVse"))}</button>`).join("")}</div>`:"")+
     `<div class="list">${vis.map(a=>`<article class="card inzcard" data-inzid="${esc(a.id)}" tabindex="0"><h3>${esc(a.pozice)}</h3><div class="meta">${esc(a.podnik)} · ${esc(shortArea(a.lokalita)||a.adresa)}</div><div class="inzline">${esc([a.profese,splitL(a.uvazek).join(", "),mzdaText(a)].filter(Boolean).join(" · "))}</div></article>`).join("")}</div>`+legalHtml();
 }
-/* odkazy z e-mailů a sdílení: ?p=<název>&inzerat=1 | &upravit=1, ?inz=<ID> */
+/* odkazy z e-mailů a sdílení: ?p=<název>[&a=<adresa>]&inzerat=1 | &upravit=1, ?inz=<ID> */
 const DEEP=(()=>{try{const p=new URLSearchParams(location.search);return {inzerat:p.get("inzerat")==="1",upravit:p.get("upravit")==="1",inz:p.get("inz")||""}}catch(e){return {}}})();
+/* ?p=<název>&a=<adresa>: stejný název má víc podniků v Praze, adresa vybere ten správný (bez shody adresy → všechny se stejným názvem) */
+function pinIdx(){const all=firmy.map((f,i)=>f.nazev===st.pin?i:-1).filter(i=>i>=0);
+  if(!st.pinA||all.length<2)return all;const k=inzKey(st.pin,st.pinA),one=all.filter(i=>inzKey(firmy[i].nazev,firmy[i].adresa)===k);return one.length?one:all}
 function deepLink(){
   if((DEEP.inzerat||DEEP.upravit)&&st.pin){
-    const i=firmy.findIndex(f=>f.nazev===st.pin);
+    const i=pinIdx().find(i=>i>=0)??-1;
     if(i>=0){const f=firmy[i];if(st.mode!=="prace"){st.mode="prace";store.set("mode","prace");applyMode();render()}
       if(DEEP.upravit){DEEP.upravit=false;DEEP.inzerat=false;track("odkaz-upravit");editForm(f)}
       else if(DEEP.inzerat&&INZERAT_URL){DEEP.inzerat=false;track("odkaz-inzerat");inzForm(f)}}
@@ -1692,7 +1695,7 @@ function render(){
   renderInzBar();
   if(st.inzv&&st.mode==="prace"&&!st.pin){if(LMAP){LMAP.remove();LMAP=null}$("#firmy").innerHTML=inzListHtml();return}
   if(st.pin){
-    const items=firmy.map((f,i)=>[f,i]).filter(([f])=>f.nazev===st.pin);
+    const items=pinIdx().map(i=>[firmy[i],i]);
     $("#firmy").innerHTML=`<div class="druhbar"><button data-unpin="1">← ${esc(T("allFirms"))}</button></div>`+(items.length?`<div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div>`:`<div class="empty">${esc(dataSource==="live"?T("nothing"):T("loading"))}</div>`);
     return;
   }
@@ -2006,7 +2009,7 @@ st.area=typeof store.get("area")==="string"?store.get("area"):"";
 st.obor=OBORY.includes(store.get("obor"))?store.get("obor"):"Gastronomie";
 st.mode=store.get("mode")==="sluzba"?"sluzba":"prace";
 st.lang=(()=>{const s=store.get("lang");if(I18N[s])return s;const n=(navigator.languages||[navigator.language||""]).map(x=>String(x).toLowerCase());return n.some(x=>x.startsWith("uk"))?"uk":"cs"})();
-try{const p=new URLSearchParams(location.search).get("p");if(p)st.pin=p;const l=new URLSearchParams(location.search).get("lang");if(I18N[l]){st.lang=l;store.set("lang",l)}}catch(e){}
+try{const p=new URLSearchParams(location.search).get("p");if(p){st.pin=p;st.pinA=new URLSearchParams(location.search).get("a")||""}const l=new URLSearchParams(location.search).get("lang");if(I18N[l]){st.lang=l;store.set("lang",l)}}catch(e){}
 function applyMode(){document.querySelectorAll(".mode button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode)));
   const sl=st.mode==="sluzba";document.documentElement.dataset.mode=st.mode;$("#tab-navody").hidden=sl}
 document.querySelectorAll(".mode button").forEach(b=>b.onclick=()=>{st.mode=b.dataset.mode;store.set("mode",st.mode);track("rezim-"+st.mode);applyMode();render()});
