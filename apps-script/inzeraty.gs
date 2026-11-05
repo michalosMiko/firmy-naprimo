@@ -20,6 +20,7 @@ const CFG = {
   MAX_NA_PODNIK: 5,                     // kolik rozpracovaných + aktivních inzerátů smí mít jeden podnik
   MAX_ZA_HODINU: 30,                    // ochrana proti zahlcení: inzerátů za hodinu celkem
   PLATNOST: [14, 30, 60],               // povolené platnosti ve dnech
+  MAX_POPIS: 2000,                      // nejvýš znaků v popisu práce (na webu INZ_MAX_POPIS)
 };
 
 const STAV = {
@@ -128,7 +129,7 @@ function over(d) {
   if (d.mzdaOd && d.mzdaDo && Number(d.mzdaDo) < Number(d.mzdaOd)) return 'Mzda „do“ je menší než „od“.';
   if (!d.telUch && !d.mailUch) return 'Vyplňte telefon nebo e-mail pro uchazeče.';
   if (d.mailUch && !platnyMail(d.mailUch)) return 'E-mail pro uchazeče nevypadá správně.';
-  if (String(d.popis).length > 3000) return 'Popis je moc dlouhý (max. 3000 znaků).';
+  if (String(d.popis).length > CFG.MAX_POPIS) return 'Popis je moc dlouhý (max. ' + CFG.MAX_POPIS + ' znaků).';
   if (!CFG.PLATNOST.includes(Number(d.platnost))) d.platnost = 30;
   if (d.mzdaDohodou) { d.mzdaOd = ''; d.mzdaDo = ''; d.mzdaJed = 'dohodou'; }
   d.ukazJmeno = d.ukazJmeno ? 'ano' : 'ne';
