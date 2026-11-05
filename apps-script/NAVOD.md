@@ -16,7 +16,7 @@ Skript `inzeraty.gs` přijímá inzeráty z formuláře na webu, posílá potvrz
 2. Google se zeptá na oprávnění. Klikni na **Zkontrolovat oprávnění**, vyber svůj účet,
    pak **Rozšířené → Přejít na Inzeráty (nebezpečné)** a **Povolit**.
    (Varování se ukazuje u každého vlastního skriptu. Skript běží jen pod tvým účtem.)
-3. V tabulce vznikne list **Inzeráty** s hlavičkou a každou noc ve 3:00 se spustí kontrola, která vypršelé inzeráty přepne na „vypršelo“.
+3. List **Inzeráty** s hlavičkou už v tabulce je (založil ho Claude). Funkce `nastavit` hlavně povolí skriptu přístup a zapne kontrolu každou noc ve 3:00, která vypršelé inzeráty přepne na „vypršelo“.
 
 ## 3. Zveřejnit skript jako webovou aplikaci
 

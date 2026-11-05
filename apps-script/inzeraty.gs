@@ -285,15 +285,18 @@ function listInzeraty() {
 function najdiPodnik(nazev, adresa) {
   const sh = SpreadsheetApp.getActive().getSheetByName(CFG.LIST_POD);
   const head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(norm);
-  const col = (...jmena) => { for (const j of jmena) { const i = head.indexOf(norm(j)); if (i >= 0) return i; } return -1; };
-  const iNaz = [col('Název v aplikaci'), col('Název podniku', 'Název')].filter(i => i >= 0);
-  const iAdr = col('Adresa'), iMail = col('E-mail pro aplikaci', 'E-mail'), iTel = col('Telefon'), iLok = col('Lokalita');
+  // hlavička přesně, nebo začátek hlavičky (např. „Název v aplikaci (vzorec, needitovat)“)
+  const col = (j) => { const n = norm(j); let i = head.indexOf(n); if (i < 0) i = head.findIndex(x => x.startsWith(n + ' ')); return i; };
+  const iNaz = [col('Název v aplikaci'), col('Název podniku')].filter(i => i >= 0);
+  const iAdr = col('Adresa'), iTel = col('Telefon'), iLok = col('Lokalita');
+  const iMail = [col('E-mail pro aplikaci'), col('E-mail')].filter(i => i >= 0); // nejdřív e-mail z karty, pak z rešerše
   const vals = sh.getRange(2, 1, sh.getLastRow() - 1, head.length).getValues();
   const n = norm(nazev), a = norm(adresa);
   for (let k = 0; k < vals.length; k++) {
     const r = vals[k];
     if (iNaz.some(i => norm(r[i]) === n) && (iAdr < 0 || norm(r[iAdr]) === a)) {
-      return { radek: k + 2, email: String(iMail >= 0 ? r[iMail] : '').split(/[,;\s]+/)[0], telefon: iTel >= 0 ? String(r[iTel]) : '', lokalita: iLok >= 0 ? r[iLok] : '' };
+      const email = iMail.map(i => String(r[i]).split(/[,;\s]+/)[0]).find(platnyMail) || '';
+      return { radek: k + 2, email: email, telefon: iTel >= 0 ? String(r[iTel]) : '', lokalita: iLok >= 0 ? r[iLok] : '' };
     }
   }
   return null;
