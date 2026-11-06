@@ -282,6 +282,9 @@ details.qa p{margin:8px 0 0}
 .iform .inzid{color:var(--muted);font-size:13px;margin:0}
 .iform .actions{display:grid;grid-template-columns:2fr 1fr;gap:8px}
 .uchban{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--accent-soft);border-radius:16px;padding:10px 14px;margin:4px 0 12px;font-size:14px;line-height:1.45}
+.uchpub .uchpubbox{display:grid;gap:8px;margin-top:8px}
+.uchcard h3{margin:0}.uchcard .inzline{font-size:13.5px;margin-top:4px}.uchcard .uchmore{font-size:13.5px;margin-top:8px;display:grid;gap:3px}
+.uchcard .uchmore p{margin:0}.uchcard .omne{white-space:pre-line;margin-top:6px}.uchcard .row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .uchban .btn{flex:none}
 .uchban .btn{padding:9px 14px;font-size:14px}
 @media (max-width:420px){.uchban{font-size:13.5px;gap:10px}}
@@ -1699,7 +1702,7 @@ function uchForm(){
   bg.innerHTML=`<form class="sheet iform" role="dialog" aria-label="Hledám práci" novalidate>
     <h3>Hledám práci</h3>
     <p class="note">Vyplňte, co hledáte. Hned vám pošleme e-mail s podniky ve vaší lokalitě a návodem, jak je napřímo oslovit. Údaje ani životopis nikde nezveřejňujeme.</p>
-    <div class="two"><div class="field"><label for="u-jmeno">Jméno a příjmení *</label><input id="u-jmeno" name="jmeno" maxlength="80" autocomplete="name"></div>
+    <div class="two"><div class="field"><label for="u-jmeno">Jméno</label><input id="u-jmeno" name="jmeno" maxlength="80" autocomplete="name" placeholder="nepovinné, nezveřejňuje se"></div>
       <div class="field"><label for="u-email">E-mail *</label><input id="u-email" name="email" type="email" maxlength="100" autocomplete="email" placeholder="sem pošleme tipy"></div></div>
     <div class="field"><label for="u-telefon">Telefon</label><input id="u-telefon" name="telefon" type="tel" maxlength="40" autocomplete="tel" placeholder="nepovinné"></div>
     <div class="two"><div class="field"><label for="u-lokalita">Kde chcete pracovat *</label>${ao?`<select id="u-lokalita" name="lokalita">${ao}</select>`:`<input id="u-lokalita" name="lokalita" maxlength="80" placeholder="např. Praha - Nusle">`}</div>
@@ -1721,6 +1724,12 @@ function uchForm(){
     <div class="field"><label for="u-omne">Krátce o sobě</label><textarea id="u-omne" name="omne" maxlength="${UCH_MAX_OMNE}" placeholder="Co umíte, kde jste pracoval/a, co by vás bavilo…"></textarea><span class="cnt" id="u-cnt" aria-live="polite">0 / ${UCH_MAX_OMNE} znaků</span></div>
     <div class="field"><label for="u-cv">Životopis</label><input id="u-cv" name="cv" type="file" accept=".pdf,.doc,.docx,.odt,.jpg,.jpeg,.png"><span class="hint">PDF, Word nebo fotka, nejvýš 5 MB. Nepovinné. Uložíme ho neveřejně, podnikům ho neposíláme.</span></div>
     <input name="web2" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+    <fieldset class="field uchpub"><legend>Inzerát pro firmy</legend>
+      <label class="one"><input type="checkbox" name="zverejnit"><span><b>Zveřejnit můj inzerát</b>, aby mě mohly oslovit firmy a personalisté.</span></label>
+      <div class="uchpubbox" hidden>
+        <p class="hint">Firmy uvidí profesi, lokalitu, podmínky, text „Krátce o sobě“ a kontakt, který vyberete. Jméno ani životopis nezveřejňujeme. Inzerát zveřejníme na 60 dní, až v e-mailu kliknete na „Zveřejnit inzerát“. Stáhnout ho můžete kdykoli.</p>
+        <div class="chks"><label><input type="checkbox" name="ukazTel"> Ukázat telefon</label><label><input type="checkbox" name="ukazMail"> Ukázat e-mail</label></div>
+      </div></fieldset>
     <label class="one"><input type="checkbox" name="upozornit"><span>Pošlete mi e-mail, když se v mé lokalitě objeví inzerát v mém oboru.</span></label>
     <label class="one"><input type="checkbox" name="souhlas"><span>Souhlasím se <a class="link" href="ochrana-udaju/#uchazeci" target="_blank" rel="noopener">zpracováním údajů</a> na 12 měsíců. Kdykoli je můžu smazat odkazem z e-mailu. *</span></label>
     <p class="ierr" role="alert" hidden></p>
@@ -1733,6 +1742,8 @@ function uchForm(){
   bg.addEventListener("click",e=>{if(e.target===bg)close()});
   $i("obor").onchange=()=>{$i("profese").innerHTML=inzProfOpts($i("obor").value);bg.querySelector("#u-jinabox").hidden=true};
   $i("profese").onchange=()=>{const j=$i("profese").value==="_jina";bg.querySelector("#u-jinabox").hidden=!j;if(j)$i("jina").focus()};
+  $i("zverejnit").onchange=()=>{bg.querySelector(".uchpubbox").hidden=!$i("zverejnit").checked;if($i("zverejnit").checked&&!$i("ukazTel").checked&&!$i("ukazMail").checked)$i(v0("telefon")?"ukazTel":"ukazMail").checked=true};
+  const v0=n=>String($i(n).value||"").trim();
   $i("omne").oninput=()=>{const n=$i("omne").value.length,c=bg.querySelector("#u-cnt");c.textContent=`${n} / ${UCH_MAX_OMNE} znaků`;c.classList.toggle("max",n>=UCH_MAX_OMNE*.95)};
   const readCv=file=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]||"");r.onerror=()=>ko(new Error("Životopis se nepodařilo načíst."));r.readAsDataURL(file)});
   fm.addEventListener("submit",async e=>{
@@ -1745,9 +1756,12 @@ function uchForm(){
       obor:v("obor"),profese:prof,dalsi:v("dalsi"),uvazek:all("uvazek"),smlouva:all("smlouva"),smeny:all("smeny"),
       nastup:v("nastup"),praxe:v("praxe"),vzdelani:v("vzdelani")==="Neuvádím"?"":v("vzdelani"),jazyky:all("jazyky"),mam:all("mam"),
       mzda:v("mzda"),mzdaJed:v("mzda")?v("mzdaJed"):"",omne:v("omne"),upozornit:$i("upozornit").checked,
+      zverejnit:$i("zverejnit").checked,ukazTel:$i("zverejnit").checked&&$i("ukazTel").checked,ukazMail:$i("zverejnit").checked&&$i("ukazMail").checked,
       lang:st.lang,souhlas:$i("souhlas").checked,web2:v("web2")};
-    const miss=[[!d.jmeno,"jméno"],[!d.email,"e-mail"],[!d.lokalita,"kde chcete pracovat"],[!d.profese,"profesi"],[!d.uvazek.length,"úvazek"],[!d.souhlas,"souhlas"]].filter(x=>x[0]).map(x=>x[1]);
+    const miss=[[!d.email,"e-mail"],[!d.lokalita,"kde chcete pracovat"],[!d.profese,"profesi"],[!d.uvazek.length,"úvazek"],[!d.souhlas,"souhlas"]].filter(x=>x[0]).map(x=>x[1]);
     if(d.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email))miss.push("e-mail ve správném tvaru");
+    if(d.zverejnit&&!d.ukazTel&&!d.ukazMail)miss.push("jaký kontakt ukázat u inzerátu (telefon nebo e-mail)");
+    if(d.ukazTel&&!d.telefon)miss.push("telefon, když ho chcete ukázat u inzerátu");
     if(file&&!UCH_CV_TYP[ext])miss.push("životopis jako PDF, Word nebo fotku");
     if(file&&file.size>UCH_MAX_CV)miss.push("menší životopis (nejvýš 5 MB)");
     if(miss.length){err.textContent="Doplňte prosím: "+miss.join(", ")+".";err.hidden=false;err.scrollIntoView({block:"nearest"});return}
@@ -1761,6 +1775,7 @@ function uchForm(){
       fm.innerHTML=`<h3>Hotovo, tipy jsou na cestě</h3>
         <p>Na <b>${esc(d.email)}</b> jsme poslali e-mail s návodem, jak podniky oslovit. Když nepřijde do pár minut, podívejte se do spamu.</p>
         ${o.podniku?`<p>V lokalitě ${esc(kde)} máme <b>${o.podniku} ${o.podniku===1?"podnik":o.podniku<5?"podniky":"podniků"}</b>${ob?` v oboru ${esc(oborName(ob))}`:""}.</p>`:""}
+        ${d.zverejnit?`<p class="note"><b>Inzerát pro firmy:</b> zveřejníme ho, až v e-mailu kliknete na <b>Zveřejnit inzerát</b>.</p>`:""}
         ${o.hledaji?`<p class="note">${o.hledaji} z nich právě hledá lidi. Na webu mají štítek <b>Hledá lidi</b>.</p>`:""}
         <p>Nemusíte čekat: podniky si můžete prohlédnout hned. U každého je telefon a tlačítko <b>Napsat</b> s hotovým textem.</p>
         ${o.id?`<p class="inzid">Číslo přihlášky: ${esc(o.id)}</p>`:""}
@@ -1773,6 +1788,56 @@ function uchForm(){
   });
 }
 document.addEventListener("click",e=>{if(e.target.closest("[data-uch]")){e.preventDefault();uchForm()}});
+
+/* ---------- Lidé hledají práci: zveřejněné inzeráty uchazečů ----------
+   Čte veřejný list „Hledají práci“ (QUERY jen zveřejněných řádků z neveřejného listu Uchazeči,
+   bez jména a životopisu). Ukazuje se v Pracovních inzerátech na kartě „Lidé hledají práci“. */
+let UCH=null,uchP=null;
+const UCH_COL={id:"ID",zverejneno:"Zveřejněno",plati:"Platí do",lokalita:"Lokalita",dojezd:"Dojíždění",obor:"Obor",profese:"Profese",dalsi:"Další profese",
+  uvazek:"Úvazek",smlouva:"Smlouva",smeny:"Směny",nastup:"Nástup",praxe:"Praxe",vzdelani:"Vzdělání",jazyky:"Jazyky",mam:"Mám",
+  mzda:"Mzda představa",mzdaJed:"Mzda jednotka",omne:"O mně",tel:"Telefon",mail:"E-mail"};
+function uchFromCsv(t){const rows=parseCSV(t);if(rows.length<2)return [];const hd=rows[0].map(x=>x.trim());
+  return rows.slice(1).map(r=>{const o={};for(const k in UCH_COL){const i=hd.indexOf(UCH_COL[k]);o[k]=i<0?"":String(r[i]||"").trim()}return o}).filter(o=>o.id&&o.profese)}
+function loadUch(){if(uchP)return uchP;
+  try{const c=store.get("uchCache");if(c&&c.t)UCH=uchFromCsv(c.t)}catch(e){}
+  uchP=(async()=>{try{const ctl=new AbortController();setTimeout(()=>ctl.abort(),10000);
+    const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent("Hledají práci")}`,{signal:ctl.signal,cache:"no-store"});
+    if(r.ok){const t=await r.text();if(!/^\s*</.test(t)){UCH=uchFromCsv(t);store.set("uchCache",{t})}}}catch(e){}
+    if(!UCH)UCH=[];if(st.inzv&&st.inzTab==="uch")render()})();return uchP}
+/* lokalita uchazeče: „Praha - Nusle“, nebo „Praha 4 (celý obvod)“ */
+function uchObvod(l){const m=String(l).match(/^(.*) \(celý obvod\)$/);return m?m[1]:""}
+function uchVArea(l){if(!st.area)return true;const ob=uchObvod(l),a=st.area;
+  if(a[0]==="@")return ob?ob===a.slice(1):areaGroup(l)===a.slice(1);
+  return ob?areaGroup(a)===ob:l===a}
+function uchMzda(u){return u.mzda?czkU(u.mzda)+" "+(u.mzdaJed||"Kč/měsíc"):""}
+const czkU=n=>{const x=Number(String(n).replace(/\s/g,""));return isNaN(x)?String(n):x.toLocaleString("cs-CZ")};
+function uchCardHtml(u){
+  const lok=uchObvod(u.lokalita)?uchObvod(u.lokalita):shortArea(u.lokalita);
+  const ph=firstPhone(u.tel),subj=`Nabídka práce – ${u.profese} (pracenaprimo.cz)`;
+  const more=[["Smlouva",u.smlouva],["Směny",u.smeny],["Vzdělání",u.vzdelani],["Jazyky",u.jazyky],["Má",u.mam],["Představa o mzdě",uchMzda(u)]].filter(x=>x[1]);
+  return `<article class="card uchcard"><h3>${esc(u.profese)}${u.dalsi?` <small class="meta">· ${esc(u.dalsi)}</small>`:""}</h3>
+    <div class="meta">${esc(lok)}${u.dojezd?` · ${esc(u.dojezd.toLowerCase())}`:""}</div>
+    <div class="inzline">${esc([splitL(u.uvazek).join(", "),u.nastup&&("nástup: "+u.nastup.toLowerCase()),u.praxe&&("praxe: "+u.praxe.toLowerCase())].filter(Boolean).join(" · "))}</div>
+    ${more.length||u.omne?`<details class="uchmore"><summary class="link">Podrobnosti</summary>${more.map(([k,x])=>`<p><b>${esc(k)}:</b> ${esc(splitL(x).join(", "))}</p>`).join("")}${u.omne?`<p class="omne">${esc(u.omne)}</p>`:""}</details>`:""}
+    <div class="row">${ph?`<a class="btn primary" href="tel:${esc(ph)}" data-ev="uchazec-zavolat">${ICON.tel} Zavolat</a>`:""}${u.mail?`<a class="btn" href="mailto:${esc(u.mail)}?subject=${encodeURIComponent(subj)}" data-ev="uchazec-napsat">${ICON.mail} Napsat</a>`:""}</div>
+  </article>`}
+function renderUchList(el){
+  if(!el)return;
+  if(UCH===null){el.innerHTML=`<div class="empty">${esc(T("loading"))}</div>`;loadUch();return}
+  loadUch();
+  let list=UCH.filter(u=>uchVArea(u.lokalita));const jinde=st.area&&!list.length;if(jinde)list=UCH.slice();
+  const obory=[...new Set(list.map(u=>u.obor).filter(Boolean))];
+  if(st.uchObor&&!obory.includes(st.uchObor))st.uchObor="";
+  const vis=st.uchObor?list.filter(u=>u.obor===st.uchObor):list;
+  vis.sort((a,b)=>String(b.zverejneno).localeCompare(String(a.zverejneno)));
+  el.innerHTML=`<p class="note">Lidé, kteří hledají práci a chtějí, aby je firmy oslovily. Ozvěte se jim napřímo.</p>`+
+    (!UCH.length?`<div class="empty"><strong>Zatím tu nikdo není.</strong>Hledáte práci? Přidejte svůj inzerát přes tlačítko výše.</div>`:
+    (jinde?`<p class="note">V lokalitě ${esc(shortArea(st.area))} zatím nikdo není, ukazujeme všechny.</p>`:"")+
+    (obory.length>1?`<div class="chips inzchips">${["",...obory].map(o=>`<button class="chip" data-uchobor="${esc(o)}" aria-pressed="${o===(st.uchObor||"")}">${esc(o?oborName(o):T("inzVse"))}</button>`).join("")}</div>`:"")+
+    `<div class="list">${vis.map(uchCardHtml).join("")}</div>`);
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-uchobor]");if(b){st.uchObor=b.dataset.uchobor;render();return}
+  const a=e.target.closest(".uchcard [data-ev]");if(a)track(a.dataset.ev)});
 
 /* ---------- mapa (Leaflet + OpenStreetMap, načte se až při prvním otevření) ---------- */
 let LMAP=null,leafletP=null;
