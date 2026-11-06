@@ -227,6 +227,17 @@ details.qa p{margin:8px 0 0}
 .inzrow:hover,.inzrow:focus-visible{outline:1px solid var(--accent)}
 .inzrow .p{font-weight:600;font-size:14.5px}.inzrow .m{font-size:12.5px;color:var(--muted)}
 #inzbar:empty{display:none}
+.jobhub{display:flex;gap:8px;align-items:stretch;margin:0 0 10px}
+@media (max-width:360px){.jobhub{flex-wrap:wrap}}
+.jobhub .inzbanner{flex:1 1 0;min-width:0;width:auto}
+.jobhub>.btn{flex:none;padding:9px 14px;font-size:14px}
+.jobhub .inztabs{flex:1 1 auto;margin:0}
+.jobpick{display:grid;gap:10px;margin:8px 0 14px}
+.jobpick .btn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px 16px;font-size:16px;text-align:left}
+.jobpick .btn small{font-size:13px;font-weight:400;opacity:.85}
+.pkres{display:grid;gap:6px;margin:6px 0}
+.pkrow{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:14.5px;cursor:pointer}
+.pkrow small{color:var(--muted);font-size:12.5px}
 #inzbar{max-width:720px;margin:0 auto;padding:8px 16px 0}
 .inzbanner{width:100%;display:flex;align-items:center;gap:8px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:14px;cursor:pointer;text-align:left}
 .inzbanner span{margin-left:auto;color:var(--accent);font-weight:700}
@@ -447,7 +458,7 @@ cs:{
  tabFirmy:"Firmy",tabMoje:"Moje",tabNavody:"Návody",tabOnas:"O aplikaci",
  details:"Podrobnosti",call:"Zavolat",write:"Napsat",map:"Mapa",menuWeb:"Menu / web",showMap:"Ukázat na mapě",
  fPhone:"Telefon",fEmail:"E-mail",fHours:"Otevřeno",openNow:"Teď otevřeno",closed:"Zavřeno",incomplete:"Neúplné",incompleteT:"Některé údaje chybí",
- inzAdd:"Přidat pracovní inzerát (pro firmy)",uprAdd:"Upravit údaje (pro firmy)",inzBox:"Volné pozice ({n})",inzBanner:"Pracovní inzeráty ({n})",inzJinde:"zatím jinde v Praze",inzList:"Pracovní inzeráty",inzBack:"Zpět na podniky",inzVse:"Vše",inzNoArea:"V lokalitě {a} zatím inzerát není, ukazujeme všechny.",inzDohodou:"mzda dohodou",inzOd:"od",inzDo:"do",inzMzda:"Mzda",inzUvazek:"Úvazek",inzSmlouva:"Smlouva",inzSmeny:"Směny",inzNastup:"Nástup",inzMist:"Počet míst",inzVzdelani:"Vzdělání",inzPraxe:"Praxe",inzJazyky:"Jazyky",inzPozadavky:"Požadavky",inzNabizime:"Co nabízíme",inzPopis:"Popis práce",inzJak:"Jak se ucházet",inzOsoba:"kontakt",inzPlati:"Platí do {d}",inzFirma:"O podniku",newTag:"Nové",hiring:"Hledá lidi",hiringDet:"Hledá: {txt}",checked:"ověřeno {d}",
+ inzAdd:"Přidat pracovní inzerát (pro firmy)",uprAdd:"Upravit údaje (pro firmy)",inzBox:"Volné pozice ({n})",inzBanner:"Pracovní inzeráty ({n})",jobAds:"Pracovní inzeráty",jobPost:"Podat inzerát",jobFirm:"Nabízím práci",jobFirmS:"pro firmy a personalisty",jobSeek:"Hledám práci",jobSeekS:"pro uchazeče",jobFirmT:"Najděte svůj podnik. Inzerát potvrdíte odkazem, který pošleme na e-mail, který u podniku vedeme. Zdarma.",jobFind:"Název podniku",jobMissing:"Váš podnik tu není? Napište nám",jobNone:"Zatím tu žádný inzerát není. Podejte první, je to zdarma.",jobNoMatch:"Nic jsme nenašli. Zkuste část názvu.",tabOffers:"Nabídky práce",tabSeekers:"Lidé hledají práci",inzJinde:"zatím jinde v Praze",inzList:"Pracovní inzeráty",inzBack:"Zpět na podniky",inzVse:"Vše",inzNoArea:"V lokalitě {a} zatím inzerát není, ukazujeme všechny.",inzDohodou:"mzda dohodou",inzOd:"od",inzDo:"do",inzMzda:"Mzda",inzUvazek:"Úvazek",inzSmlouva:"Smlouva",inzSmeny:"Směny",inzNastup:"Nástup",inzMist:"Počet míst",inzVzdelani:"Vzdělání",inzPraxe:"Praxe",inzJazyky:"Jazyky",inzPozadavky:"Požadavky",inzNabizime:"Co nabízíme",inzPopis:"Popis práce",inzJak:"Jak se ucházet",inzOsoba:"kontakt",inzPlati:"Platí do {d}",inzFirma:"O podniku",newTag:"Nové",hiring:"Hledá lidi",hiringDet:"Hledá: {txt}",checked:"ověřeno {d}",
  share:"Sdílet",shareTxt:"{n} – v aplikaci Práce napřímo",linkCopied:"Odkaz zkopírován",fix:"Opravit údaje / Jsem majitel",atmo:"Hodnocení zaměstnavatele (Atmoskop)",
  save:"Uložit",saved:"Uloženo do Moje",removed:"Odebráno z Moje",autoSaved:"Zapsáno do Moje: {s}",
  st_ulozeno:"Uloženo",st_napsano:"Napsáno",st_volano:"Voláno",st_pohovor:"Pohovor",st_nabidka:"Nabídka",st_odmitnuto:"Odmítnuto",
@@ -478,7 +489,7 @@ uk:{
  tabFirmy:"Фірми",tabMoje:"Моє",tabNavody:"Поради",tabOnas:"Про застосунок",
  details:"Детальніше",call:"Подзвонити",write:"Написати",map:"Мапа",menuWeb:"Меню / сайт",showMap:"Показати на мапі",
  fPhone:"Телефон",fEmail:"E-mail",fHours:"Відчинено",openNow:"Зараз відчинено",closed:"Зачинено",incomplete:"Неповні дані",incompleteT:"Деякі дані відсутні",
- inzBox:"Вільні вакансії ({n})",inzBanner:"Вакансії ({n})",inzJinde:"поки в інших районах Праги",inzList:"Вакансії",inzBack:"Назад до компаній",inzVse:"Усі",inzNoArea:"У районі {a} вакансій поки немає, показуємо всі.",inzDohodou:"зарплата за домовленістю",inzOd:"від",inzDo:"до",inzMzda:"Зарплата",inzUvazek:"Зайнятість",inzSmlouva:"Договір",inzSmeny:"Зміни",inzNastup:"Початок",inzMist:"Кількість місць",inzVzdelani:"Освіта",inzPraxe:"Досвід",inzJazyky:"Мови",inzPozadavky:"Вимоги",inzNabizime:"Що пропонуємо",inzPopis:"Опис роботи",inzJak:"Як відгукнутися",inzOsoba:"контакт",inzPlati:"Дійсне до {d}",inzFirma:"Про компанію",newTag:"Нове",hiring:"Шукає працівників",hiringDet:"Шукає: {txt}",checked:"перевірено {d}",
+ inzBox:"Вільні вакансії ({n})",inzBanner:"Вакансії ({n})",jobAds:"Вакансії",jobPost:"Подати оголошення",jobFirm:"Пропоную роботу",jobFirmS:"для компаній і HR",jobSeek:"Шукаю роботу",jobSeekS:"для шукачів роботи",jobFirmT:"Знайдіть свою компанію. Оголошення підтвердите посиланням, яке надішлемо на e-mail компанії з нашої бази. Безкоштовно.",jobFind:"Назва компанії",jobMissing:"Вашої компанії немає? Напишіть нам",jobNone:"Поки що вакансій немає. Додайте першу, це безкоштовно.",jobNoMatch:"Нічого не знайдено. Спробуйте частину назви.",tabOffers:"Вакансії",tabSeekers:"Шукають роботу",inzJinde:"поки в інших районах Праги",inzList:"Вакансії",inzBack:"Назад до компаній",inzVse:"Усі",inzNoArea:"У районі {a} вакансій поки немає, показуємо всі.",inzDohodou:"зарплата за домовленістю",inzOd:"від",inzDo:"до",inzMzda:"Зарплата",inzUvazek:"Зайнятість",inzSmlouva:"Договір",inzSmeny:"Зміни",inzNastup:"Початок",inzMist:"Кількість місць",inzVzdelani:"Освіта",inzPraxe:"Досвід",inzJazyky:"Мови",inzPozadavky:"Вимоги",inzNabizime:"Що пропонуємо",inzPopis:"Опис роботи",inzJak:"Як відгукнутися",inzOsoba:"контакт",inzPlati:"Дійсне до {d}",inzFirma:"Про компанію",newTag:"Нове",hiring:"Шукає працівників",hiringDet:"Шукає: {txt}",checked:"перевірено {d}",
  share:"Поділитися",shareTxt:"{n} – у застосунку Práce napřímo",linkCopied:"Посилання скопійовано",fix:"Виправити дані / Я власник",atmo:"Відгуки про роботодавця (Atmoskop)",
  save:"Зберегти",saved:"Збережено в «Моє»",removed:"Видалено з «Моє»",autoSaved:"Записано в «Моє»: {s}",
  st_ulozeno:"Збережено",st_napsano:"Написав(-ла)",st_volano:"Дзвонив(-ла)",st_pohovor:"Співбесіда",st_nabidka:"Пропозиція",st_odmitnuto:"Відмова",
@@ -510,7 +521,7 @@ en:{
  tabFirmy:"Businesses",tabMoje:"Mine",tabNavody:"Guides",tabOnas:"About",
  details:"Details",call:"Call",write:"Write",map:"Map",menuWeb:"Menu / website",showMap:"Show on map",
  fPhone:"Phone",fEmail:"E-mail",fHours:"Open",openNow:"Open now",closed:"Closed",incomplete:"Incomplete",incompleteT:"Some details are missing",
- inzBox:"Open positions ({n})",inzBanner:"Job ads ({n})",inzJinde:"elsewhere in Prague for now",inzList:"Job ads",inzBack:"Back to businesses",inzVse:"All",inzNoArea:"No job ads in {a} yet, showing all.",inzDohodou:"salary negotiable",inzOd:"from",inzDo:"up to",inzMzda:"Salary",inzUvazek:"Hours",inzSmlouva:"Contract",inzSmeny:"Shifts",inzNastup:"Start",inzMist:"Openings",inzVzdelani:"Education",inzPraxe:"Experience",inzJazyky:"Languages",inzPozadavky:"Requirements",inzNabizime:"What we offer",inzPopis:"Job description",inzJak:"How to apply",inzOsoba:"contact",inzPlati:"Valid until {d}",inzFirma:"About the business",newTag:"New",hiring:"Hiring",hiringDet:"Looking for: {txt}",checked:"checked {d}",
+ inzBox:"Open positions ({n})",inzBanner:"Job ads ({n})",jobAds:"Job ads",jobPost:"Post an ad",jobFirm:"I'm hiring",jobFirmS:"for businesses and HR",jobSeek:"I'm looking for work",jobSeekS:"for job seekers",jobFirmT:"Find your business. You confirm the ad via a link we send to the business e-mail we have on file. Free.",jobFind:"Business name",jobMissing:"Business not listed? Write to us",jobNone:"No job ads yet. Post the first one, it's free.",jobNoMatch:"Nothing found. Try part of the name.",tabOffers:"Job offers",tabSeekers:"People looking for work",inzJinde:"elsewhere in Prague for now",inzList:"Job ads",inzBack:"Back to businesses",inzVse:"All",inzNoArea:"No job ads in {a} yet, showing all.",inzDohodou:"salary negotiable",inzOd:"from",inzDo:"up to",inzMzda:"Salary",inzUvazek:"Hours",inzSmlouva:"Contract",inzSmeny:"Shifts",inzNastup:"Start",inzMist:"Openings",inzVzdelani:"Education",inzPraxe:"Experience",inzJazyky:"Languages",inzPozadavky:"Requirements",inzNabizime:"What we offer",inzPopis:"Job description",inzJak:"How to apply",inzOsoba:"contact",inzPlati:"Valid until {d}",inzFirma:"About the business",newTag:"New",hiring:"Hiring",hiringDet:"Looking for: {txt}",checked:"checked {d}",
  share:"Share",shareTxt:"{n} – in the Práce napřímo app",linkCopied:"Link copied",fix:"Fix details / I'm the owner",atmo:"Employer reviews (Atmoskop)",
  save:"Save",saved:"Saved to Mine",removed:"Removed from Mine",autoSaved:"Added to Mine: {s}",
  st_ulozeno:"Saved",st_napsano:"Emailed",st_volano:"Called",st_pohovor:"Interview",st_nabidka:"Offer",st_odmitnuto:"Rejected",
@@ -1422,15 +1433,45 @@ function inzDetail(a){
 function renderInzBar(){
   const bar=$("#inzbar");if(!bar)return;
   const n=INZ.filter(a=>areaHas(a.lokalita)).length,all=INZ.length;
-  if(st.mode!=="prace"||!all||st.inzv||st.pin){bar.innerHTML="";return}
-  bar.innerHTML=`<button class="inzbanner" data-inzlist>📢 <b>${esc(T("inzBanner",{n:n||all}))}</b>${st.area&&!n?` <small>${esc(T("inzJinde"))}</small>`:""} <span aria-hidden="true">→</span></button>`;
+  if(st.mode!=="prace"||st.inzv||st.pin){bar.innerHTML="";return}
+  bar.innerHTML=`<div class="jobhub"><button class="inzbanner" data-inzlist>📢 <b>${esc(all?T("inzBanner",{n:n||all}):T("jobAds"))}</b>${all&&st.area&&!n?` <small>${esc(T("inzJinde"))}</small>`:""} <span aria-hidden="true">→</span></button><button class="btn primary" data-inzpost>＋ ${esc(T("jobPost"))}</button></div>`;
+}
+/* „Podat inzerát“: rozcestník firma / uchazeč, firma si najde svůj podnik a otevře se inzForm */
+function inzPick(){
+  document.querySelector(".sheet-bg")?.remove();
+  track("inzerat-rozcestnik");
+  const bg=document.createElement("div");bg.className="sheet-bg";
+  bg.innerHTML=`<div class="sheet iform" role="dialog" aria-label="${esc(T("jobPost"))}"><h3>${esc(T("jobPost"))}</h3>
+    <div class="jobpick"><button class="btn primary" data-pf>${esc(T("jobFirm"))}<small>${esc(T("jobFirmS"))}</small></button>${UCHAZEC_URL?`<button class="btn" data-ps>${esc(T("jobSeek"))}<small>${esc(T("jobSeekS"))}</small></button>`:""}</div>
+    <div class="jobfind" hidden><p class="note">${esc(T("jobFirmT"))}</p><div class="field"><label for="pk-q">${esc(T("jobFind"))}</label><input id="pk-q" type="search" autocomplete="off"></div><div class="pkres"></div>
+    <p class="note"><a class="link" href="mailto:domecekcafe@gmail.com?subject=${encodeURIComponent("Chybí náš podnik – chceme podat inzerát")}">${esc(T("jobMissing"))}</a></p></div>
+    <button class="btn" data-close>${esc(T("close"))}</button></div>`;
+  document.body.appendChild(bg);
+  const close=()=>bg.remove(),inp=bg.querySelector("#pk-q"),res=bg.querySelector(".pkres");
+  const find=()=>{const q=norm(inp.value).trim();if(q.length<2){res.innerHTML="";return}
+    const hit=firmy.map((f,i)=>[f,i]).filter(([f])=>norm(f.nazev).includes(q));
+    hit.sort((a,b)=>(!areaHas(a[0].oblast))-(!areaHas(b[0].oblast))||(!norm(a[0].nazev).startsWith(q))-(!norm(b[0].nazev).startsWith(q))||ABC.compare(a[0].nazev,b[0].nazev));
+    res.innerHTML=hit.length?hit.slice(0,8).map(([f,i])=>`<button type="button" class="pkrow" data-pk="${i}"><b>${esc(f.nazev)}</b><small>${esc([f.adresa,shortArea(f.oblast)].filter(Boolean).join(" · "))}</small></button>`).join(""):`<p class="note">${esc(T("jobNoMatch"))}</p>`};
+  inp.addEventListener("input",find);
+  bg.addEventListener("click",e=>{
+    if(e.target===bg||e.target.closest("[data-close]")){close();return}
+    if(e.target.closest("[data-pf]")){bg.querySelector(".jobpick").hidden=true;bg.querySelector(".jobfind").hidden=false;track("inzerat-rozcestnik-firma");inp.focus();return}
+    if(e.target.closest("[data-ps]")){close();track("inzerat-rozcestnik-uchazec");uchForm();return}
+    const pk=e.target.closest("[data-pk]");if(pk){close();inzForm(firmy[+pk.dataset.pk])}
+  });
 }
 function inzListHtml(){
   let list=INZ.filter(a=>areaHas(a.lokalita));const jinde=!list.length;if(jinde)list=INZ.slice();
   const obory=[...new Set(list.map(a=>a.obor).filter(Boolean))];
   if(st.inzObor&&!obory.includes(st.inzObor))st.inzObor="";
   const vis=st.inzObor?list.filter(a=>a.obor===st.inzObor):list;
-  return `<div class="druhbar"><button data-inzback="1">← ${esc(T("inzBack"))}</button><strong>${esc(T("inzList"))}</strong></div>`+
+  const uch=typeof renderUchList==="function",tab=uch&&st.inzTab==="uch"?"uch":"inz";
+  const head=`<div class="druhbar"><button data-inzback="1">← ${esc(T("inzBack"))}</button><strong>${esc(T("inzList"))}</strong></div>`+
+    `<div class="jobhub">${uch?`<div class="chips inztabs"><button class="chip" data-inztab="inz" aria-pressed="${tab==="inz"}">${esc(T("tabOffers"))}</button><button class="chip" data-inztab="uch" aria-pressed="${tab==="uch"}">${esc(T("tabSeekers"))}</button></div>`:""}<button class="btn primary" data-inzpost>＋ ${esc(T("jobPost"))}</button></div>`;
+  /* háček pro seznam uchazečů (vlákno Hledám práci): renderUchList(el) vyplní <div id="uchlist"> */
+  if(tab==="uch")return head+`<div id="uchlist"></div>`+legalHtml();
+  if(!INZ.length)return head+`<div class="empty"><strong>${esc(T("jobNone"))}</strong></div>`+legalHtml();
+  return head+
     (jinde&&st.area?`<p class="note">${esc(T("inzNoArea",{a:shortArea(st.area)}))}</p>`:"")+
     (obory.length>1?`<div class="chips inzchips">${["",...obory].map(o=>`<button class="chip" data-inzobor="${esc(o)}" aria-pressed="${o===(st.inzObor||"")}">${esc(o?oborName(o):T("inzVse"))}</button>`).join("")}</div>`:"")+
     `<div class="list">${vis.map(a=>`<article class="card inzcard" data-inzid="${esc(a.id)}" tabindex="0"><h3>${esc(a.pozice)}</h3><div class="meta">${esc(a.podnik)} · ${esc(shortArea(a.lokalita)||a.adresa)}</div><div class="inzline">${esc([a.profese,splitL(a.uvazek).join(", "),mzdaText(a)].filter(Boolean).join(" · "))}</div></article>`).join("")}</div>`+legalHtml();
@@ -1805,7 +1846,7 @@ function render(){
   $("#count").textContent=nT("total",tot);
   if(LMAP&&(st.view!=="map")){LMAP.remove();LMAP=null}
   renderInzBar();
-  if(st.inzv&&st.mode==="prace"&&!st.pin){if(LMAP){LMAP.remove();LMAP=null}$("#firmy").innerHTML=inzListHtml();return}
+  if(st.inzv&&st.mode==="prace"&&!st.pin){if(LMAP){LMAP.remove();LMAP=null}$("#firmy").innerHTML=inzListHtml();if(st.inzTab==="uch"&&typeof renderUchList==="function"&&$("#uchlist"))renderUchList($("#uchlist"));return}
   if(st.pin){
     const items=pinIdx().map(i=>[firmy[i],i]);
     $("#firmy").innerHTML=`<div class="druhbar"><button data-unpin="1">← ${esc(T("allFirms"))}</button></div>`+(items.length?`<div class="list">${items.map(([f,i])=>card(f,i)).join("")}</div>`:`<div class="empty">${esc(dataSource==="live"?T("nothing"):T("loading"))}</div>`);
@@ -1912,7 +1953,8 @@ $("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b
 $("#sugg").addEventListener("click",e=>{const a=e.target.closest("[data-sarea]");if(a){st.q="";$("#q").value="";st.areaMsg=null;track("hledani-lokalita");setArea(a.dataset.sarea);return}
   const b=e.target.closest("[data-druh]");if(b)pickDruh(b.dataset.druh,"hledani")});
 $("#area").addEventListener("click",areaOpen);
-$("#inzbar").addEventListener("click",e=>{if(e.target.closest("[data-inzlist]")){st.inzv=true;st.inzObor="";track("inzeraty-seznam");render();window.scrollTo(0,0)}});
+$("#inzbar").addEventListener("click",e=>{if(e.target.closest("[data-inzlist]")){st.inzv=true;st.inzObor="";st.inzTab="inz";track("inzeraty-seznam");render();window.scrollTo(0,0)}
+  if(e.target.closest("[data-inzpost]"))inzPick()});
 $("#firmy").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.matches(".inzcard")){const a=INZ.find(x=>x.id===e.target.dataset.inzid);if(a)inzDetail(a)}});
 addEventListener("resize",()=>{if(!matchMedia("(max-width:600px)").matches)areaClose()});
 addEventListener("scroll",areaPlace,{passive:true});
@@ -1945,6 +1987,8 @@ $("#firmy").addEventListener("click",e=>{
   if(e.target.closest("[data-back]")){if(st.nove)st.nove=false;else if(st.gasSub){st.druh=GAS;st.gasSub=false}else st.druh="";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-more]")){pageShown+=PAGE_SIZE;const y=scrollY;render();scrollTo(0,y);return}
   if(e.target.closest("[data-inzback]")){st.inzv=false;render();window.scrollTo(0,0);return}
+  if(e.target.closest("[data-inzpost]")){inzPick();return}
+  const it=e.target.closest("[data-inztab]");if(it){st.inzTab=it.dataset.inztab;track("inzeraty-tab-"+st.inzTab);render();return}
   const io=e.target.closest("[data-inzobor]");if(io){st.inzObor=io.dataset.inzobor;render();return}
   if(e.target.closest("[data-unpin]")){st.pin="";history.replaceState(null,"",location.pathname);render();return}
   const so=e.target.closest("[data-sort]");if(so){
