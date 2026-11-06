@@ -31,6 +31,9 @@ const UCFG = {
   UPOZORNIT_SPRAVCE: true,  // krátký e-mail správci o každém novém uchazeči
   PRIKLADU: 8,              // kolik podniků, které hledají lidi, vypsat v e-mailu
   ZVEREJNIT_DNI: 60,        // jak dlouho je inzerát uchazeče vidět na webu
+  ZADOSTI_ZA_HODINU: 30,    // žádostí o životopis za hodinu celkem
+  ZADOSTI_NA_UCHAZECE: 10,  // žádostí o životopis jednomu uchazeči za den
+  MAX_ZPRAVA: 600,
 };
 
 const UZV = { NE: 'ne', CEKA: 'čeká na potvrzení', ANO: 'zveřejněno', STAZENO: 'staženo', VYPRSELO: 'vypršelo' };
@@ -58,6 +61,7 @@ const UC = Object.fromEntries(UH.map((x, i) => [x, i + 1]));
 /* ---------------- příjem z webu ---------------- */
 
 function uchazecPost(d) {
+  if (d.akce === 'zadost-cv') return uchazecZadostCv(d); // firma žádá o životopis (tlačítko na kartě uchazeče)
   if (d.web2) return json({ ok: true, id: '', podniku: 0 }); // past na roboty
   const chyba = uchazecOver(d);
   if (chyba) return json({ ok: false, err: chyba });
@@ -298,6 +302,64 @@ function sablonaOsloveni(d, tel) {
   return 'Předmět: ' + d.profese + ' – hledáte posilu?\n\nDobrý den,\n\nnehledáte do [podnik] posilu? Jmenuji se ' + jm + ', hledám práci jako ' + prof +
     ' a bydlím kousek od vás.\n\n' + praxe + '\n\nŽivotopis posílám v příloze. Rád/a se zastavím osobně, stačí napsat nebo zavolat na ' + tel +
     '.\n\nDěkuji a přeji hezký den\n' + jm;
+}
+
+/* ---------------- žádost firmy o životopis ----------------
+   Firma klikne na kartě uchazeče na „Požádat o životopis“ a vyplní své údaje. Uchazeči přijde
+   e-mail s odpovědí na adresu firmy (replyTo). Firma e-mail uchazeče nevidí a životopis
+   neposíláme my: uchazeč se sám rozhodne, jestli firmě odpoví a životopis přiloží. */
+
+function uchazecZadostCv(d) {
+  if (d.web2) return json({ ok: true }); // past na roboty
+  const t = (x, n) => String(x == null ? '' : x).trim().slice(0, n);
+  const firma = t(d.firma, 120), mail = t(d.email, 100), tel = t(d.telefon, 40), osoba = t(d.osoba, 80), zprava = t(d.zprava, UCFG.MAX_ZPRAVA);
+  if (!d.id) return json({ ok: false, err: 'Chybí číslo inzerátu.' });
+  if (!firma) return json({ ok: false, err: 'Chybí: název firmy.' });
+  if (!mail || !platnyMail(mail)) return json({ ok: false, err: 'E-mail nevypadá správně.' });
+  if (!d.souhlas) return json({ ok: false, err: 'Chybí: souhlas.' });
+
+  const cache = CacheService.getScriptCache();
+  const n = Number(cache.get('zcv-hod') || 0);
+  if (n >= UCFG.ZADOSTI_ZA_HODINU) return json({ ok: false, err: 'Teď přichází moc žádostí najednou. Zkuste to prosím za hodinu.' });
+  const klicPar = 'zcv-' + d.id + '-' + Utilities.base64EncodeWebSafe(norm(mail)).slice(0, 150);
+  if (cache.get(klicPar)) return json({ ok: false, err: 'Tomuto uchazeči jste už žádost poslali. Odpoví vám na ' + mail + ', pokud bude mít zájem.' });
+  const klicUch = 'zcvu-' + d.id, nu = Number(cache.get(klicUch) || 0);
+  if (nu >= UCFG.ZADOSTI_NA_UCHAZECE) return json({ ok: false, err: 'Tento uchazeč dnes dostal už hodně žádostí. Zkuste to prosím zítra, nebo ho kontaktujte telefonem či e-mailem z inzerátu.' });
+
+  const sh = listUchazeci();
+  const r = najdiRadek(sh, d.id);
+  if (!r) return json({ ok: false, err: 'Tento inzerát už není aktivní.' });
+  const v = sh.getRange(r, 1, 1, UH.length).getValues()[0];
+  if (v[UC['Zveřejnění'] - 1] !== UZV.ANO) return json({ ok: false, err: 'Tento inzerát už není aktivní.' });
+  const komu = v[UC['E-mail'] - 1], profese = v[UC['Profese'] - 1], jmeno = String(v[UC['Jméno'] - 1] || '').split(' ')[0];
+  const maCv = !!v[UC['ID souboru'] - 1];
+  const zelena = 'display:inline-block;background:#0F6B5C;color:#fff;padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:600';
+  const box = 'padding:12px 14px;background:#DCEFEA;border-radius:10px';
+  const predmet = 'Re: Životopis – ' + profese + ' (pracenaprimo.cz)';
+
+  MailApp.sendEmail({
+    to: komu, replyTo: mail, name: 'Práce napřímo',
+    subject: firma + ' má zájem o váš životopis (' + profese + ')',
+    htmlBody: '<div style="font-family:system-ui,sans-serif;line-height:1.5;max-width:620px">' +
+      '<p>Dobrý den' + (jmeno ? ', ' + h(jmeno) : '') + ',</p>' +
+      '<p>firma <b>' + h(firma) + '</b> viděla váš inzerát <b>' + h(profese) + '</b> na <a href="' + CFG.WEB + '">pracenaprimo.cz</a> a prosí o váš životopis.</p>' +
+      '<div style="' + box + '"><p style="margin:0"><b>Firma:</b> ' + h(firma) + '<br>' + (osoba ? '<b>Kontaktní osoba:</b> ' + h(osoba) + '<br>' : '') +
+      '<b>E-mail:</b> ' + h(mail) + (tel ? '<br><b>Telefon:</b> ' + h(tel) : '') + '</p>' +
+      (zprava ? '<p style="margin:8px 0 0;white-space:pre-line"><b>Zpráva:</b> ' + h(zprava) + '</p>' : '') + '</div>' +
+      '<p><b>Co dál:</b> pokud máte zájem, odpovězte na tento e-mail (odpověď půjde rovnou firmě) a životopis přiložte. Váš e-mail firma uvidí, až jí odpovíte. Pokud zájem nemáte, nemusíte nic dělat.</p>' +
+      '<p><a style="' + zelena + '" href="mailto:' + encodeURIComponent(mail) + '?subject=' + encodeURIComponent(predmet) + '">Odpovědět firmě</a></p>' +
+      (maCv ? '<p style="font-size:14px">Životopis, který jste nahrál/a při zápisu, firmám neposíláme. Přiložte ho prosím sám/sama.</p>' : '') +
+      '<p style="font-size:13px;color:#555">Nevíme, jestli je firma důvěryhodná. Nikomu neposílejte rodné číslo, číslo účtu ani peníze předem. ' +
+      'Když už práci nehledáte: <a href="' + odkazAkce('stahnout', v[0], v[UC['Token'] - 1]) + '">Stáhnout inzerát</a> · <a href="' + odkazAkce('smazat', v[0], v[UC['Token'] - 1]) + '">Smazat moje údaje</a>.</p></div>',
+  });
+  cache.put('zcv-hod', String(n + 1), 3600);
+  cache.put(klicPar, '1', 86400);
+  cache.put(klicUch, String(nu + 1), 86400);
+
+  const pozn = sh.getRange(r, UC['Poznámka správce']);
+  const den = Utilities.formatDate(new Date(), 'Europe/Prague', 'd. M.');
+  pozn.setValue((String(pozn.getValue() || '') + '\n' + den + ' žádost o CV: ' + firma + ' <' + mail + '>').trim().slice(-2000));
+  return json({ ok: true });
 }
 
 /* ---------------- odkazy z e-mailu: zveřejnit / stáhnout / smazat ----------------

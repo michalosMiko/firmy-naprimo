@@ -1819,7 +1819,7 @@ function uchCardHtml(u){
     <div class="meta">${esc(lok)}${u.dojezd?` · ${esc(u.dojezd.toLowerCase())}`:""}</div>
     <div class="inzline">${esc([splitL(u.uvazek).join(", "),u.nastup&&("nástup: "+u.nastup.toLowerCase()),u.praxe&&("praxe: "+u.praxe.toLowerCase())].filter(Boolean).join(" · "))}</div>
     ${more.length||u.omne?`<details class="uchmore"><summary class="link">Podrobnosti</summary>${more.map(([k,x])=>`<p><b>${esc(k)}:</b> ${esc(splitL(x).join(", "))}</p>`).join("")}${u.omne?`<p class="omne">${esc(u.omne)}</p>`:""}</details>`:""}
-    <div class="row">${ph?`<a class="btn primary" href="tel:${esc(ph)}" data-ev="uchazec-zavolat">${ICON.tel} Zavolat</a>`:""}${u.mail?`<a class="btn" href="mailto:${esc(u.mail)}?subject=${encodeURIComponent(subj)}" data-ev="uchazec-napsat">${ICON.mail} Napsat</a>`:""}</div>
+    <div class="row">${ph?`<a class="btn primary" href="tel:${esc(ph)}" data-ev="uchazec-zavolat">${ICON.tel} Zavolat</a>`:""}${u.mail?`<a class="btn" href="mailto:${esc(u.mail)}?subject=${encodeURIComponent(subj)}" data-ev="uchazec-napsat">${ICON.mail} Napsat</a>`:""}<button class="btn" type="button" data-zcv="${esc(u.id)}" data-zcvp="${esc(u.profese)}">Požádat o životopis</button></div>
   </article>`}
 function renderUchList(el){
   if(!el)return;
@@ -1836,7 +1836,49 @@ function renderUchList(el){
     (obory.length>1?`<div class="chips inzchips">${["",...obory].map(o=>`<button class="chip" data-uchobor="${esc(o)}" aria-pressed="${o===(st.uchObor||"")}">${esc(o?oborName(o):T("inzVse"))}</button>`).join("")}</div>`:"")+
     `<div class="list">${vis.map(uchCardHtml).join("")}</div>`);
 }
-document.addEventListener("click",e=>{const b=e.target.closest("[data-uchobor]");if(b){st.uchObor=b.dataset.uchobor;render();return}
+/* firma žádá uchazeče o životopis: uchazeči přijde e-mail s odpovědí na adresu firmy */
+function zadostCvForm(id,profese){
+  document.querySelector(".sheet-bg")?.remove();
+  track("zadost-cv-formular");
+  const bg=document.createElement("div");bg.className="sheet-bg";
+  bg.innerHTML=`<form class="sheet iform" role="dialog" aria-label="Požádat o životopis" novalidate>
+    <h3>Požádat o životopis</h3>
+    <p class="note">Uchazeči (${esc(profese)}) pošleme e-mail s vaší žádostí. Když bude mít zájem, odpoví vám rovnou na váš e-mail a životopis přiloží.</p>
+    <div class="two"><div class="field"><label for="z-firma">Firma nebo podnik *</label><input id="z-firma" name="firma" maxlength="120" autocomplete="organization"></div>
+      <div class="field"><label for="z-osoba">Kontaktní osoba</label><input id="z-osoba" name="osoba" maxlength="80" autocomplete="name" placeholder="nepovinné"></div></div>
+    <div class="two"><div class="field"><label for="z-email">Váš e-mail *</label><input id="z-email" name="email" type="email" maxlength="100" autocomplete="email" placeholder="sem uchazeč odpoví"></div>
+      <div class="field"><label for="z-telefon">Telefon</label><input id="z-telefon" name="telefon" type="tel" maxlength="40" autocomplete="tel" placeholder="nepovinné"></div></div>
+    <div class="field"><label for="z-zprava">Zpráva pro uchazeče</label><textarea id="z-zprava" name="zprava" maxlength="600" placeholder="Např. jakou práci nabízíte, kde a od kdy."></textarea></div>
+    <input name="web2" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+    <label class="one"><input type="checkbox" name="souhlas"><span>Souhlasím, že vaše údaje pošleme uchazeči a poznamenáme si je u jeho přihlášky (<a class="link" href="ochrana-udaju/#uchazeci" target="_blank" rel="noopener">ochrana údajů</a>). *</span></label>
+    <p class="ierr" role="alert" hidden></p>
+    <div class="actions"><button class="btn primary" type="submit">Poslat žádost</button><button class="btn" type="button" data-close>Zavřít</button></div>
+  </form>`;
+  document.body.appendChild(bg);
+  const fm=bg.querySelector("form"),err=bg.querySelector(".ierr"),v=n=>String(fm.elements[n].value||"").trim(),close=()=>bg.remove();
+  bg.querySelector("[data-close]").onclick=close;
+  bg.addEventListener("click",e=>{if(e.target===bg)close()});
+  fm.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const d={typ:"uchazec",akce:"zadost-cv",id,firma:v("firma"),osoba:v("osoba"),email:v("email"),telefon:v("telefon"),zprava:v("zprava"),souhlas:fm.elements.souhlas.checked,web2:v("web2")};
+    const miss=[[!d.firma,"název firmy"],[!d.email,"e-mail"],[!d.souhlas,"souhlas"]].filter(x=>x[0]).map(x=>x[1]);
+    if(d.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email))miss.push("e-mail ve správném tvaru");
+    if(miss.length){err.textContent="Doplňte prosím: "+miss.join(", ")+".";err.hidden=false;return}
+    err.hidden=true;const sb=fm.querySelector("[type=submit]");sb.disabled=true;sb.textContent="Odesílám…";
+    try{
+      const r=await fetch(UCHAZEC_URL,{method:"POST",body:JSON.stringify(d)});const o=await r.json();
+      if(!o.ok)throw new Error(o.err||"Chyba");
+      track("zadost-cv-odeslana");
+      fm.innerHTML=`<h3>Žádost je odeslaná</h3><p>Uchazeči jsme poslali e-mail s vaší žádostí. Když bude mít zájem, odpoví vám na <b>${esc(d.email)}</b> a životopis přiloží.</p>
+        <p class="note">Jeho e-mail ani životopis vám neposíláme my. Rozhodnutí je na něm.</p><div class="actions"><button class="btn primary" type="button" data-close>Zavřít</button></div>`;
+      fm.querySelector("[data-close]").onclick=close;
+    }catch(ex){
+      err.textContent=(ex&&ex.message&&ex.message!=="Failed to fetch"?ex.message+" ":"")+"Žádost se nepodařilo odeslat. Zkuste to znovu, nebo nám napište na domecekcafe@gmail.com.";
+      err.hidden=false;sb.disabled=false;sb.textContent="Poslat žádost"}
+  });
+}
+document.addEventListener("click",e=>{const z=e.target.closest("[data-zcv]");if(z&&UCHAZEC_URL){zadostCvForm(z.dataset.zcv,z.dataset.zcvp);return}
+  const b=e.target.closest("[data-uchobor]");if(b){st.uchObor=b.dataset.uchobor;render();return}
   const a=e.target.closest(".uchcard [data-ev]");if(a)track(a.dataset.ev)});
 
 /* ---------- mapa (Leaflet + OpenStreetMap, načte se až při prvním otevření) ---------- */
