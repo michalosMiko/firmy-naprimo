@@ -281,9 +281,10 @@ details.qa p{margin:8px 0 0}
 .iform .cnt.max{color:var(--warn);font-weight:600}
 .iform .inzid{color:var(--muted);font-size:13px;margin:0}
 .iform .actions{display:grid;grid-template-columns:2fr 1fr;gap:8px}
-.uchban{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--accent-soft);border-radius:16px;padding:12px 14px;margin:14px 0;font-size:14px;line-height:1.45}
+.uchban{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--accent-soft);border-radius:16px;padding:10px 14px;margin:4px 0 12px;font-size:14px;line-height:1.45}
 .uchban .btn{flex:none}
-@media (max-width:420px){.uchban{flex-direction:column;align-items:stretch}}
+.uchban .btn{padding:9px 14px;font-size:14px}
+@media (max-width:420px){.uchban{font-size:13.5px;gap:10px}}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:999px;font-size:13.5px;z-index:10;max-width:calc(100% - 32px);text-align:center}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
 /* nové: jazyk, Moje, štítky, vzdálenost, mapa */
@@ -1681,7 +1682,7 @@ const UCH_OPT={
   dojezd:["Jen v mé lokalitě","I do sousedních čtvrtí","Kamkoli po Praze a okolí"],
   mam:["Řidičský průkaz sk. B","Zdravotní průkaz","Čistý trestní rejstřík","Vlastní auto"]
 };
-function uchBanner(){return UCHAZEC_URL&&st.mode==="prace"?`<div class="uchban"><div><b>Hledáte práci?</b> Napište nám, co umíte a kde chcete pracovat. Pošleme vám e-mailem podniky z vašeho okolí a návod, jak je oslovit.</div><button class="btn primary" data-uch="1">Zapsat se</button></div>`:""}
+function uchBanner(){return UCHAZEC_URL&&st.mode==="prace"?`<div class="uchban"><div><b>Hledáte práci?</b> Zapište se a pošleme vám e-mailem podniky z vašeho okolí a návod, jak je oslovit.</div><button class="btn primary" data-uch="1">Zapsat se</button></div>`:""}
 function uchAreaOpts(sel){
   const areas=areaOrder(firmy.map(f=>f.oblast).filter(Boolean));
   if(!areas.length)return "";
@@ -1854,7 +1855,7 @@ function render(){
   }
   if(st.obor===AZ&&!st.druh&&!q&&!st.nove){
     const c=druhCountsAZ(inArea);
-    $("#firmy").innerHTML=`<p class="idx-lead">${esc(T("idxLead",{n:c.size,a:st.area?T("inArea",{a:shortArea(st.area)}):""}))}</p>`+(c.size?idxHtml(c,true):`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(T("tryArea"))}</div>`)+uchBanner()+legalHtml();
+    $("#firmy").innerHTML=`<p class="idx-lead">${esc(T("idxLead",{n:c.size,a:st.area?T("inArea",{a:shortArea(st.area)}):""}))}</p>`+uchBanner()+(c.size?idxHtml(c,true):`<div class="empty"><strong>${esc(T("nothing"))}</strong>${esc(T("tryArea"))}</div>`)+legalHtml();
     return;
   }
   if(st.obor===AZ&&st.druh===GAS&&!q&&!st.nove){
@@ -1868,7 +1869,7 @@ function render(){
     (!q||matchQ(f,q)));
   list.forEach(x=>x[2]=km(x[0]));
   list.sort((a,b)=>(st.near?(a[2]==null)-(b[2]==null)||(a[2]??0)-(b[2]??0):0)||(st.mode==="sluzba"?openRank(a[0].hodiny)-openRank(b[0].hodiny):(!hiring(a[0]))-(!hiring(b[0])))||ABC.compare(a[0].nazev||"",b[0].nazev||""));
-  const status=`<p class="status">${esc(dataSource!=="embedded"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`+uchBanner()+legalHtml();
+  const status=`<p class="status">${esc(dataSource!=="embedded"?T("live"):T("dataAt",{d:DATA_DATE}))}</p>`+legalHtml();
   let top="";
   if(st.nove) top=`<div class="druhbar"><button data-back="1">← ${esc(T("back"))}</button><strong>${esc(T("newH"))}</strong></div>`;
   else if(st.druh) top=`<div class="druhbar"><button data-back="1">← ${st.gasSub?esc(oborName("Gastronomie")):(st.obor===AZ?esc(T("backAll")):esc(oborName(st.obor)))}</button><strong>${esc(cap(druhName(st.druh)))}</strong></div>`;
@@ -1881,6 +1882,7 @@ function render(){
     const none=!firmy.some(f=>f.obor===st.obor);
     $("#firmy").innerHTML=`<div class="empty"><strong>${esc(none?T("oborSoon",{o:oborName(st.obor)}):st.area&&!st.q?T("oborNone",{o:oborName(st.obor),a:shortArea(st.area)}):T("nothing"))}</strong>${esc(none?T("oborSoonT"):st.area&&!st.q?T("oborNoneT"):T("tryOther"))}</div>`;return;
   }
+  top=uchBanner()+top;
   top+=toolsHtml(list.length);
   if(st.near&&list.some(x=>x[2]==null))top+=`<p class="status">${esc(T("nearOn"))}. ${esc(T("nearNoGps"))}</p>`;
   if(st.view==="map"){
