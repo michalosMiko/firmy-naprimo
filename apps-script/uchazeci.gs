@@ -10,9 +10,12 @@
  *   → uchazeči hned odejde e-mail s tipy: kolik podniků jeho oboru je v jeho lokalitě,
  *     které z nich hledají lidi, aktivní inzeráty, odkaz na web s výběrem a jak podniky oslovit
  *   → v e-mailu je odkaz „smazat moje údaje“ (smaže řádek i životopis)
+ *   → když uchazeč zaškrtne „Zveřejnit inzerát“, je v e-mailu odkaz k potvrzení; po kliknutí se
+ *     inzerát na 60 dní ukáže firmám na webu (veřejná tabulka, list „Hledají práci“ = QUERY jen
+ *     zveřejněných řádků a jen vybraných sloupců: bez jména, životopisu a nevybraného kontaktu)
  *   → údaje se po 12 měsících samy smažou (denní kontrola)
  *
- * Údaje uchazečů NIKDY nejdou do veřejné tabulky.
+ * Do veřejné tabulky jde jen zveřejněný inzerát, a to jen se souhlasem a po potvrzení z e-mailu.
  */
 
 const UCFG = {
@@ -27,7 +30,10 @@ const UCFG = {
   MAX_O_MNE: 1000,
   UPOZORNIT_SPRAVCE: true,  // krátký e-mail správci o každém novém uchazeči
   PRIKLADU: 8,              // kolik podniků, které hledají lidi, vypsat v e-mailu
+  ZVEREJNIT_DNI: 60,        // jak dlouho je inzerát uchazeče vidět na webu
 };
+
+const UZV = { NE: 'ne', CEKA: 'čeká na potvrzení', ANO: 'zveřejněno', STAZENO: 'staženo', VYPRSELO: 'vypršelo' };
 
 const USTAV = { NOVY: 'nový', KONTAKTOVAN: 'kontaktován', NASEL: 'našel práci', NEAKTIVNI: 'neaktivní' };
 
@@ -43,6 +49,8 @@ const USL = [
   ['Životopis', null], ['ID souboru', null],
   ['Upozornit na inzeráty', 'upozornit'], ['Jazyk webu', 'lang'],
   ['Podniků v lokalitě a oboru', null], ['Token', null], ['Poznámka správce', null],
+  // inzerát pro firmy (veřejná tabulka čte jen tyto a profesní sloupce, viz nastavitUchazece)
+  ['Zveřejnění', null], ['Zveřejněno', null], ['Zveřejnit do', null], ['Veřejný telefon', null], ['Veřejný e-mail', null],
 ];
 const UH = USL.map(x => x[0]);
 const UC = Object.fromEntries(UH.map((x, i) => [x, i + 1]));
@@ -86,6 +94,9 @@ function uchazecPost(d) {
         case 'ID souboru': return cv ? cv.id : '';
         case 'Podniků v lokalitě a oboru': return tipy.pocet;
         case 'Token': return token;
+        case 'Zveřejnění': return d.zverejnit ? UZV.CEKA : UZV.NE;
+        case 'Veřejný telefon': return d.zverejnit && d.ukazTel ? cist(d.telefon) : '';
+        case 'Veřejný e-mail': return d.zverejnit && d.ukazMail ? cist(d.email) : '';
         default: return '';
       }
     });
@@ -101,19 +112,20 @@ function uchazecPost(d) {
       MailApp.sendEmail({
         to: CFG.ADMIN, name: 'Práce napřímo',
         subject: 'Nový uchazeč: ' + d.profese + ' – ' + lokText,
-        htmlBody: '<p><b>' + h(d.jmeno) + '</b> hledá práci: ' + h(d.profese) + ' (' + h(d.obor) + '), ' + h(lokText) +
-          (cv ? ', <b>se životopisem</b>' : '') + '.</p><p>Poslali jsme mu tipy (' + tipy.pocet + ' podniků v lokalitě a oboru).</p>' +
+        htmlBody: '<p><b>' + h(d.jmeno || '(bez jména)') + '</b> hledá práci: ' + h(d.profese) + ' (' + h(d.obor) + '), ' + h(lokText) +
+          (cv ? ', <b>se životopisem</b>' : '') + '.</p>' +
+          (d.zverejnit ? '<p>Chce zveřejnit inzerát pro firmy (zveřejní se po potvrzení z jeho e-mailu). Stáhnout ho jde v menu Uchazeči.</p>' : '') + '<p>Poslali jsme mu tipy (' + tipy.pocet + ' podniků v lokalitě a oboru).</p>' +
           '<p><a href="' + ss.getUrl() + '#gid=' + sh.getSheetId() + '&range=A' + r + '">Otevřít řádek ' + r + ' v tabulce</a></p>',
       });
     }
-    return json({ ok: true, id: id, podniku: tipy.pocet, hledaji: tipy.hledaji.length, inzeratu: tipy.inzeraty.length });
+    return json({ ok: true, id: id, podniku: tipy.pocet, hledaji: tipy.hledaji.length, inzeratu: tipy.inzeraty.length, zverejnit: !!d.zverejnit });
   } finally {
     lock.releaseLock();
   }
 }
 
 function uchazecOver(d) {
-  const povinne = { jmeno: 'jméno', email: 'e-mail', lokalita: 'lokalita', obor: 'obor', profese: 'profese', uvazek: 'typ úvazku', souhlas: 'souhlas' };
+  const povinne = { email: 'e-mail', lokalita: 'lokalita', obor: 'obor', profese: 'profese', uvazek: 'typ úvazku', souhlas: 'souhlas' };
   for (const k in povinne) if (!d[k] || (Array.isArray(d[k]) && !d[k].length)) return 'Chybí: ' + povinne[k] + '.';
   if (!platnyMail(d.email)) return 'E-mail nevypadá správně.';
   if (String(d.omne || '').length > UCFG.MAX_O_MNE) return 'Text „O mně“ je moc dlouhý (max. ' + UCFG.MAX_O_MNE + ' znaků).';
@@ -123,6 +135,11 @@ function uchazecOver(d) {
     if (d.cv.data.length * 0.75 > UCFG.MAX_CV_MB * 1024 * 1024) return 'Životopis je větší než ' + UCFG.MAX_CV_MB + ' MB.';
   }
   d.upozornit = d.upozornit ? 'ano' : 'ne';
+  d.jmeno = String(d.jmeno || '').trim();
+  d.zverejnit = !!d.zverejnit;
+  d.ukazTel = !!(d.ukazTel && String(d.telefon || '').trim());
+  d.ukazMail = !!d.ukazMail;
+  if (d.zverejnit && !d.ukazTel && !d.ukazMail) return 'Vyberte, jaký kontakt mají firmy u inzerátu vidět (telefon nebo e-mail).';
   return '';
 }
 
@@ -206,17 +223,23 @@ function posliTipy(d, id, token, t) {
   const kde = d.lokalita[0] === '@' ? d.lokalita.slice(1) : String(d.lokalita).replace(/^Praha\s*-\s*/, '');
   const jeObor = OBORY_PODNIKU.includes(d.obor);
   const odkaz = CFG.WEB + '/?lokalita=' + encodeURIComponent(d.lokalita) + (jeObor ? '&obor=' + encodeURIComponent(d.obor) : '') + '&zdroj=uchazec-email';
-  const smazat = ScriptApp.getService().getUrl() + '?a=smazat-uchazece&id=' + encodeURIComponent(id) + '&t=' + token;
+  const smazat = odkazAkce('smazat', id, token);
   const zelena = 'display:inline-block;background:#0F6B5C;color:#fff;padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:600';
   const box = 'padding:12px 14px;background:#DCEFEA;border-radius:10px';
   const tel = String(d.telefon || '').trim() || '[telefon]';
   const sablona = sablonaOsloveni(d, tel);
 
   let html = '<div style="font-family:system-ui,sans-serif;line-height:1.5;max-width:620px">' +
-    '<p>Dobrý den, ' + h(String(d.jmeno).split(' ')[0]) + ',</p>' +
+    '<p>Dobrý den' + (d.jmeno ? ', ' + h(String(d.jmeno).split(' ')[0]) : '') + ',</p>' +
     '<p>děkujeme, že jste se zapsal/a na <a href="' + CFG.WEB + '">pracenaprimo.cz</a>. Hledáte práci jako <b>' + h(d.profese) + '</b> v lokalitě <b>' + h(kde) + '</b>. ' +
     'Nejrychleji ji najdete, když podniky oslovíte sami, napřímo. Tady je návod.</p>';
 
+  if (d.zverejnit) {
+    const zverejnit = odkazAkce('zverejnit', id, token);
+    html += '<div style="' + box + ';margin:16px 0"><p style="margin:0 0 8px"><b>Potvrďte prosím zveřejnění inzerátu.</b> Firmy pak na webu uvidí vaši profesi, lokalitu, podmínky, text „O mně“ a ' +
+      [d.ukazTel ? 'telefon' : '', d.ukazMail ? 'e-mail' : ''].filter(Boolean).join(' a ') + '. Jméno ani životopis nezveřejňujeme. Inzerát bude vidět ' + UCFG.ZVEREJNIT_DNI + ' dní.</p>' +
+      '<p style="margin:0"><a href="' + zverejnit + '" style="' + zelena + '">Zveřejnit inzerát</a></p></div>';
+  }
   html += '<h3 style="color:#0F6B5C">1. Podniky ve vašem okolí</h3>';
   if (t.pocet) {
     html += '<p style="' + box + '">V lokalitě ' + h(kde) + ' máme <b>' + t.pocet + ' ' + podniku(t.pocet) + (jeObor ? ' v oboru ' + h(d.obor) : '') + '</b>' +
@@ -255,7 +278,8 @@ function posliTipy(d, id, token, t) {
   html += '<hr style="border:none;border-top:1px solid #ddd;margin:24px 0">' +
     '<p style="color:#666;font-size:13px">Vaše údaje' + (d.cv && d.cv.data ? ' i životopis' : '') + ' máme uložené neveřejně a nikomu je nepředáváme. ' +
     'Po 12 měsících je sami smažeme. Číslo přihlášky: ' + h(id) + '.<br>' +
-    'Chcete je smazat hned? <a href="' + smazat + '" style="color:#666">Smazat moje údaje</a>. ' +
+    (d.zverejnit ? 'Inzerát můžete kdykoli stáhnout z webu: <a href="' + odkazAkce('stahnout', id, token) + '" style="color:#666">Stáhnout inzerát</a>. ' : '') +
+    'Chcete údaje smazat hned? <a href="' + smazat + '" style="color:#666">Smazat moje údaje</a>. ' +
     'Zásady: <a href="' + CFG.WEB + '/ochrana-udaju/" style="color:#666">ochrana údajů</a>.<br>' +
     'Práce napřímo · Michal Mamula · ' + CFG.ADMIN + '</p></div>';
 
@@ -264,7 +288,7 @@ function posliTipy(d, id, token, t) {
 
 /* Text oslovení podle oboru a profese, předvyplněný údaji uchazeče. [podnik] doplní tlačítko Napsat na webu. */
 function sablonaOsloveni(d, tel) {
-  const jm = String(d.jmeno).trim();
+  const jm = String(d.jmeno || '').trim() || '[Jméno Příjmení]';
   const prof = String(d.profese).toLowerCase();
   const praxe = d.praxe && !/bez praxe/i.test(d.praxe) ? 'Mám ' + String(d.praxe).toLowerCase() + ' praxe, naposledy jako [poslední pozice] v [poslední podnik].'
     : 'Zatím nemám velkou praxi, ale učím se rychle a nebojím se práce.';
@@ -276,7 +300,12 @@ function sablonaOsloveni(d, tel) {
     '.\n\nDěkuji a přeji hezký den\n' + jm;
 }
 
-/* ---------------- smazání z odkazu v e-mailu ---------------- */
+/* ---------------- odkazy z e-mailu: zveřejnit / stáhnout / smazat ----------------
+   Všechny vedou přes ?a=smazat-uchazece (háček v doGet v inzeraty.gs), akci určuje parametr op. */
+
+function odkazAkce(op, id, token) {
+  return ScriptApp.getService().getUrl() + '?a=smazat-uchazece' + (op === 'smazat' ? '' : '&op=' + op) + '&id=' + encodeURIComponent(id) + '&t=' + token;
+}
 
 function uchazecSmazatOdkaz(p) {
   const sh = listUchazeci();
@@ -284,9 +313,23 @@ function uchazecSmazatOdkaz(p) {
   if (!r) return stranka('Údaje už jsou smazané', 'Přihlášku jsme nenašli. Nejspíš už je smazaná.');
   const v = sh.getRange(r, 1, 1, UH.length).getValues()[0];
   if (v[UC['Token'] - 1] !== p.t) return stranka('Neplatný odkaz', 'Odkaz nesouhlasí. Zkopírujte ho z e-mailu celý, nebo nám napište na ' + CFG.ADMIN + '.');
+  const zv = v[UC['Zveřejnění'] - 1];
+  if (p.op === 'zverejnit') {
+    if (zv === UZV.ANO) return stranka('Inzerát už je zveřejněný', 'Váš inzerát je na webu do ' + datum(v[UC['Zveřejnit do'] - 1]) + '.');
+    if (zv !== UZV.CEKA) return stranka('Inzerát nejde zveřejnit', 'Tento inzerát už byl stažený nebo vypršel. Zapište se prosím na webu znovu.');
+    const doDne = new Date(); doDne.setHours(23, 59, 0, 0); doDne.setDate(doDne.getDate() + UCFG.ZVEREJNIT_DNI);
+    sh.getRange(r, UC['Zveřejnění'], 1, 3).setValues([[UZV.ANO, new Date(), doDne]]);
+    return stranka('Inzerát je zveřejněný', 'Firmy ho na pracenaprimo.cz uvidí do ' + datum(doDne) + ' (na webu se objeví do pár minut). Stáhnout ho můžete odkazem z e-mailu.');
+  }
+  if (p.op === 'stahnout') {
+    if (zv === UZV.ANO || zv === UZV.CEKA) sh.getRange(r, UC['Zveřejnění']).setValue(UZV.STAZENO);
+    return stranka('Inzerát je stažený', 'Firmy ho už na webu neuvidí (změna se projeví do pár minut). Vaše přihláška u nás zůstává, smazat ji můžete odkazem z e-mailu.');
+  }
   smazRadekUchazece(sh, r, v);
   return stranka('Údaje jsou smazané', 'Vaši přihlášku' + (v[UC['ID souboru'] - 1] ? ' i životopis' : '') + ' jsme smazali. Kdykoli se můžete zapsat znovu.');
 }
+
+function datum(d) { return d instanceof Date ? Utilities.formatDate(d, 'Europe/Prague', 'd. M. yyyy') : String(d || ''); }
 
 function smazRadekUchazece(sh, r, v) {
   const fid = v[UC['ID souboru'] - 1];
@@ -299,10 +342,19 @@ function smazRadekUchazece(sh, r, v) {
 /* Volá se z onOpen v inzeraty.gs */
 function uchazeciMenu() {
   SpreadsheetApp.getUi().createMenu('Uchazeči')
+    .addItem('Stáhnout z webu inzerát vybraného uchazeče', 'stahnoutVybranehoUchazece')
     .addItem('Smazat vybraného uchazeče (i životopis)', 'smazatVybranehoUchazece')
     .addSeparator()
     .addItem('Připravit list Uchazeči a složku životopisů', 'nastavitUchazece')
     .addToUi();
+}
+
+function stahnoutVybranehoUchazece() {
+  const sh = SpreadsheetApp.getActiveSheet();
+  const r = sh.getActiveRange() && sh.getActiveRange().getRow();
+  if (sh.getName() !== UCFG.LIST || !r || r < 2) return SpreadsheetApp.getUi().alert('Otevři list „' + UCFG.LIST + '“ a klikni do řádku uchazeče.');
+  sh.getRange(r, UC['Zveřejnění']).setValue(UZV.STAZENO);
+  SpreadsheetApp.getActive().toast('Inzerát uchazeče z řádku ' + r + ' je stažený z webu.');
 }
 
 function smazatVybranehoUchazece() {
@@ -323,7 +375,9 @@ function uchazeciDenne() {
   const v = sh.getRange(2, 1, sh.getLastRow() - 1, UH.length).getValues(), now = new Date();
   for (let i = v.length - 1; i >= 0; i--) {
     const d = v[i][UC['Smazat po'] - 1];
-    if (d instanceof Date && d < now) smazRadekUchazece(sh, i + 2, v[i]);
+    if (d instanceof Date && d < now) { smazRadekUchazece(sh, i + 2, v[i]); continue; }
+    const z = v[i][UC['Zveřejnit do'] - 1];
+    if (v[i][UC['Zveřejnění'] - 1] === UZV.ANO && z instanceof Date && z < now) sh.getRange(i + 2, UC['Zveřejnění']).setValue(UZV.VYPRSELO);
   }
 }
 
@@ -336,6 +390,10 @@ function nastavitUchazece() {
     SpreadsheetApp.newDataValidation().requireValueInList(Object.values(USTAV), true).build());
   sh.getRange(2, UC['Vytvořeno'], sh.getMaxRows() - 1, 1).setNumberFormat('d. M. yyyy H:mm');
   sh.getRange(2, UC['Smazat po'], sh.getMaxRows() - 1, 1).setNumberFormat('d. M. yyyy');
+  sh.getRange(2, UC['Zveřejnění'], sh.getMaxRows() - 1, 1).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(Object.values(UZV), true).build());
+  sh.getRange(2, UC['Zveřejněno'], sh.getMaxRows() - 1, 1).setNumberFormat('d. M. yyyy H:mm');
+  sh.getRange(2, UC['Zveřejnit do'], sh.getMaxRows() - 1, 1).setNumberFormat('d. M. yyyy');
   slozkaCv();
   if (!ScriptApp.getProjectTriggers().some(t => t.getHandlerFunction() === 'uchazeciDenne'))
     ScriptApp.newTrigger('uchazeciDenne').timeBased().everyDays(1).atHour(4).inTimezone('Europe/Prague').create();
