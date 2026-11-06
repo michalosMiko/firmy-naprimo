@@ -347,7 +347,8 @@ function uchazecZadostCv(d) {
       '<b>E-mail:</b> ' + h(mail) + (tel ? '<br><b>Telefon:</b> ' + h(tel) : '') + '</p>' +
       (zprava ? '<p style="margin:8px 0 0;white-space:pre-line"><b>Zpráva:</b> ' + h(zprava) + '</p>' : '') + '</div>' +
       '<p><b>Co dál:</b> pokud máte zájem, odpovězte na tento e-mail (odpověď půjde rovnou firmě) a životopis přiložte. Váš e-mail firma uvidí, až jí odpovíte. Pokud zájem nemáte, nemusíte nic dělat.</p>' +
-      '<p><a style="' + zelena + '" href="mailto:' + encodeURIComponent(mail) + '?subject=' + encodeURIComponent(predmet) + '">Odpovědět firmě</a></p>' +
+      '<p><a style="' + zelena + '" href="mailto:' + h(encodeURI(mail)) + '?subject=' + encodeURIComponent(predmet) + '">Odpovědět firmě</a></p>' +
+      '<p style="font-size:14px">Kdyby se po kliknutí adresa nevyplnila, napište firmě na <b>' + h(mail) + '</b>, nebo v e-mailové schránce klikněte na <b>Odpovědět</b>.</p>' +
       (maCv ? '<p style="font-size:14px">Životopis, který jste nahrál/a při zápisu, firmám neposíláme. Přiložte ho prosím sám/sama.</p>' : '') +
       '<p style="font-size:13px;color:#555">Nevíme, jestli je firma důvěryhodná. Nikomu neposílejte rodné číslo, číslo účtu ani peníze předem. ' +
       'Když už práci nehledáte: <a href="' + odkazAkce('stahnout', v[0], v[UC['Token'] - 1]) + '">Stáhnout inzerát</a> · <a href="' + odkazAkce('smazat', v[0], v[UC['Token'] - 1]) + '">Smazat moje údaje</a>.</p></div>',
