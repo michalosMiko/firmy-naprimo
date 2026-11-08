@@ -13,6 +13,9 @@
  *   → když uchazeč zaškrtne „Zveřejnit inzerát“, je v e-mailu odkaz k potvrzení; po kliknutí se
  *     inzerát na 60 dní ukáže firmám na webu (veřejná tabulka, list „Hledají práci“ = QUERY jen
  *     zveřejněných řádků a jen vybraných sloupců: bez jména, životopisu a nevybraného kontaktu)
+ *   → když zaškrtne „Upozornit na inzeráty“, přijde mu jednou denně (ráno) e-mail s novými
+ *     inzeráty v jeho oboru a lokalitě (podle Dojíždění i sousední čtvrti nebo celá Praha),
+ *     v každém e-mailu je odkaz „Nechci upozornění“ (op=odhlasit)
  *   → údaje se po 12 měsících samy smažou (denní kontrola)
  *
  * Do veřejné tabulky jde jen zveřejněný inzerát, a to jen se souhlasem a po potvrzení z e-mailu.
@@ -34,6 +37,8 @@ const UCFG = {
   ZADOSTI_ZA_HODINU: 30,    // žádostí o životopis za hodinu celkem
   ZADOSTI_NA_UCHAZECE: 10,  // žádostí o životopis jednomu uchazeči za den
   MAX_ZPRAVA: 600,
+  UPOZ_MAX_INZ: 10,         // nejvýš inzerátů v jednom upozornění
+  UPOZ_REZERVA: 15,         // tolik e-mailů z denní kvóty Gmailu nechat na formuláře; zbytek upozornění dojde zítra
 };
 
 const UZV = { NE: 'ne', CEKA: 'čeká na potvrzení', ANO: 'zveřejněno', STAZENO: 'staženo', VYPRSELO: 'vypršelo' };
@@ -54,6 +59,8 @@ const USL = [
   ['Podniků v lokalitě a oboru', null], ['Token', null], ['Poznámka správce', null],
   // inzerát pro firmy (veřejná tabulka čte jen tyto a profesní sloupce, viz nastavitUchazece)
   ['Zveřejnění', null], ['Zveřejněno', null], ['Zveřejnit do', null], ['Veřejný telefon', null], ['Veřejný e-mail', null],
+  // upozornění na nové inzeráty (posílá uchazeciDenne)
+  ['Naposledy upozorněn', null],
 ];
 const UH = USL.map(x => x[0]);
 const UC = Object.fromEntries(UH.map((x, i) => [x, i + 1]));
@@ -384,6 +391,10 @@ function uchazecSmazatOdkaz(p) {
     sh.getRange(r, UC['Zveřejnění'], 1, 3).setValues([[UZV.ANO, new Date(), doDne]]);
     return stranka('Inzerát je zveřejněný', 'Firmy ho na pracenaprimo.cz uvidí do ' + datum(doDne) + ' (na webu se objeví do pár minut). Stáhnout ho můžete odkazem z e-mailu.');
   }
+  if (p.op === 'odhlasit') {
+    sh.getRange(r, UC['Upozornit na inzeráty']).setValue('ne');
+    return stranka('Upozornění jsou vypnutá', 'E-maily o nových inzerátech vám už posílat nebudeme. Vaše přihláška u nás zůstává, smazat ji můžete odkazem z e-mailu.');
+  }
   if (p.op === 'stahnout') {
     if (zv === UZV.ANO || zv === UZV.CEKA) sh.getRange(r, UC['Zveřejnění']).setValue(UZV.STAZENO);
     return stranka('Inzerát je stažený', 'Firmy ho už na webu neuvidí (změna se projeví do pár minut). Vaše přihláška u nás zůstává, smazat ji můžete odkazem z e-mailu.');
@@ -407,6 +418,7 @@ function uchazeciMenu() {
   SpreadsheetApp.getUi().createMenu('Uchazeči')
     .addItem('Stáhnout z webu inzerát vybraného uchazeče', 'stahnoutVybranehoUchazece')
     .addItem('Smazat vybraného uchazeče (i životopis)', 'smazatVybranehoUchazece')
+    .addItem('Poslat upozornění na nové inzeráty teď', 'upozornitUchazeceRucne')
     .addSeparator()
     .addItem('Připravit list Uchazeči a složku životopisů', 'nastavitUchazece')
     .addToUi();
@@ -442,6 +454,7 @@ function uchazeciDenne() {
     const z = v[i][UC['Zveřejnit do'] - 1];
     if (v[i][UC['Zveřejnění'] - 1] === UZV.ANO && z instanceof Date && z < now) sh.getRange(i + 2, UC['Zveřejnění']).setValue(UZV.VYPRSELO);
   }
+  upozornitUchazece();
 }
 
 /* Jednorázově: list s hlavičkou, složka na životopisy, denní mazání. Spustit ručně v editoru. */
@@ -468,4 +481,145 @@ function listUchazeci() {
   let sh = ss.getSheetByName(UCFG.LIST);
   if (!sh) { sh = ss.insertSheet(UCFG.LIST); sh.getRange(1, 1, 1, UH.length).setValues([UH]).setFontWeight('bold'); sh.setFrozenRows(1); }
   return sh;
+}
+
+/* ---------------- upozornění na nové inzeráty ----------------
+   Jednou denně (z uchazeciDenne, 4:00) projde uchazeče se zaškrtnutým „Upozornit na inzeráty“
+   a každému pošle JEDEN e-mail s inzeráty, které se zveřejnily od jeho zápisu nebo od minulého
+   upozornění, jsou pořád aktivní a sedí oborem a lokalitou:
+     „Jen v mé lokalitě“          → jeho lokalita (u celého obvodu všechny lokality obvodu)
+     „I do sousedních čtvrtí“     → + sousední lokality ze sloupce „Sousední lokality“ listu Lokality
+     „Kamkoli po Praze a okolí“   → všechny lokality
+   Obor „Jiné“ (není mezi obory podniků) dostává inzeráty všech oborů. Uchazeč ve stavu
+   „našel práci“ nebo „neaktivní“ upozornění nedostává. Datum odeslání se zapíše do sloupce
+   „Naposledy upozorněn“, takže se žádný inzerát nepošle dvakrát. Když dojde denní kvóta e-mailů,
+   zbytek uchazečů dostane upozornění příští den. Vrací počet odeslaných e-mailů. */
+
+function upozornitUchazece() {
+  const ss = SpreadsheetApp.getActive();
+  const sh = listUchazeci();
+  const si = ss.getSheetByName(CFG.LIST_INZ);
+  if (sh.getLastRow() < 2 || !si || si.getLastRow() < 2) return 0;
+  // sloupec „Naposledy upozorněn“ doplnit do hlavičky, kdyby v listu ještě nebyl
+  const cN = UC['Naposledy upozorněn'];
+  if (String(sh.getRange(1, cN).getValue()) !== 'Naposledy upozorněn')
+    sh.getRange(1, cN).setValue('Naposledy upozorněn').setFontWeight('bold');
+
+  const now = new Date();
+  const inz = si.getRange(2, 1, si.getLastRow() - 1, H.length).getValues().filter(r => {
+    const zv = r[C['Zveřejněno'] - 1], plati = r[C['Platí do'] - 1];
+    return r[C['Stav'] - 1] === STAV.AKTIVNI && zv instanceof Date && !(plati instanceof Date && plati < now);
+  });
+  if (!inz.length) return 0;
+
+  const lok = lokalityMapa();
+  const vsechny = Object.keys(lok);
+  const v = sh.getRange(2, 1, sh.getLastRow() - 1, UH.length).getValues();
+  let poslano = 0, zbyva = 0;
+  for (let i = 0; i < v.length; i++) {
+    const u = v[i];
+    if (String(u[UC['Upozornit na inzeráty'] - 1]).trim() !== 'ano') continue;
+    if (!platnyMail(u[UC['E-mail'] - 1])) continue;
+    const stav = u[UC['Stav'] - 1];
+    if (stav === USTAV.NASEL || stav === USTAV.NEAKTIVNI) continue;
+    const od = [u[UC['Vytvořeno'] - 1], u[cN - 1]].filter(d => d instanceof Date).reduce((a, b) => a > b ? a : b, new Date(0));
+    const kde = lokalityUchazece(u[UC['Lokalita'] - 1], u[UC['Dojíždění'] - 1], lok, vsechny).map(norm);
+    const obor = String(u[UC['Obor'] - 1] || ''), jine = !OBORY_PODNIKU.includes(obor);
+    const nove = inz.filter(r => r[C['Zveřejněno'] - 1] > od &&
+      kde.includes(norm(r[C['Lokalita'] - 1])) && (jine || norm(r[C['Obor'] - 1]) === norm(obor)));
+    if (!nove.length) continue;
+    if (MailApp.getRemainingDailyQuota() <= UCFG.UPOZ_REZERVA) { zbyva++; continue; }
+    // inzeráty s profesí uchazeče dopředu, pak nejnovější
+    const p = norm(u[UC['Profese'] - 1]), dalsi = norm(u[UC['Další profese'] - 1]);
+    const skore = r => { const pr = norm(r[C['Profese'] - 1]); return (pr && pr === p ? 2 : 0) + (pr && dalsi.includes(pr) ? 1 : 0); };
+    nove.sort((a, b) => skore(b) - skore(a) || b[C['Zveřejněno'] - 1] - a[C['Zveřejněno'] - 1]);
+    try {
+      posliUpozorneni(u, nove);
+      sh.getRange(i + 2, cN).setValue(now).setNumberFormat('d. M. yyyy H:mm');
+      poslano++;
+    } catch (e) {
+      console.error('Upozornění ' + u[0] + ': ' + e);
+    }
+  }
+  if (zbyva) console.warn('Došla denní kvóta e-mailů, ' + zbyva + ' uchazečů dostane upozornění zítra.');
+  return poslano;
+}
+
+/* Z menu Uchazeči: pošle upozornění hned (jinak chodí samo každé ráno). */
+function upozornitUchazeceRucne() {
+  const n = upozornitUchazece();
+  SpreadsheetApp.getActive().toast(n ? 'Odesláno upozornění: ' + n + '.' : 'Žádný uchazeč nemá nové inzeráty od minulého upozornění.');
+}
+
+/* { „Praha - Nusle“: { obvod: „praha 4“, sousede: [...] }, … } z listu Lokality */
+function lokalityMapa() {
+  const sh = SpreadsheetApp.getActive().getSheetByName('Lokality');
+  const out = {};
+  if (!sh || sh.getLastRow() < 2) return out;
+  sh.getRange(2, 1, sh.getLastRow() - 1, 13).getValues().forEach(r => {
+    if (!r[0]) return;
+    out[String(r[0]).trim()] = { obvody: [norm(r[8]), norm(r[9])].filter(Boolean),
+      sousede: String(r[12] || '').split(';').map(x => x.trim()).filter(Boolean) };
+  });
+  return out;
+}
+
+/* Lokalita uchazeče, jak je zapsaná v listu („Praha - Nusle“ nebo „Praha 4 (celý obvod)“) + dojíždění → seznam lokalit */
+function lokalityUchazece(lokalita, dojezd, lok, vsechny) {
+  if (/kamkoli/i.test(String(dojezd || ''))) return vsechny;
+  const l = String(lokalita || '').trim();
+  const m = l.match(/^(.*) \(celý obvod\)$/);
+  let zaklad = m ? vsechny.filter(x => lok[x].obvody.includes(norm(m[1]))) : [l];
+  if (/soused/i.test(String(dojezd || ''))) {
+    const s = new Set(zaklad);
+    zaklad.forEach(x => ((lok[x] || {}).sousede || []).forEach(y => s.add(y)));
+    zaklad = [...s];
+  }
+  return zaklad;
+}
+
+function posliUpozorneni(u, nove) {
+  const id = u[0], token = u[UC['Token'] - 1];
+  const jmeno = String(u[UC['Jméno'] - 1] || '').trim().split(' ')[0];
+  const profese = String(u[UC['Profese'] - 1] || '');
+  const zelena = 'display:inline-block;background:#0F6B5C;color:#fff;padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:600';
+  const box = 'padding:12px 14px;background:#DCEFEA;border-radius:10px;margin:0 0 10px';
+  const ukaz = nove.slice(0, UCFG.UPOZ_MAX_INZ);
+  const lokU = String(u[UC['Lokalita'] - 1] || '').trim(), mo = lokU.match(/^(.*) \(celý obvod\)$/);
+  const oborU = String(u[UC['Obor'] - 1] || '');
+  const odkazWeb = CFG.WEB + '/?lokalita=' + encodeURIComponent(mo ? '@' + mo[1] : lokU) +
+    (OBORY_PODNIKU.includes(oborU) ? '&obor=' + encodeURIComponent(oborU) : '') + '&zdroj=upozorneni';
+  const mzda = r => {
+    const od = r[C['Mzda od'] - 1], dd = r[C['Mzda do'] - 1], j = String(r[C['Mzda jednotka'] - 1] || '');
+    if (j === 'dohodou' || (!od && !dd)) return 'mzda dohodou';
+    const tis = x => String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return [od, dd].filter(Boolean).map(tis).join(' – ') + ' ' + j;
+  };
+  const karty = ukaz.map(r => {
+    const url = CFG.WEB + '/?inz=' + encodeURIComponent(r[0]) + '&zdroj=upozorneni';
+    const kde = String(r[C['Lokalita'] - 1] || '').replace(/^Praha\s*-\s*/, '');
+    return '<div style="' + box + '"><p style="margin:0 0 4px"><b style="font-size:16px">' + h(r[C['Pozice'] - 1]) + '</b></p>' +
+      '<p style="margin:0 0 6px">' + h(r[C['Podnik'] - 1]) + (r[C['Adresa'] - 1] ? ', ' + h(r[C['Adresa'] - 1]) : '') + (kde ? ' (' + h(kde) + ')' : '') + '<br>' +
+      h(String(r[C['Úvazek'] - 1] || '')) + ' · ' + h(mzda(r)) + (r[C['Nástup'] - 1] ? ' · nástup ' + h(String(r[C['Nástup'] - 1]).toLowerCase()) : '') + '</p>' +
+      '<p style="margin:0"><a href="' + url + '" style="color:#0F6B5C;font-weight:600">Zobrazit inzerát a kontakt</a></p></div>';
+  }).join('');
+  const vic = nove.length > ukaz.length ? '<p>… a ' + (nove.length - ukaz.length) + ' dalších na webu.</p>' : '';
+  const html = '<div style="font-family:system-ui,sans-serif;line-height:1.5;max-width:620px">' +
+    '<p>Dobrý den' + (jmeno ? ', ' + h(jmeno) : '') + ',</p>' +
+    '<p>na <a href="' + CFG.WEB + '">pracenaprimo.cz</a> ' + (nove.length === 1 ? 'přibyl nový inzerát' : 'přibyly nové inzeráty') +
+    ' pro vaše hledání: <b>' + h(profese) + '</b>, lokalita ' + h(u[UC['Lokalita'] - 1]) + '.</p>' + karty + vic +
+    '<p><a href="' + odkazWeb + '" style="' + zelena + '">Otevřít web s mou lokalitou</a></p>' +
+    '<p style="font-size:14px">Tip: zavolejte nebo napište co nejdřív, nová místa se obsazují rychle. Hotové texty najdete v <a href="' + CFG.WEB + '/#navody">Návodech</a>.</p>' +
+    '<hr style="border:none;border-top:1px solid #ddd;margin:24px 0">' +
+    '<p style="color:#666;font-size:13px">Tento e-mail dostáváte, protože jste při zápisu (číslo ' + h(id) + ') zaškrtl/a upozornění na nové inzeráty. Posíláme ho nejvýš jednou denně.<br>' +
+    '<a href="' + odkazAkce('odhlasit', id, token) + '" style="color:#666">Nechci upozornění</a> · ' +
+    '<a href="' + odkazAkce('smazat', id, token) + '" style="color:#666">Smazat moje údaje</a> · ' +
+    '<a href="' + CFG.WEB + '/ochrana-udaju/#uchazeci" style="color:#666">Ochrana údajů</a><br>' +
+    'Práce napřímo · Michal Mamula · ' + CFG.ADMIN + '</p></div>';
+  MailApp.sendEmail({
+    to: u[UC['E-mail'] - 1], replyTo: CFG.ADMIN, name: 'Práce napřímo',
+    subject: (nove.length === 1 ? 'Nový inzerát: ' + nove[0][C['Pozice'] - 1] + ' – ' + nove[0][C['Podnik'] - 1]
+      : nove.length + (nove.length < 5 ? ' nové inzeráty' : ' nových inzerátů') + ' pro vás: ' + profese),
+    htmlBody: html,
+  });
 }
